@@ -1,7 +1,7 @@
 {
 	"name": "contentinum/contentinum-components",
 	"description" : "Contentinum library for Symfony and contentinum manage content application",
-	"keywords": ["contentinum", "library"],
+	"keywords": ["contentinum", "library", "cms"],
 	"homepage": "https://github.com/Mikel1961/contentinum-components.git",
     "license": "BSD",
     "type": "library",
