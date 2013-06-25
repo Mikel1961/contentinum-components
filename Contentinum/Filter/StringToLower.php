@@ -27,6 +27,8 @@
  */
 namespace Contentinum\Filter;
 
+use Contentinum\Filter\Exception\NotFound;
+use Contentinum\Filter\Exception\InvalidValue;
 /**
  * 
  * @author mike
@@ -54,7 +56,8 @@ class StringToLower implements FiltersInterface
 	/**
 	 * Set and validate encoding if avaibale 
 	 * @param string $encoding
-	 * @throws \Exception
+	 * @throws NotFound
+	 * @throws InvalidValue
 	 * @return \Contentinum\Filter\StringToLower
 	 */
 	public function setEncoding($encoding = null)
@@ -62,13 +65,13 @@ class StringToLower implements FiltersInterface
 		if (null !== $encoding){
 			
 			if ( !function_exists('mb_strtolower')  ){
-				throw new \Exception('To set a character encoding is required mbstring');
+				throw new NotFound('To set a character encoding is required mbstring');
 			}
 			
 			$encoding = strtolower($encoding);
 			$endcodings = array_map('strtolower', mb_list_encodings());
 			if ( ! in_array($encoding, $endcodings) ){
-				throw new \Exception('The character set %s is not supported', $encoding);
+				throw new InvalidValue( sprintf('The character set %s is not supported', $encoding) );
 			}
 			
 			$this->parameters['encoding'] = $encoding;

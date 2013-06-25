@@ -27,6 +27,7 @@
  */
 namespace Contentinum\Filter;
 
+use Contentinum\Filter\Exception\InvalidValue;
 /**
  * Wrapper class for preg_replace
  * 
@@ -53,7 +54,7 @@ class PregReplace implements FiltersInterface
 	 * Provide options with keys match => preg replace pattern, replace => replace with this
 	 * 
 	 * @param array $options 
-	 * @throws \Exception
+	 * @throws InvalidValue
 	 */
 	public function __construct(array $options)
 	{
@@ -65,8 +66,8 @@ class PregReplace implements FiltersInterface
 			$this->_match = $options['match'];
 		}
 		
-		if (null != $this->_match || null != $this->_replace){
-			throw new \Exception('You need to set a valid match patter and a replacement in %s', get_class($this));
+		if (null == $this->_match || null == $this->_replace){
+			throw new InvalidValue( sprintf('You need to set a valid match patter and a replacement in %s', get_class($this)) );
 		}
 	}
 	/**
