@@ -85,7 +85,7 @@ class Chain implements FiltersInterface
     {
     	$filterValue = $value;
     	foreach ($this->_filters as $filter){
-    		$filterValue = $filter->filter($value);
+    		$filterValue = $filter->filter($filterValue);
     	}
     	return $filterValue;
     }
