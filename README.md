@@ -1,4 +1,4 @@
 contentinum-components
 ======================
 
-Contentinum library for Symfony and contentinum manage content application
+Contentinum library for Zend Framework 2 and contentinum manage content application
