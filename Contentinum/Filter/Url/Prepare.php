@@ -27,16 +27,17 @@
  */
 namespace Contentinum\Filter\Url;
 
-use Contentinum\Filter\Chain;
+use Zend\Filter\FilterChain;
 use Contentinum\Filter\ReplaceUmlaute;
-use Contentinum\Filter\StringToLower;
-use Contentinum\Filter\PregReplace;
+use Zend\Filter\StringToLower;
+use Zend\Filter\PregReplace;
 use Contentinum\Filter\CleanScope;
 use Contentinum\Filter\RemoveMultipleCharacters;
 
+
 /**
  * Preparing a string to use in a url 
- * @author mike
+ * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
 class Prepare
 {
@@ -45,12 +46,12 @@ class Prepare
 		if (! is_string($value) ){
 			return $value;
 		}
-		$filter = new Chain();
-		$filter->addFilter(new ReplaceUmlaute());
-		$filter->addFilter(new StringToLower());
-		$filter->addFilter(new PregReplace(array('match' => "/\\s+/", 'replace' => $replace)));
-		$filter->addFilter(new CleanScope());
-		$filter->addFilter(new RemoveMultipleCharacters());
+		$filter = new FilterChain();
+		$filter->attach(new ReplaceUmlaute());
+		$filter->attach(new StringToLower());
+		$filter->attach(new PregReplace(array('pattern' => "/\\s+/", 'replacement' => $replace)));
+        $filter->attach(new CleanScope());		
+        $filter->attach(new RemoveMultipleCharacters());
 		$value = $filter->filter($value);
 		unset($filter);
 		return $value;

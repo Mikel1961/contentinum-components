@@ -27,11 +27,13 @@
  */
 namespace Contentinum\Filter;
 
+use Zend\Filter\FilterInterface;
+
 /**
  * Clean a string, remove all characters except a-z, A-Z, - and the numbers
- * @author mike
+ * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
-class CleanScope implements FiltersInterface
+class CleanScope implements FilterInterface
 {
 	
 	/**
@@ -54,9 +56,10 @@ class CleanScope implements FiltersInterface
 		}
 	}	
 	
-	/**
-	 * @see \Contentinum\Filter\FiltersInterface::filter()
-	 */
+    /**
+     * (non-PHPdoc)
+     * @see \Zend\Filter\FilterInterface::filter()
+     */
 	public function filter ($value)
 	{
 		return preg_replace("/[^0-9a-zA-Z-]/", "", $value);

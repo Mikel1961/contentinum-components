@@ -27,11 +27,13 @@
  */
 namespace Contentinum\Filter;
 
+use Zend\Filter\FilterInterface;
+
 /**
  * Remove all characters in a string that occur more than once in a row
- * @author mike
+ * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
-class RemoveMultipleCharacters implements FiltersInterface
+class RemoveMultipleCharacters implements FilterInterface
 {
 
 	/**
@@ -60,8 +62,10 @@ class RemoveMultipleCharacters implements FiltersInterface
 			self::$_unicodeEnabled = (@preg_match('/\pL/u', 'a')) ? true : false;
 		}
 	}
+
 	/**
-	 * @see \Contentinum\Filter\FiltersInterface::filter()
+	 * (non-PHPdoc)
+	 * @see \Zend\Filter\FilterInterface::filter()
 	 */
 	public function filter ($value)
 	{

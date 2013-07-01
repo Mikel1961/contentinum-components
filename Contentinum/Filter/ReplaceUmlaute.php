@@ -27,12 +27,14 @@
  */
 namespace Contentinum\Filter;
 
+use Zend\Filter\FilterInterface;
+
 /**
  * Replace de umlauts
- * @author mike
+ * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  *
  */
-class ReplaceUmlaute implements FiltersInterface 
+class ReplaceUmlaute implements FilterInterface
 {
 	
 	/**
@@ -55,9 +57,10 @@ class ReplaceUmlaute implements FiltersInterface
 		}
 	}
 
-	/**
-	 * @see \Contentinum\Filter\FiltersInterface::filter()
-	 */
+    /**
+     * (non-PHPdoc)
+     * @see \Zend\Filter\FilterInterface::filter()
+     */
 	public function filter($value) 
 	{
 		$search = array (
