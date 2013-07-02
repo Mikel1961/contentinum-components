@@ -27,6 +27,7 @@
  */
 namespace Contentinum\Storage;
 
+use Doctrine\ORM\EntityManager;
 use Contentinum\Entity\AbstractEntity;
 use Contentinum\Storage\Exeption\InvalidValueException;
 use Contentinum\Storage\Exeption\NoEntityException;
@@ -67,7 +68,7 @@ class AbstractDatabase extends AbstractManager
 	 */
 	public function getEntity() 
 	{
-		return $this->entity;
+		return $this->_entity;
 		
 	}
 
@@ -98,7 +99,7 @@ class AbstractDatabase extends AbstractManager
 	 */
 	public function setStorage($storage) 
 	{
-		if ( $storage instanceof EntityManager ){ 
+	    if ( $storage instanceof EntityManager ){ 
 			$this->_storage = $storage;
 		} else {
 			throw new NoEntityException('Doctrine EntityManager is required');
