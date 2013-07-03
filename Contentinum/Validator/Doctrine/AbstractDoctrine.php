@@ -88,10 +88,12 @@ abstract class AbstractDoctrine extends AbstractValidator
 	 * @param string $orm
 	 * @throws InvalidValueException
 	 */
-	public function __construct (array $options, $orm = null)
+	public function __construct (array $options)
 	{
-		if (null == $orm) {
-			$this->worker = new Worker();
+		if (! array_key_exists('storage', $options)) {
+	        throw new InvalidValueException('EntityManger is missed');
+	    } else {
+			$this->worker = new Worker($options['storage']);
 		}
 	
 		if (! array_key_exists('entity', $options)) {
@@ -184,7 +186,7 @@ abstract class AbstractDoctrine extends AbstractValidator
 	 *
 	 * @param unknown_type $value
 	 */
-	protected function _query ($value)
+	protected function query ($value)
 	{
 		$sql = 'SELECT main FROM ' . $this->_entity . ' main WHERE main.' . $this->_field . ' = :value';
 		if (is_array($this->_exclude)) {

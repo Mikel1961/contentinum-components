@@ -32,18 +32,18 @@ namespace Contentinum\Validator\Doctrine;
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  *
  */
-class RecordExists extends AbstractDoctrine
+class NoRecordExists extends AbstractDoctrine
 {
 	
     public function isValid ($value)
     {
         $valid = true;
-        $this->_setValue($value);
+        $this->setValue($value);
         
-        $result = $this->_query($value);
+        $result = $this->query($value);
         if ($result) {
             $valid = false;
-            $this->_error(self::ERROR_RECORD_FOUND);
+            $this->error(self::ERROR_RECORD_FOUND);
         }
         
         return $valid;
