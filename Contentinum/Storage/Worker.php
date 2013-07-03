@@ -27,7 +27,6 @@
  */
 namespace Contentinum\Storage;
 
-use Doctrine\ORM\EntityManager;
 use Contentinum\Entity\AbstractEntity;
 use Contentinum\Storage\Exeption\NoDataException;
 
@@ -90,21 +89,7 @@ class Worker extends AbstractDatabase
 			'registerDate',
 			'createdBy' 
 	);
-	
-	/**
-	 * Construct
-	 * @param EntityManager $em
-	 * @param AbstractEntity $entity
-	 */
-	public function __construct($em,$entity)
-	{
 		
-		$this->setEntity($entity);
-		$this->setEntityName($entity);
-		$this->setStorage($em);
-		
-	}
-	
 	/**
 	 * Get the fields they are processed before insert
 	 * 

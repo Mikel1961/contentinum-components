@@ -83,12 +83,12 @@ abstract class AbstractManager
 	 * Abstract function to set a storage object
 	 * 
 	 * @param object $storage
+	 * @param string $charset
 	 */
-	abstract public function setStorage ($storage);
+	abstract public function setStorage ($storage = null, $charset = 'UTF8');
 	
 	/**
 	 * Abstract function to get a storage object
-	 * @param string $charset
 	 */
-	abstract public function getStorage ($charset = 'utf8');
+	abstract public function getStorage ();
 }

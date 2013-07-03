@@ -31,6 +31,7 @@ use Doctrine\ORM\EntityManager;
 use Contentinum\Entity\AbstractEntity;
 use Contentinum\Storage\Exeption\InvalidValueException;
 use Contentinum\Storage\Exeption\NoEntityException;
+use Zend\Di\ServiceLocator;
 
 /**
  * Abstract class storage manager for Doctrine
@@ -39,7 +40,41 @@ use Contentinum\Storage\Exeption\NoEntityException;
  */
 class AbstractDatabase extends AbstractManager
 {
-	/** (non-PHPdoc)
+	const ORM_DEFAULT = 'doctrine.entitymanager.orm_default';
+	/**
+	 * Default database connection
+	 * @var string
+	 */
+	public $defaultManagerIdentifier;
+	
+	/**
+	 * Get default manager identifier 
+	 * @throws InvalidValueException
+	 * @return string
+	 */
+	public function getDefaultManagerIdentifier() 
+	{
+		if (null === $this->defaultManagerIdentifier){
+			$this->setDefaultManagerIdentifier();
+		}
+		if (null === $this->defaultManagerIdentifier){
+			throw new InvalidValueException('No orm connection manager is given');
+		}
+		return $this->defaultManagerIdentifier;
+	}
+
+	/**
+	 * @param string $orm
+	 */
+	public function setDefaultManagerIdentifier($orm = null) 
+	{
+		if (null === $orm){
+			$orm = self::ORM_DEFAULT;
+		}		
+		$this->defaultManagerIdentifier = $orm;
+	}
+
+	/**
 	 * @see \Contentinum\Storage\AbstractManager::getEntityName()
 	 */
 	public function getEntityName() 
@@ -48,7 +83,7 @@ class AbstractDatabase extends AbstractManager
 		
 	}
 
-	/** (non-PHPdoc)
+	/**
 	 * @see \Contentinum\Storage\AbstractManager::setEntityName()
 	 */
 	public function setEntityName($name) 
@@ -63,7 +98,7 @@ class AbstractDatabase extends AbstractManager
 		
 	}
 	
-	/** (non-PHPdoc)
+	/**
 	 * @see \Contentinum\Storage\AbstractManager::getEntity()
 	 */
 	public function getEntity() 
@@ -72,7 +107,7 @@ class AbstractDatabase extends AbstractManager
 		
 	}
 
-	/** (non-PHPdoc)
+	/**
 	 * @see \Contentinum\Storage\AbstractManager::setEntity()
 	 */
 	public function setEntity($entity) 
@@ -84,26 +119,46 @@ class AbstractDatabase extends AbstractManager
 		}
 		
 	}
+	
+	/**
+	 * Set entity and entity name
+	 * @param AbstractEntity $entity AbstractEntity
+	 */
+	public function setEntityParams($entity)
+	{
+		$this->setEntity($entity);
+		$this->setEntityName($entity);
+	}
 
-	/** (non-PHPdoc)
+	/** 
 	 * @see \Contentinum\Storage\AbstractManager::getStorage()
 	 */
-	public function getStorage($charset = 'utf8')
+	public function getStorage()
 	{
-		return $this->_storage;
-	
-	}	
-
-	/** (non-PHPdoc)
-	 * @see \Contentinum\Storage\AbstractManager::setStorage()
-	 */
-	public function setStorage($storage) 
-	{
-	    if ( $storage instanceof EntityManager ){ 
-			$this->_storage = $storage;
-		} else {
-			throw new NoEntityException('Doctrine EntityManager is required');
+		if (null === $this->_storage){
+			$this->setStorage();
 		}
 		
+		if (! $this->_storage instanceof EntityManager) {
+			throw new InvalidValueException('There is no Doctrine EntityManager initiated !');
+		}
+		
+		return $this->_storage;
+	}	
+
+	/**
+	 * @see \Contentinum\Storage\AbstractManager::setStorage()
+	 */
+	public function setStorage($storage = null, $charset = 'UTF8') 
+	{
+		if (null === $storage){
+			$sl = new ServiceLocator();
+			$this->_storage = $sl->get($this->getDefaultManagerIdentifier());
+			if (false !== $charset ){
+				$this->_storage->getConnection()->exec('SET NAMES "'.$charset.'"');	
+			}		
+		} else {
+			$this->_storage = $storage;
+		}	
 	}
 }

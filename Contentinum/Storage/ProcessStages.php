@@ -28,8 +28,6 @@
 namespace Contentinum\Storage;
 
 use Contentinum\Storage\Worker;
-use Contentinum\Entity\AbstractEntity;
-use Contentinum\Storage\Exeption\NoEntityException;
 /**
  * Basis warpper class for insert and update database operations
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
@@ -37,28 +35,15 @@ use Contentinum\Storage\Exeption\NoEntityException;
  */
 class ProcessStages extends Worker
 {
-	/**
-	 * Construct
-	 * @param EntityManager $em
-	 * @param AbstractEntity $entity
-	 */
-	public function __construct($em, $entity)
-	{
-		parent::__construct($em, $entity);
-	}
+
 	/**
 	 * (non-PHPdoc)
 	 * @see \Contentinum\Database\Worker::save()
 	 */
-    public function save($datas,$entity = null)
+    public function save($datas,$entity)
     {
-    	if (null === $entity){
-    		$entity = $this->getEntity();
-    	} else if ($entity instanceof AbstractEntity ){
-    		$this->setEntity($entity);
-    	} else {
-    		throw new NoEntityException('No entity was passed in ProcessStage');
-    	}
+    	// first set entity parameters, process stage is a standard class
+    	$this->setEntityParams($entity);
     	
     	if (null === ($id = $entity->getPrimaryValue()   )) {
             $datas[$entity->getPrimaryKey()] = $this->sequence() + 1;
