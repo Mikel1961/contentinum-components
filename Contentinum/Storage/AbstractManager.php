@@ -29,66 +29,71 @@ namespace Contentinum\Storage;
 
 /**
  * Abstract class storage manager(s)
+ * 
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
- *
+ *        
  */
 abstract class AbstractManager
 {
-	
-	/**
-	 * Storage manager object
-	 *
-	 * @var object
-	 */
-	protected $_storage;
-		
-	/**
-	 * Entity class name
-	 *
-	 * @var string
-	 */
-	protected $_entityName;	
-	
-	/**
-	 * 
-	 * @var object
-	 */
-	protected $_entity;
-	
-	/**
-	 * Abtstract function to set entity name
-	 *
-	 * @param string $name entity name
-	 */
-	abstract public function setEntityName ($name);
-	
-	/**
-	 * Abtstract function to return $_entityName
-	 */
-	abstract public function getEntityName ();	
-	
-	/**
-	 * Abtstract function to set entity name
-	 *
-	 * @param object $entity name
-	 */
-	abstract public function setEntity ($entity);
-	
-	/**
-	 * Abtstract function to return $_entity
-	*/
-	abstract public function getEntity ();	
-	
-	/**
-	 * Abstract function to set a storage object
-	 * 
-	 * @param object $storage
-	 * @param string $charset
-	 */
-	abstract public function setStorage ($storage = null, $charset = 'UTF8');
-	
-	/**
-	 * Abstract function to get a storage object
-	 */
-	abstract public function getStorage ();
+
+    /**
+     * Storage manager object
+     *
+     * @var object
+     */
+    protected $_storage;
+
+    /**
+     * Entity class name
+     *
+     * @var string
+     */
+    protected $_entityName;
+
+    /**
+     *
+     * @var object
+     */
+    protected $_entity;
+
+    /**
+     * Abtstract function to set entity name
+     *
+     * @param string $name
+     *            entity name
+     */
+    abstract public function setEntityName($name);
+
+    /**
+     * Abtstract function to return $_entityName
+     */
+    abstract public function getEntityName();
+
+    /**
+     * Abtstract function to set entity name
+     *
+     * @param object $entity
+     */
+    abstract public function setEntity($entity);
+
+    /**
+     * Abtstract function to return $_entity
+     */
+    abstract public function getEntity();
+
+    /**
+     * Abstract function to set a storage object
+     *
+     * @param object $storage            
+     * @param string $charset            
+     */
+    abstract public function setStorage($storage, $charset = 'UTF8');
+
+    /**
+     * Abstract function to get a storage object
+     *
+     * @param object $storage            
+     * @param string $charset            
+     */
+    abstract public function getStorage($storage = null, $charset = 'UTF8');
 }

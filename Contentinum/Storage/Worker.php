@@ -29,6 +29,7 @@ namespace Contentinum\Storage;
 
 use Contentinum\Entity\AbstractEntity;
 use Contentinum\Storage\Exeption\NoDataException;
+use Doctrine\ORM\EntityManager;
 
 /**
  * Contains methods to insert, update and delete data records in a database
@@ -89,6 +90,16 @@ class Worker extends AbstractDatabase
 			'registerDate',
 			'createdBy' 
 	);
+	
+	/**
+	 * Construct
+	 * @param EntityManager $storage
+	 * @param string $charset
+	 */
+	public function __construct(EntityManager $storage, $charset = 'UTF8')
+	{
+		$this->setStorage($storage,$charset);
+	}	
 		
 	/**
 	 * Get the fields they are processed before insert
