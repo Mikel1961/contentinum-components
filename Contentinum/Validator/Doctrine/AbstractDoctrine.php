@@ -53,7 +53,7 @@ abstract class AbstractDoctrine extends AbstractValidator
 	 *
 	 * @var array Message templates
 	 */
-	protected $_messageTemplates = array(
+	protected $messageTemplates = array(
 			self::ERROR_NO_RECORD_FOUND => "No record matching '%value%' was found",
 			self::ERROR_RECORD_FOUND => "A record matching '%value%' was found");
 	
@@ -184,7 +184,7 @@ abstract class AbstractDoctrine extends AbstractValidator
 	
 	/**
 	 *
-	 * @param unknown_type $value
+	 * @param string $value
 	 */
 	protected function query ($value)
 	{
