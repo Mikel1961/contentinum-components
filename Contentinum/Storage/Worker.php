@@ -382,5 +382,61 @@ class Worker extends AbstractDatabase
 		}
 		$row = $em->find($this->getEntityName(), $id);
 		return is_null($row) ? null : $row->toArray();
+	}
+	
+	/**
+	 * Delete a data record
+	 * @param AbstractEntity $entity
+	 * @param int $id primary key value
+	 * @throws NoDataException
+	 * @return string
+	 */
+	public function deleteEntry(AbstractEntity $entity, $id)
+	{
+		// prepare ...
+		$sql = 'DELETE ' . $entity->getEntityName() . ' main';
+		$sql .= ' WHERE main.'.$entity->getPrimaryKey() .' = ' . $id;
+		// prepare ...
+		$em = $this->getStorage();
+		$row = $em->createQuery($sql)->execute();
+		if (1 >= $row){
+			$msg = 'Delete data record succesfully';
+			if (false !== ($log = $this->getLog())) {
+				$log->info($msg . ' in ' . $entity->getEntityName());
+			}
+			return $msg;
+		} else {
+			if (false !== ($log = $this->getLog())) {
+				$log->crit('Found no clear status or wrong parameter to delete in ' . $entity->getEntityName());
+			}
+			throw new NoDataException('Found no clear status or wrong parameter to delete');
+		}
+	}
+
+	/**
+	 * Delete data record(s)
+	 * @param AbstractEntity $entity
+	 * @param array $where
+	 * @return string
+	 */
+	public function deleteRecords(AbstractEntity $entity,array $where = null)
+	{
+		$em = $this->getStorage();
+		$metas = $em->getClassMetadata($entity->getEntityName());
+		$conn = $em->getConnection();
+		$sql = 'DELETE FROM '. $metas->getTableName();
+		if ($where & !empty($where)){
+			$conditions = '';
+			$i = 1;
+			foreach ($where as $column => $value){
+				if ( 1 == $i){
+					$sql .= ' WHERE ' . $column . ' = "' . $value . '"';
+				} else {
+					$sql .= ' AND ' . $column . ' = "' . $value . '"';
+				}
+				$i++;
+			}
+		}
+		return $conn->exec($sql);
 	}	
 }

@@ -146,4 +146,12 @@ class AbstractDatabase extends AbstractManager
             $this->_storage->getConnection()->exec('SET NAMES "' . $charset . '"');
         }
     }
+    
+    /**
+     * @todo implement logger
+     */
+    public function getLog ()
+    {
+    	return false;
+    }
 }
