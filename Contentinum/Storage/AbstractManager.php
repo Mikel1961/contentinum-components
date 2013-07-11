@@ -41,28 +41,27 @@ abstract class AbstractManager
      *
      * @var object
      */
-    protected $_storage;
+    protected $storage;
 
     /**
      * Entity class name
      *
      * @var string
      */
-    protected $_entityName;
+    protected $entityName;
 
     /**
      *
      * @var object
      */
-    protected $_entity;
+    protected $entity;
 
     /**
      * Abtstract function to set entity name
      *
-     * @param string $name
-     *            entity name
+     * @param string $name entity name
      */
-    abstract public function setEntityName($name);
+    abstract public function setEntityName($name = null);
 
     /**
      * Abtstract function to return $_entityName
