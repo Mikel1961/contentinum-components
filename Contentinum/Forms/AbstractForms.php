@@ -59,6 +59,12 @@ abstract class AbstractForms
 	protected $exclude = array ();
 	
 	/**
+	 * Display this form for delete
+	 * @var boolen
+	 */
+	protected $delete = false;
+	
+	/**
 	 * Construct
 	 * Initiate \Zend\Form\Factory if no other factory
 	 * The EntityManager is only required for RecordExists or RecordNoExists validators
@@ -66,12 +72,13 @@ abstract class AbstractForms
 	 * @param object $storage EntityManager
 	 * @param object $factory Form factory
 	 */
-	public function __construct($storage = null, $factory = null) 
+	public function __construct($storage = null, $factory = null, $delete = false) 
 	{
 		$this->storage = $storage;
 		if (null === $factory) {
 			$this->factory = new Factory ();
 		}
+		$this->delete = $delete;
 	}
 	/**
 	 * Returns \Zend\Form\Factory
