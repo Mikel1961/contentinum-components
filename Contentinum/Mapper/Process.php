@@ -28,6 +28,7 @@
 namespace Contentinum\Mapper;
 
 use Contentinum\Mapper\Worker;
+use Contentinum\Entity\Exeption\IsPublishEntityException;
 /**
  * Basis warpper class for insert and update database operations
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
@@ -42,7 +43,7 @@ class Process extends Worker
 	public function save($datas, $entity = null)
 	{
 		
-		if (null !== $entity){
+		if (null === $entity){
 			$entity = $this->getEntity();
 		}
 		 
@@ -53,4 +54,20 @@ class Process extends Worker
 			parent::save($entity, $datas, self::SAVE_UPDATE);
 		}
 	}
+	
+	/**
+	 * Delete entry if not publish
+	 * @param AbstractEntity $entity
+	 * @param int $id
+	 * @throws IsPublishEntityException
+	 */
+	public function delete($entity, $id)
+	{
+		if ( isset($entity->publish) && 'yes' == $entity->publish ){
+			throw new IsPublishEntityException('This entry is not published and therefore can not be deleted');
+		} else {
+			$this->deleteEntry($entity, $id);
+		}
+	}
+
 }

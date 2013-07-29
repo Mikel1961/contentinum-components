@@ -31,7 +31,6 @@ use Contentinum\Mapper\AbstractMapper;
 use Contentinum\Entity\AbstractEntity;
 use Contentinum\Mapper\Exeption\NoDataMapperException;
 use Doctrine\ORM\EntityManager;
-use Contentinum\Mapper\Exeption\SaveeMapperException;
 use Contentinum\Mapper\Exeption\SaveMapperException;
 
 /**
