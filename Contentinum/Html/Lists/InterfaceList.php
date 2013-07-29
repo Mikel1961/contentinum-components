@@ -25,28 +25,42 @@
  * @link      https://github.com/Mikel1961/contentinum-components
  * @version   1.0.0
  */
-namespace Contentinum\Html\Element\View;
+namespace Contentinum\Html\Lists;
 
-use Contentinum\Html\Elements\AbstractElements;
 /**
- * Display html element
+ * Interface html list
  *
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
+ * @copyright Copyright (c) 2005-2008 jochum-mediaservices, Katja Jochum
  */
-class Elements extends AbstractElements
+interface InterfaceList
 {
 
     /**
-     * display content elements
+     * create a ul or ol list (<ul> .
      *
-     * @return string
+     *
+     *
+     * .. </ul>)
+     *
+     * @return void
      */
-    public function display ()
-    {
-        $html = '';
-        foreach ($this->_tagElements as $element) {
-            $html = $html . $element->display();
-        }
-        return $html;
-    }
+    public function createList ();
+
+    /**
+     * create a listelement
+     *
+     * @return void
+     */
+    public function createElement ();
+
+    /**
+     * build up list element (<li>...</li>)
+     * set tag attributes
+     *
+     * @param string $content content of this listelement
+     * @param string/boolen $attribute tag attributes
+     * @return void
+     */
+    public function createListElement ($content, $attribute = false);
 }

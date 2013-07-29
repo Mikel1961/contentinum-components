@@ -25,28 +25,61 @@
  * @link      https://github.com/Mikel1961/contentinum-components
  * @version   1.0.0
  */
-namespace Contentinum\Html\Element\View;
+namespace Contentinum\Html\Table;
 
-use Contentinum\Html\Elements\AbstractElements;
 /**
- * Display html element
+ * Interface html table
  *
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
-class Elements extends AbstractElements
+interface InterfaceTable
 {
 
     /**
-     * display content elements
+     * Returns the string of a complete html table
      *
-     * @return string
+     * @return void
      */
-    public function display ()
-    {
-        $html = '';
-        foreach ($this->_tagElements as $element) {
-            $html = $html . $element->display();
-        }
-        return $html;
-    }
+    public function createTable ();
+
+    /**
+     * Returns the string of a html table caption
+     *
+     * @param string $content content of this html tags
+     * @param string $attribute a poosible tag attribute
+     * @param string $tag the tag
+     * @return void
+     */
+    public function createCaption ($content, $attribute = false, $tag = false);
+
+    /**
+     * Returns the string of a complete html element (th, td)
+     *
+     * @return void
+     */
+    public function createElement ($tag = false, $attribute = false);
+
+    /**
+     * Returns the string of a html table header
+     *
+     * @return void
+     */
+    public function createHeader ();
+
+    /**
+     * Returns the string of a html table footer
+     *
+     * @return void
+     */
+    public function createFooter ();
+
+    /**
+     * Returns the string of a html table row with content
+     *
+     * @param string $content content of this html tags
+     * @param string $attribute a poosible tag attribute
+     * @param string $tag the tag
+     * @return void
+     */
+    public function createRowElement ($content, $attribute = false, $tag = false);
 }

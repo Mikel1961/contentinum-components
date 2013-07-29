@@ -31,7 +31,6 @@ use Contentinum\Html\Elements\AbstractTag;
 /**
  * Display html element
  *
- * @uses AbstractTag
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
 class Element extends AbstractTag

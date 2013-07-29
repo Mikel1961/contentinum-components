@@ -25,28 +25,20 @@
  * @link      https://github.com/Mikel1961/contentinum-components
  * @version   1.0.0
  */
-namespace Contentinum\Html\Element\View;
+namespace Contentinum\Html\Table;
 
 use Contentinum\Html\Elements\AbstractElements;
 /**
- * Display html element
+ * Abstract class table header
  *
+ * @use Contentinum_Html_Elements_Abstract
+ *
+ * @category contentinum library
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
+ * @copyright Copyright (c) 2005-2008 jochum-mediaservices, Katja Jochum
+ *            (http://www.jochum-mediaservices.de)
+ * @license http://www.contentinum-library.de/licenses BSD License
  */
-class Elements extends AbstractElements
+abstract class AbstractHeader extends AbstractElements
 {
-
-    /**
-     * display content elements
-     *
-     * @return string
-     */
-    public function display ()
-    {
-        $html = '';
-        foreach ($this->_tagElements as $element) {
-            $html = $html . $element->display();
-        }
-        return $html;
-    }
 }

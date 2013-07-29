@@ -25,28 +25,15 @@
  * @link      https://github.com/Mikel1961/contentinum-components
  * @version   1.0.0
  */
-namespace Contentinum\Html\Element\View;
+namespace Contentinum\Html\Table;
 
 use Contentinum\Html\Elements\AbstractElements;
+
 /**
- * Display html element
+ * Abstract class table footer
  *
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
-class Elements extends AbstractElements
+abstract class AbstractFooter extends AbstractElements
 {
-
-    /**
-     * display content elements
-     *
-     * @return string
-     */
-    public function display ()
-    {
-        $html = '';
-        foreach ($this->_tagElements as $element) {
-            $html = $html . $element->display();
-        }
-        return $html;
-    }
 }

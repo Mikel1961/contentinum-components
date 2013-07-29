@@ -25,28 +25,38 @@
  * @link      https://github.com/Mikel1961/contentinum-components
  * @version   1.0.0
  */
-namespace Contentinum\Html\Element\View;
+namespace Contentinum\Html\Table;
 
-use Contentinum\Html\Elements\AbstractElements;
+use Contentinum\Html\Table\AbstractTable;
 /**
- * Display html element
+ * Abstract class table caption
  *
+ * @use Contentinum_Html_Elements_Abstract
+ *
+ * @category contentinum library
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
+ * @copyright Copyright (c) 2005-2008 jochum-mediaservices, Katja Jochum
+ *            (http://www.jochum-mediaservices.de)
+ * @license http://www.contentinum-library.de/licenses BSD License
  */
-class Elements extends AbstractElements
+abstract class AbstractCaption extends AbstractTable
 {
 
     /**
-     * display content elements
+     * table headline (caption) content
      *
-     * @return string
+     * @var string
      */
-    public function display ()
+    protected $_headline = null;
+
+    /**
+     * set caption content
+     *
+     * @param string $headline
+     * @return void
+     */
+    public function __construct ($headline)
     {
-        $html = '';
-        foreach ($this->_tagElements as $element) {
-            $html = $html . $element->display();
-        }
-        return $html;
+        $this->_headline = $headline;
     }
 }

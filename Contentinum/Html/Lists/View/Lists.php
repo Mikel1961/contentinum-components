@@ -25,58 +25,46 @@
  * @link      https://github.com/Mikel1961/contentinum-components
  * @version   1.0.0
  */
-namespace Contentinum\Html\Element\View;
+namespace Contentinum\Html\Lists\View;
 
-use Contentinum\Html\Element\AbstractElement;
+use Contentinum\Html\Lists\AbstractList;
 /**
- * Set content in html elements
- * If avaibale set html attributes
+ * Display a html list
  *
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
-class Content extends AbstractElement
+class Lists extends AbstractList
 {
 
     /**
-     * format the display from a html body content elements
-     * retun a array or a string with content
-     * depending on the settings in Libary_Html_Elements_Abstract
-     *
-     * @return array or string
+     * display list
      */
     public function display ()
     {
-        $out = '';
-        if ($this->_tag) {
-            switch ($this->_output) {
-                case 'array':
-                    $out[] = "\n<{$this->_tag}{$this->_attribute}>";
-                    break;
-                default:
-                    $out = $out . "\n<{$this->_tag}{$this->_attribute}>";
-                    break;
-            }
-        }
+        $tag = $this->getListTag();
+        $html = "\n<{$tag}{$this->_attribute}>";
         foreach ($this->_elements as $element) {
-            switch ($this->_output) {
-                case 'array':
-                    $out[] = $element->display();
-                    break;
-                default:
-                    $out = $out . $element->display();
-                    break;
-            }
+            $html = $html . $element->display();
         }
-        if ($this->_tag) {
-            switch ($this->_output) {
-                case 'array':
-                    $out[] = "\n</{$this->_tag}>";
-                    break;
-                default:
-                    $out = $out . "\n</{$this->_tag}>";
-                    break;
-            }
+        $html = $html . "\n</$tag>";
+        return $html;
+    }
+
+    /**
+     * get and check list tag
+     *
+     * @return string
+     */
+    private function getListTag ()
+    {
+        switch ($this->_tag) {
+            case 'ul':
+            case 'ol':
+            case 'dl':
+                return $this->_tag;
+                break;
+            default:
+                return 'ul';
         }
-        return $out;
     }
 }

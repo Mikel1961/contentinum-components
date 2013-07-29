@@ -25,38 +25,29 @@
  * @link      https://github.com/Mikel1961/contentinum-components
  * @version   1.0.0
  */
-namespace Contentinum\Html;
+namespace Contentinum\Html\Table\View;
 
+use Contentinum\Html\Table\AbstractHeader;
 /**
- * Get/set html tag attribute
+ * Display a html table header row
  *
- * @category contentinum library
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
- * @copyright Copyright (c) 2005-2008 jochum-mediaservices, Katja Jochum
- *            (http://www.jochum-mediaservices.de)
- * @license http://www.contentinum-library.de/licenses BSD License
  */
-class Attribute
+class TableHeader extends AbstractHeader
 {
 
     /**
-     * set/get attribute string: attribute="value"
+     * display a table header row (th)
      *
-     * @param string $attribute html tag attribute
-     * @param string $value html attribute value
-     * @param boolen $w whitespace before attribute value pair
-     * @return string attribute="value"
+     * @return string
      */
-    static public function attributeString ($attribute = false, $value = false, $w = false)
+    public function display ()
     {
-        if (strlen($attribute) > 0 && strlen($value) > 0) {
-            $str = $attribute . '="' . $value . '"';
-            if (true === $w) {
-                $str = ' ' . $str;
-            }
-            return $str;
-        } else {
-            return false;
+        $html = "\n<thead><tr>";
+        foreach ($this->_tagElements as $element) {
+            $html = $html . $element->display();
         }
+        $html = $html . "\n</tr></thead>";
+        return $html;
     }
 }

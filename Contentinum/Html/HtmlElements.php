@@ -33,13 +33,9 @@ use Contentinum\Html\Attribute;
  * create htmls elements for view html content
  * set attribute
  *
- * @category contentinum library
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
- * @copyright Copyright (c) 2005-2008 jochum-mediaservices, Katja Jochum
- *            (http://www.jochum-mediaservices.de)
- * @license http://www.contentinum-library.de/licenses BSD License
  */
-class Elements
+class HtmlElements
 {
 
     /**

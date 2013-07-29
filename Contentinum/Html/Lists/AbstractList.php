@@ -25,28 +25,70 @@
  * @link      https://github.com/Mikel1961/contentinum-components
  * @version   1.0.0
  */
-namespace Contentinum\Html\Element\View;
+namespace Contentinum\Html\Lists;
 
 use Contentinum\Html\Elements\AbstractElements;
 /**
- * Display html element
+ * Abstract class html list and attributes
  *
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
-class Elements extends AbstractElements
+abstract class AbstractList
 {
 
     /**
-     * display content elements
+     * list tag
      *
-     * @return string
+     * @var string
      */
-    public function display ()
+    protected $_tag = 'ul';
+
+    /**
+     * AbstractElements
+     *
+     * @var AbstractElements array AbstractElements
+     */
+    protected $_elements = array();
+
+    /**
+     * list attribute
+     *
+     * @var string
+     */
+    protected $_attribute = null;
+
+    /**
+     * Instances of AbstractElements
+     *
+     * @param AbstractElements $element AbstractElements
+     */
+    public function setElement (AbstractElements $element)
     {
-        $html = '';
-        foreach ($this->_tagElements as $element) {
-            $html = $html . $element->display();
-        }
-        return $html;
+        $this->_elements[] = $element;
     }
+
+    /**
+     * set a possible tag attributte
+     *
+     * @param string $attribute tag attributte
+     */
+    public function setAttribute ($attribute)
+    {
+        $this->_attribute = $attribute;
+    }
+
+    /**
+     * set list tag, standard is ul
+     *
+     * @param string $tag
+     */
+    public function setList ($tag)
+    {
+        $this->_tag = $tag;
+    }
+
+    /**
+     * Display html list
+     */
+    abstract public function display ();
 }

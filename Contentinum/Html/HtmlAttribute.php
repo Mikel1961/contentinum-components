@@ -25,58 +25,38 @@
  * @link      https://github.com/Mikel1961/contentinum-components
  * @version   1.0.0
  */
-namespace Contentinum\Html\Element\View;
+namespace Contentinum\Html;
 
-use Contentinum\Html\Element\AbstractElement;
 /**
- * Set content in html elements
- * If avaibale set html attributes
+ * Get/set html tag attribute
  *
+ * @category contentinum library
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
+ * @copyright Copyright (c) 2005-2008 jochum-mediaservices, Katja Jochum
+ *            (http://www.jochum-mediaservices.de)
+ * @license http://www.contentinum-library.de/licenses BSD License
  */
-class Content extends AbstractElement
+class HtmlAttribute
 {
 
     /**
-     * format the display from a html body content elements
-     * retun a array or a string with content
-     * depending on the settings in Libary_Html_Elements_Abstract
+     * set/get attribute string: attribute="value"
      *
-     * @return array or string
+     * @param string $attribute html tag attribute
+     * @param string $value html attribute value
+     * @param boolen $w whitespace before attribute value pair
+     * @return string attribute="value"
      */
-    public function display ()
+    static public function attributeString ($attribute = false, $value = false, $w = false)
     {
-        $out = '';
-        if ($this->_tag) {
-            switch ($this->_output) {
-                case 'array':
-                    $out[] = "\n<{$this->_tag}{$this->_attribute}>";
-                    break;
-                default:
-                    $out = $out . "\n<{$this->_tag}{$this->_attribute}>";
-                    break;
+        if (strlen($attribute) > 0 && strlen($value) > 0) {
+            $str = $attribute . '="' . $value . '"';
+            if (true === $w) {
+                $str = ' ' . $str;
             }
+            return $str;
+        } else {
+            return false;
         }
-        foreach ($this->_elements as $element) {
-            switch ($this->_output) {
-                case 'array':
-                    $out[] = $element->display();
-                    break;
-                default:
-                    $out = $out . $element->display();
-                    break;
-            }
-        }
-        if ($this->_tag) {
-            switch ($this->_output) {
-                case 'array':
-                    $out[] = "\n</{$this->_tag}>";
-                    break;
-                default:
-                    $out = $out . "\n</{$this->_tag}>";
-                    break;
-            }
-        }
-        return $out;
     }
 }

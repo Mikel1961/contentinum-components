@@ -25,58 +25,24 @@
  * @link      https://github.com/Mikel1961/contentinum-components
  * @version   1.0.0
  */
-namespace Contentinum\Html\Element\View;
+namespace Contentinum\Html\Table\View;
 
-use Contentinum\Html\Element\AbstractElement;
+use Contentinum\Html\Elements\AbstractTag;
 /**
- * Set content in html elements
- * If avaibale set html attributes
+ * Display a html table cell
  *
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
-class Content extends AbstractElement
+class TableCell extends AbstractTag
 {
 
     /**
-     * format the display from a html body content elements
-     * retun a array or a string with content
-     * depending on the settings in Libary_Html_Elements_Abstract
+     * display a table cell
      *
-     * @return array or string
+     * @return string
      */
     public function display ()
     {
-        $out = '';
-        if ($this->_tag) {
-            switch ($this->_output) {
-                case 'array':
-                    $out[] = "\n<{$this->_tag}{$this->_attribute}>";
-                    break;
-                default:
-                    $out = $out . "\n<{$this->_tag}{$this->_attribute}>";
-                    break;
-            }
-        }
-        foreach ($this->_elements as $element) {
-            switch ($this->_output) {
-                case 'array':
-                    $out[] = $element->display();
-                    break;
-                default:
-                    $out = $out . $element->display();
-                    break;
-            }
-        }
-        if ($this->_tag) {
-            switch ($this->_output) {
-                case 'array':
-                    $out[] = "\n</{$this->_tag}>";
-                    break;
-                default:
-                    $out = $out . "\n</{$this->_tag}>";
-                    break;
-            }
-        }
-        return $out;
+        return "\n<{$this->_tag}{$this->_attribute}>{$this->_content}</{$this->_tag}>";
     }
 }

@@ -31,7 +31,6 @@ use Contentinum\Html\Element\InterfaceElement;
 /**
  * Factory html element
  *
- * @uses InterfaceElement
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
 class FactoryElement implements InterfaceElement

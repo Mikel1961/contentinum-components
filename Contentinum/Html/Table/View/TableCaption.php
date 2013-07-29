@@ -25,58 +25,28 @@
  * @link      https://github.com/Mikel1961/contentinum-components
  * @version   1.0.0
  */
-namespace Contentinum\Html\Element\View;
+namespace Contentinum\Html\Table\View;
 
-use Contentinum\Html\Element\AbstractElement;
+use Contentinum\Html\Table\AbstractCaption;
 /**
- * Set content in html elements
- * If avaibale set html attributes
+ * Display html table caption row
+ * Extends Contentinum_Html_Table_Caption
  *
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
-class Content extends AbstractElement
+class TableCaption extends AbstractCaption
 {
 
     /**
-     * format the display from a html body content elements
-     * retun a array or a string with content
-     * depending on the settings in Libary_Html_Elements_Abstract
+     * display table caption
      *
-     * @return array or string
+     * @return string
      */
     public function display ()
     {
-        $out = '';
-        if ($this->_tag) {
-            switch ($this->_output) {
-                case 'array':
-                    $out[] = "\n<{$this->_tag}{$this->_attribute}>";
-                    break;
-                default:
-                    $out = $out . "\n<{$this->_tag}{$this->_attribute}>";
-                    break;
-            }
+        if ($this->_headline) {
+            return "<caption>{$this->_headline}</caption>";
         }
-        foreach ($this->_elements as $element) {
-            switch ($this->_output) {
-                case 'array':
-                    $out[] = $element->display();
-                    break;
-                default:
-                    $out = $out . $element->display();
-                    break;
-            }
-        }
-        if ($this->_tag) {
-            switch ($this->_output) {
-                case 'array':
-                    $out[] = "\n</{$this->_tag}>";
-                    break;
-                default:
-                    $out = $out . "\n</{$this->_tag}>";
-                    break;
-            }
-        }
-        return $out;
+        return null;
     }
 }
