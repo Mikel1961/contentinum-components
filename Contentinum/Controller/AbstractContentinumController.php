@@ -34,15 +34,53 @@ use Zend\Mvc\Controller\AbstractActionController;
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  *
  */
-abstract class ContentinumAbstractController extends AbstractActionController
+abstract class AbstractContentinumController extends AbstractActionController
 {
 	/**
-	 * Returns doctrine entity default manager
-	 *  
-	 * @return EntityManager
+	 * Worker
+	 * @var Process
 	 */
-	public function getDoctrineDefault()
+	protected $worker;
+	
+	/**
+	 * AbstractEntity
+	 * @var AbstractEntity
+	 */
+	protected $entity;
+	
+	/**
+	 * Get mapper worker
+	 * @return \Contentinum\Mapper\Process
+	 */
+	public function getWorker()
 	{
-		return $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
+		return $this->worker;
 	}
+	
+	/**
+	 * Set mapper worker
+	 * @param Process $worker
+	 */
+	public function setWorker($worker)
+	{
+		$this->worker = $worker;
+	}
+	
+	/**
+	 * Return entity
+	 * @return \Contentinum\Entity\AbstractEntity
+	 */
+	public function getEntity()
+	{
+		return $this->entity;
+	}
+	
+	/**
+	 * Set Entity
+	 * @param \Contentinum\Entity\AbstractEntity $entity
+	 */
+	public function setEntity($entity)
+	{
+		$this->entity = $entity;
+	}	
 }
