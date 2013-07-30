@@ -28,7 +28,6 @@
 namespace Contentinum\Validator\Doctrine;
 
 use Zend\Validator\AbstractValidator;
-use Contentinum\Storage\Worker;
 use Contentinum\Validator\Exeption\InvalidValueException;
 
 /**
@@ -76,9 +75,9 @@ abstract class AbstractDoctrine extends AbstractValidator
 	protected $_exclude = null;
 	
 	/**
-	 * Contentinum\Storage\Worker
+	 * Contentinum\Mapper\Process
 	 *
-	 * @var Contentinum\Storage\Worker
+	 * @var Contentinum\Mapper\Process
 	 */
 	protected $worker;
 	
@@ -93,7 +92,7 @@ abstract class AbstractDoctrine extends AbstractValidator
 		if (! array_key_exists('storage', $options)) {
 	        throw new InvalidValueException('EntityManger is missed');
 	    } else {
-			$this->worker = new Worker($options['storage']);
+			$this->worker = $options['storage'];
 		}
 	
 		if (! array_key_exists('entity', $options)) {
