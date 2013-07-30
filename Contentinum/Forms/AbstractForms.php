@@ -59,10 +59,10 @@ abstract class AbstractForms
 	protected $exclude = array ();
 	
 	/**
-	 * Display this form for delete
+	 * Switch on|off form validation
 	 * @var boolen
 	 */
-	protected $delete = false;
+	protected $validation = true;
 	
 	/**
 	 * Construct
@@ -70,15 +70,16 @@ abstract class AbstractForms
 	 * The EntityManager is only required for RecordExists or RecordNoExists validators
 	 * 
 	 * @param object $storage EntityManager
+	 * @param boolean $validation switch of on form validation
 	 * @param object $factory Form factory
 	 */
-	public function __construct($storage = null, $factory = null, $delete = false) 
+	public function __construct($storage = null, $validation = true, $factory = null) 
 	{
 		$this->storage = $storage;
 		if (null === $factory) {
 			$this->factory = new Factory ();
 		}
-		$this->delete = $delete;
+		$this->validation = $validation;
 	}
 	/**
 	 * Returns \Zend\Form\Factory
@@ -147,6 +148,24 @@ abstract class AbstractForms
 		$this->exclude = $exclude;
 	}
 	
+	/**
+	 * Get status validation is on or off
+	 * @return boolean $validation
+	 */
+	public function getValidation() 
+	{
+		return $this->validation;
+	}
+
+	/**
+	 * Set validation switch on or off
+	 * @param \Contentinum\Forms\boolen $validation
+	 */
+	public function setValidation($validation) 
+	{
+		$this->validation = $validation;
+	}
+
 	/**
 	 * Create the form
 	 * @return \Zend\Form\Factory

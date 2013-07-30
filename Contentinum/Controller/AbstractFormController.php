@@ -107,13 +107,16 @@ abstract class AbstractFormController extends AbstractController
 		}
 		
 		$routeMatch = $e->getRouteMatch ();
-		
+
 		if ($this->getRequest ()->isPost ()) {
-			
+	
 			$this->form->setInputFilter ( $this->form->getInputFilter () );
 			$this->form->setData ( $this->getRequest ()->getPost () );
 			
-			if ($this->form->isValid ()) {
+			if (false === $this->formFactory->getValidation()){
+				$routeMatch->setParam ( 'action', 'process' );
+				$return = $this->process ();				
+			} elseif ($this->form->isValid ()) {
 				$routeMatch->setParam ( 'action', 'process' );
 				$return = $this->process ();
 			} else {
@@ -145,9 +148,13 @@ abstract class AbstractFormController extends AbstractController
 	 */
 	protected function show() 
 	{
-		return new ViewModel ( array (
+		$model = new ViewModel ( array (
 				'form' => $this->form 
 		) );
+		if (null !== $this->toRoute){
+			$model->setVariable('abortation', $this->toRoute);
+		}
+		return $model;
 	}
 	
 	/**
