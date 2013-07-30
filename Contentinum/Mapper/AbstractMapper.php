@@ -110,7 +110,7 @@ abstract class AbstractMapper extends AbstractManager
 		
 		if (is_string ( $name )) {
 			$this->entityName = $name;
-		} elseif ($name instanceof AbstractEntity && method_exists ( $name, 'getEntityName' )) {
+		} elseif ( is_object($name) && method_exists ( $name, 'getEntityName' )) {
 			$this->entityName = $name->getEntityName ();
 		} else {
 			throw new InvalidValueMapperException ( 'Incorrect parameters given, to set the entity name' );

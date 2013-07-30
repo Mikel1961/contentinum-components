@@ -29,6 +29,7 @@ namespace Contentinum\Mapper;
 
 use Contentinum\Mapper\Worker;
 use Contentinum\Entity\Exeption\IsPublishEntityException;
+use Contentinum\Mapper\Exeption\MissEntityMapperException;
 /**
  * Basis warpper class for insert and update database operations
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
@@ -43,9 +44,7 @@ class Process extends Worker
 	public function save($datas, $entity = null)
 	{
 		
-		if (null === $entity){
-			$entity = $this->getEntity();
-		}
+		$entity = $this->handleEntity($entity);
 		 
 		if (null === ($id = $entity->getPrimaryValue()   )) {
 			$datas[$entity->getPrimaryKey()] = $this->sequence() + 1;
@@ -63,11 +62,37 @@ class Process extends Worker
 	 */
 	public function delete($entity, $id)
 	{
+		$entity = $this->handleEntity($entity);
+		
 		if ( isset($entity->publish) && 'yes' == $entity->publish ){
 			throw new IsPublishEntityException('This entry is not published and therefore can not be deleted');
 		} else {
 			$this->deleteEntry($entity, $id);
 		}
 	}
+	
+	/**
+	 * Handle entity make it available
+	 * @param AbstractEntity $entity
+	 * @throws MissEntityMapperException
+	 * @return $entity
+	 */
+	protected function handleEntity($entity)
+	{
+		if (null === $entity && null === $this->getEntity()){
+			throw new MissEntityMapperException('It must be passed an entity');
+		}
+		
+		if (null === $entity){
+			$entity = $this->getEntity();
+		}
+
+		if (null === $this->getEntity()){
+			$this->setEntity($entity);
+		}		
+		
+		return $entity;
+	}
+
 
 }
