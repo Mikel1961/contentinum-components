@@ -39,6 +39,17 @@ use Contentinum\Forms\Exception\ParamNotExistsException;
  */
 abstract class AbstractForms 
 {
+
+	const DECO_ROW = 'deco-row';
+	const DECO_DESC = 'deco-desc';
+	const DECO_ERROR = 'deco-error';
+	
+	/**
+	 * Decorator keys storage
+	 * @var array
+	 */
+	protected $decoStorageKeys = array('deco-row' => self::DECO_ROW, 'deco-desc' => self::DECO_DESC, 'deco-error' => self::DECO_ERROR);
+	
 	/**
 	 * \Zend\Form\Factory
 	 * 
@@ -63,6 +74,14 @@ abstract class AbstractForms
 	 * @var boolen
 	 */
 	protected $validation = true;
+	
+	/**
+	 * Decoration form fields
+	 * @var array
+	 */
+	protected $decorators = array( 'deco-row' => array('tag' => 'div', 'attributes' => array('class' => 'form_element')), 
+			                       'deco-desc' => array('tag' => 'span', 'attributes' => array('class' => 'desc')),
+	                               'deco-error' => array('tag' => 'span', 'separator' => '<br />', 'attributes' => array('class' => 'error', 'role' => 'alert')));
 	
 	/**
 	 * Construct
@@ -164,6 +183,29 @@ abstract class AbstractForms
 	public function setValidation($validation) 
 	{
 		$this->validation = $validation;
+	}
+
+	/**
+	 * @return the $decoration
+	 */
+	public function getDecorators($key = null) 
+	{
+		if (null !== $key && isset($this->decorators[$key])){
+			return $this->decorators[$key];
+		}
+		return $this->decorators;
+	}
+
+	/**
+	 * @param multitype:multitype:string multitype:string    $decoration
+	 */
+	public function setDecorators(array $decorators) 
+	{
+		foreach ($decorators as $key => $row ){
+			if ( array_key_exists($key, $this->decoStorageKeys) ){
+				$this->decorators[$key] = $row;
+			}
+		}
 	}
 
 	/**
