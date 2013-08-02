@@ -120,7 +120,6 @@ class RenderForm extends AbstractHelper
 			
 		}
 		
-		$html .= '</div>';
 		return $html;
 		
 	}	
