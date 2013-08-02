@@ -28,7 +28,7 @@
 namespace Contentinum\Html;
 
 use Contentinum\Html\Element\FactoryElement;
-use Contentinum\Html\Attribute;
+use Contentinum\Html\HtmlAttribute;
 /**
  * create htmls elements for view html content
  * set attribute
@@ -180,7 +180,7 @@ class HtmlElements
         if (! empty($this->_attributes)) {
             $attribute = '';
             foreach ($this->_attributes as $k => $v) {
-                $attribute = $attribute . ' ' . Attribute::attributeString($k, $v);
+                $attribute = $attribute . ' ' . HtmlAttribute::attributeString($k, $v);
             }
             $content->setAttribute($attribute);
         }
@@ -191,7 +191,7 @@ class HtmlElements
             $attribute = '';
             if (isset($this->_tagAttributes[$i]) && ! empty($this->_tagAttributes[$i])) {
                 foreach ($this->_tagAttributes[$i] as $k => $v) {
-                    $attribute = $attribute . ' ' . Attribute::attributeString($k, $v);
+                    $attribute = $attribute . ' ' . HtmlAttribute::attributeString($k, $v);
                 }
             }
             $buildElement = $this->_htmlFactory->createContentElement($values, $attribute, $this->_contentTag[$i]);

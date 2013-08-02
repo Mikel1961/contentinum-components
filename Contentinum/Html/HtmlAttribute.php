@@ -59,4 +59,20 @@ class HtmlAttribute
             return false;
         }
     }
+    
+    /**
+     * Generate some html tag attributes
+     * @param array $attribute
+     * @return string
+     */
+    static public function attributeArray(array $attribute)
+    {
+    	$str = '';
+    	if (is_array($attribute)){
+    		foreach ($attribute as $a => $v){
+    			$str .= self::attributeString($a,$v,true);
+    		}
+    	}
+    	return $str;
+    }
 }
