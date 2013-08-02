@@ -98,15 +98,14 @@ class RenderForm extends AbstractHelper
 	private function renderElement($element)
 	{
 		$html = '';
-		$formLabel = $this->plugin('formLabel');
-		$html .= '<div class="form_element">';
+		$formLabel = $this->view->plugin('formLabel');
 		if ( $element->getOption('label') ){
 			$html .= $formLabel->openTag();
 			$html .= $element->getOption('label');
 			$html .= $formLabel->closeTag();
 		}
 		
-		$html .= $this->formElement($element);
+		$html .= $this->view->formElement($element);
 		
 		$html .= $this->renderErrors($element);
 
@@ -144,7 +143,7 @@ class RenderForm extends AbstractHelper
 				$attributes = HtmlAttribute::attributeArray($deco['attributes']);
 			}
 			
-			$err = $this->formElementErrors();
+			$err = $this->view->formElementErrors();
 			
 			if (false !== $tag){
 				$err->setMessageOpenFormat('<'.$tag.''.$attributes. '>');
@@ -169,14 +168,18 @@ class RenderForm extends AbstractHelper
 	{
 		$html = '';
 		if ( is_array($desc) && !empty($desc) ){
+			
 			$tag = 'span';
-			if ( isset($desc['tag']) ){
-				$tag = $desc['tag'];
-			}
 			$attributes = '';
-			if ( isset($desc['attributes']) ){
-				$attributes = HtmlAttribute::attributeArray($desc['attributes']);
+			if (true == ($deco = $desc['deco-desc'])) {
+				if ( isset($deco['tag']) ){
+					$tag = $deco['tag'];
+				}
+				if ( isset($deco['attributes'])){
+					$attributes = HtmlAttribute::attributeArray($deco['attributes']);
+				}
 			}
+			
 			$html = '<' . $tag . '' . $attributes . '>' . $desc['text'] . '</' . $tag . '>';
 		}
 		return $html;		
