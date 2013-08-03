@@ -98,6 +98,7 @@ class RenderForm extends AbstractHelper
 	private function renderElement($element)
 	{
 		$html = '';
+		$type = $element->getAttribute('type');
 		$formLabel = $this->view->plugin('formLabel');
 		if ( $element->getOption('label') ){
 			$html .= $formLabel->openTag();
@@ -106,6 +107,14 @@ class RenderForm extends AbstractHelper
 		}
 		
 		$html .= $this->view->formElement($element);
+		if( $type == 'submit') {
+			$abortDeco = $element->getOption('deco-abort-btn');
+			$label = 'Button';
+			if ( isset($abortDeco['label']) ){
+				$label = $abortDeco['label'];
+			}
+			$html .= $this->view->abortationButton($label,$abortDeco);
+		}
 		
 		$html .= $this->renderErrors($element);
 
