@@ -39,16 +39,21 @@ use Contentinum\Forms\Exception\ParamNotExistsException;
  */
 abstract class AbstractForms 
 {
-
+	const DECO_FORM = 'deco-form';
+	const DECO_ROW_BUTTON = 'deco-row-button';
+	const DECO_ROW_RADIO = 'deco-row-radio';
+	const DECO_ROW_CHECK = 'deco-row-check';
+	const DECO_ROW_SELECT = 'deco-row-select';
 	const DECO_ROW = 'deco-row';
 	const DECO_DESC = 'deco-desc';
 	const DECO_ERROR = 'deco-error';
 	
+	const PATTERN_DECCO_ROW = '/deco-row/';
 	/**
 	 * Decorator keys storage
 	 * @var array
 	 */
-	protected $decoStorageKeys = array('deco-row' => self::DECO_ROW, 'deco-desc' => self::DECO_DESC, 'deco-error' => self::DECO_ERROR);
+	protected $decoStorageKeys = array('deco-form' => self::DECO_FORM, 'deco-row-button' => self::DECO_ROW_BUTTON, 'deco-row-radio' => self::DECO_ROW_RADIO, 'deco-row-check' => self::DECO_ROW_CHECK, 'deco-row-select' => self::DECO_ROW_SELECT, 'deco-row' => self::DECO_ROW, 'deco-desc' => self::DECO_DESC, 'deco-error' => self::DECO_ERROR);
 	
 	/**
 	 * \Zend\Form\Factory
@@ -190,8 +195,19 @@ abstract class AbstractForms
 	 */
 	public function getDecorators($key = null) 
 	{
-		if (null !== $key && isset($this->decorators[$key])){
-			return $this->decorators[$key];
+		if (null !== $key){
+			if ( preg_match(self::PATTERN_DECCO_ROW, $key) ){
+				if ( isset($this->decorators[$key])){
+					return $this->decorators[$key];
+				} else {
+					return $this->decorators[self::DECO_ROW];
+				}
+			} elseif ( isset($this->decorators[$key])){
+					return $this->decorators[$key];
+ 
+			} else {
+				return array();
+			}
 		}
 		return $this->decorators;
 	}
