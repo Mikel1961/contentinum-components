@@ -94,6 +94,12 @@ class Worker extends AbstractMapper
 	);
 	
 	/**
+	 * Storage from entities
+	 * @var array
+	 */
+	protected $targetEntities = array();	
+	
+	/**
 	 * Construct
 	 * @param EntityManager $storage
 	 * @param string $charset
@@ -216,6 +222,39 @@ class Worker extends AbstractMapper
 	{
 		$this->unsetUpdateFields = $unsetUpdateFields;
 	}
+	
+	/**
+	 * Get target entities
+	 * @param string $key
+	 * @return multitype:
+	 */
+	public function getTargetEntities($key = null)
+	{
+		if ( isset($this->targetEntities[$key]) ){
+			return $this->targetEntities[$key];
+		}
+		return $this->targetEntities;
+	}
+	
+    /**
+     * Add a target entity
+     * @param string $key form field name
+     * @param string $entity entity name
+     */
+	public function addTargetEntities($key, $entity)
+	{
+		$this->targetEntities[$key] = $entity;
+	}	
+	
+	/**
+	 * Set target entities
+	 * @param array $entity
+	 */
+	public function setTargetEntities(array $entity)
+	{
+		$this->targetEntities = $entity;
+	}
+
 
 	/**
 	 * Get the last primary id value
@@ -379,8 +418,6 @@ class Worker extends AbstractMapper
 		}
 		return $conn->exec($sql);
 	}	
-	
-	
 	
 	/**
 	 * Unset fields before prepare datas to INSERT or UPDATE a table row

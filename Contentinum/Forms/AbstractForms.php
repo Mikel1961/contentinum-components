@@ -80,7 +80,7 @@ abstract class AbstractForms
 	 * @var boolen
 	 */
 	protected $validation = true;
-	
+		
 	/**
 	 * Decoration form fields
 	 * @var array
@@ -225,6 +225,30 @@ abstract class AbstractForms
 			}
 		}
 	}
+	
+	/**
+	 * Get options for form element select from database
+	 * @param string form field name reference to target entity
+	 * @param array $columns
+	 * @return array
+	 */
+	public function getSelectOptions($fieldName,$columns = array('value' => 'id', 'label' => 'name'))
+	{
+		$em = $this->storage->getStorage();
+		$entityName = $this->storage->getTargetEntities($fieldName);
+		$builder = $em->createQueryBuilder ();
+		$builder->add ( 'select', 'main.' . implode(', main.', $columns) );
+		$builder->add ( 'from', $entityName . ' AS main' );
+		$query = $builder->getQuery();
+		$datas = $query->getResult();
+		$options = array();
+		if ( is_array($datas) ){	
+			foreach ($datas as $row){
+				$options[$row[$columns['value']]] = $row[$columns['label']];
+			}
+		}
+		return $options;
+	}	
 
 	/**
 	 * Create the form

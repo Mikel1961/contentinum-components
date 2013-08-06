@@ -48,6 +48,7 @@ class Process extends Worker
 		 
 		if (null === ($id = $entity->getPrimaryValue()   )) {
 			$datas[$entity->getPrimaryKey()] = $this->sequence() + 1;
+			$datas = $this->foreignMapper($datas);
 			parent::save($entity, $datas, self::SAVE_INSERT,$datas[$entity->getPrimaryKey()]);
 		} else {
 			parent::save($entity, $datas, self::SAVE_UPDATE);
@@ -93,6 +94,24 @@ class Process extends Worker
 		
 		return $entity;
 	}
-
-
+	
+	/**
+	 * Set traget entities before insert 
+	 * @param array $datas valid form user inputs
+	 * @return array
+	 */
+	protected function foreignMapper($datas)
+	{
+		if ( ! empty($this->targetEntities) ){
+			$dataKeys = array_keys($datas);
+			foreach ($dataKeys as $key){
+				if (true == ($entityName = $this->getTargetEntities($key)   )){
+					$em = $this->getStorage();
+					$em->clear($entityName);
+					$datas[$key] = $em->find($entityName, $datas[$key]);
+				}
+			}
+		}
+		return $datas;
+	}
 }
