@@ -16,31 +16,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * @category contentinum library
- * @package html
- * @copyright Copyright (c) 2009-2011 jochum-mediaservices, Katja Jochum (http://www.jochum-mediaservices.de)
+ * @category contentinum components
+ * @package Html
+ * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
+ * @copyright Copyright (c) 2009-2013 jochum-mediaservices, Katja Jochum (http://www.jochum-mediaservices.de)
  * @license http://www.opensource.org/licenses/bsd-license
- * @version $Id: Factory.php 39 2012-09-01 14:24:27Z mike $
- * @since contentinum library release 0.1
- *        See also docs/LICENCE.txt for details
+ * @since contentinum version 1.0
+ * @link      https://github.com/Mikel1961/contentinum-components
+ * @version   1.0.0
  */
-// included from parent file ...
-if (! defined('VALID_PAGE')) {
-    die('Restricted access');
-}
+namespace Contentinum\Html\Table;
+
+use Contentinum\Html\Table\InterfaceTable;
+use Contentinum\Html\Table\View\Table;
+use Contentinum\Html\Table\View\TableCaption;
+use Contentinum\Html\Table\View\TableRow;
+use Contentinum\Html\Table\View\TableHeader;
+use Contentinum\Html\Table\View\TableFooter;
+use Contentinum\Html\Table\View\TableCell;
 
 /**
  * Factory html table
  *
- * @use Contentinum_Html_Table_Interface
- *
- * @category contentinum library
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
- * @copyright Copyright (c) 2005-2008 jochum-mediaservices, Katja Jochum
- *            (http://www.jochum-mediaservices.de)
- * @license http://www.contentinum-library.de/licenses BSD License
  */
-class Contentinum_Html_Table_Factory implements Contentinum_Html_Table_Interface
+class FactoryTable implements InterfaceTable
 {
 
     /**
@@ -50,7 +50,7 @@ class Contentinum_Html_Table_Factory implements Contentinum_Html_Table_Interface
      */
     public function createTable ()
     {
-        $table = new Contentinum_Html_Table_View_Table();
+        $table = new Table();
         return $table;
     }
 
@@ -64,7 +64,7 @@ class Contentinum_Html_Table_Factory implements Contentinum_Html_Table_Interface
      */
     public function createCaption ($content, $attribute = false, $tag = false)
     {
-        $caption = new Contentinum_Html_Table_View_Caption($content, $attribute, $tag);
+        $caption = new TableCaption($content, $attribute, $tag);
         return $caption;
     }
 
@@ -75,7 +75,7 @@ class Contentinum_Html_Table_Factory implements Contentinum_Html_Table_Interface
      */
     public function createElement ($tag = false, $attribute = false)
     {
-        $element = new Contentinum_Html_Table_View_Row($tag, $attribute);
+        $element = new TableRow($tag, $attribute);
         return $element;
     }
 
@@ -86,7 +86,7 @@ class Contentinum_Html_Table_Factory implements Contentinum_Html_Table_Interface
      */
     public function createHeader ()
     {
-        $header = new Contentinum_Html_Table_View_Header();
+        $header = new TableHeader();
         return $header;
     }
 
@@ -97,7 +97,7 @@ class Contentinum_Html_Table_Factory implements Contentinum_Html_Table_Interface
      */
     public function createFooter ()
     {
-        $footer = new Contentinum_Html_Table_View_Footer();
+        $footer = new TableFooter();
         return $footer;
     }
 
@@ -111,7 +111,7 @@ class Contentinum_Html_Table_Factory implements Contentinum_Html_Table_Interface
      */
     public function createRowElement ($content, $attribute = false, $tag = false)
     {
-        $listelement = new Contentinum_Html_Table_View_Cell($content, $attribute, $tag);
+        $listelement = new TableCell($content, $attribute, $tag);
         return $listelement;
     }
 }
