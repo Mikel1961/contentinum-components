@@ -30,6 +30,7 @@ namespace Contentinum\Forms;
 
 use Zend\Form\Factory;
 use Contentinum\Forms\Exception\ParamNotExistsException;
+use Contentinum\Entity\Exeption\InvalidValueEntityException;
 
 /**
  * Abtract Form class for mcwork modul
@@ -235,7 +236,10 @@ abstract class AbstractForms
 	public function getSelectOptions($fieldName,$columns = array('value' => 'id', 'label' => 'name'))
 	{
 		$em = $this->storage->getStorage();
-		$entityName = $this->storage->getTargetEntities($fieldName);
+		$entityName = $this->storage->getTargetEntity($fieldName);
+		if (false === $entityName){
+			throw new InvalidValueEntityException('Entity can not be found or is not available!');
+		}
 		$builder = $em->createQueryBuilder ();
 		$builder->add ( 'select', 'main.' . implode(', main.', $columns) );
 		$builder->add ( 'from', $entityName . ' AS main' );

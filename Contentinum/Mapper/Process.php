@@ -105,7 +105,7 @@ class Process extends Worker
 		if ( ! empty($this->targetEntities) ){
 			$dataKeys = array_keys($datas);
 			foreach ($dataKeys as $key){
-				if (true == ($entityName = $this->getTargetEntities($key)   )){
+				if (false !== ($entityName = $this->getTargetEntity($key)   )){
 					$em = $this->getStorage();
 					$em->clear($entityName);
 					$datas[$key] = $em->find($entityName, $datas[$key]);

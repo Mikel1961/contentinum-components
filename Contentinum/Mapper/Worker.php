@@ -226,7 +226,7 @@ class Worker extends AbstractMapper
 	/**
 	 * Get target entities
 	 * @param string $key
-	 * @return multitype:
+	 * @return multitype:|array
 	 */
 	public function getTargetEntities($key = null)
 	{
@@ -235,6 +235,20 @@ class Worker extends AbstractMapper
 		}
 		return $this->targetEntities;
 	}
+	
+	/**
+	 * Get a target entity if available
+	 * @param string $key
+	 * @return multitype:|NULL
+	 */
+	public function getTargetEntity($key)
+	{
+		if ( isset($this->targetEntities[$key]) ){
+			return $this->targetEntities[$key];
+		}
+		return false;
+	}
+
 	
     /**
      * Add a target entity
