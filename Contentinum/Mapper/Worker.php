@@ -378,6 +378,38 @@ class Worker extends AbstractMapper
 	}
 	
 	/**
+	 * Fetch database entry, get result as array
+	 * Render foreign entities if get result in a array
+	 * 
+	 * @param int|string $id primary key
+	 * @param boolen $toArray get db result as array
+	 * @return multitype
+	 */
+	public function fetchPopulateValues($id, $toArray = true)
+	{
+		$em = $this->getStorage(null);
+		$builder = $em->createQueryBuilder();
+		$builder->add('select', 'main')->add('from', $this->getEntityName() . ' AS main');
+		$builder->add('where', 'main.' .  $this->getEntity()->getPrimaryKey() . ' = ?' . 1);
+		$builder->setParameter(1, $id);	
+		$query = $builder->getQuery();
+		$row = $query->getSingleResult();
+		if (true === $toArray) {
+			$row = $row->toArray();
+			$metas = $em->getClassMetadata($this->getEntityName());
+			$targetMap = $this->getJoinColumns($metas->getAssociationMappings());
+			if ( ! empty($targetMap) ){
+				foreach ($targetMap as $field => $ref){
+					if ( isset($row[$field]) ){
+						$row[$field] = $row[$field]->$ref;
+					}
+				}
+			}			
+		}	
+		return $row;		
+	}
+	
+	/**
 	 * Delete a data record
 	 * @param AbstractEntity $entity
 	 * @param int $id primary key value
@@ -493,6 +525,27 @@ class Worker extends AbstractMapper
 			}
 		}
 		return $datas;
+	}
+	
+	/**
+	 * Get join columns from target entity
+	 * @param array $map
+	 * @return multitype:NULL |multitype:array
+	 */
+	protected function getJoinColumns($map = array()) 
+	{
+		if (! empty ( $map )) {
+			$targetMap = array ();
+			foreach ( $map as $fieldName ) {
+				
+				if (isset ( $fieldName ['joinColumns'] [0] ['referencedColumnName'] )) {
+					$targetMap [$fieldName ["fieldName"]] = $fieldName ['joinColumns'] [0] ['referencedColumnName'];
+				}
+			}
+			return $targetMap;
+		}
+		
+		return array ();
 	}
 	
 	/**
