@@ -113,7 +113,9 @@ class RenderForm extends AbstractHelper
 			if ( isset($abortDeco['label']) ){
 				$label = $abortDeco['label'];
 			}
-			$html .= $this->view->abortationButton($label,$abortDeco);
+			if ($this->view->abortation){
+				$html = $this->renderButton($label,$abortDeco);
+			}
 		}
 		
 		$html .= $this->renderErrors($element);
@@ -192,5 +194,40 @@ class RenderForm extends AbstractHelper
 		}
 		return $html;		
 	}
+	
+	/**
+	 * Build and create a button
+	 * @param string $label button label
+	 * @param array $decorator button attributtes and row tag
+	 * @return string
+	 */
+	private function renderButton($label, $decorator = null)
+	{
+		$attributtes = '';
+		$html = '';
+		$endTag = '';
+		if ( $decorator ){
+			if (isset($decorator['attributes']) && is_array($decorator['attributes'])){
+				$attributtes = HtmlAttribute::attributeArray($decorator['attributes']);
+			}
+				
+			if (isset($decorator['tag'])){
+				$html .= '<'. $decorator['tag'];
+			}
+				
+			if (isset($decorator['tag-attribs']) && is_array($decorator['tag-attribs'])){
+				$html .= HtmlAttribute::attributeArray($decorator['tag-attribs']);
+			}
+				
+			if (isset($decorator['tag'])){
+				$html .= '>';
+				$endTag = '</'. $decorator['tag'] . '>';
+			}
+		}
+		$html .= '<a' . $attributtes;
+		$html .= ' href="' . $this->view->url($this->view->abortation) . '">';
+		$html .= $label . '</a>' . $endTag;
+		return $html;
+	}	
 
 }
