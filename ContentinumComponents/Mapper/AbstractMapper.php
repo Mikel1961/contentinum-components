@@ -47,7 +47,7 @@ abstract class AbstractMapper extends AbstractManager
 	
 	/**
 	 * Logger
-	 * @var \Zend\Log
+	 * @var object
 	 */
 	protected $logger = false;
 	
@@ -135,10 +135,32 @@ abstract class AbstractMapper extends AbstractManager
 	}
 	
 	/**
-	 * Returns Zend logger
-	 * @return \Zend\Log | false
+	 * Check if logger available
+	 * @return boolean
 	 */
-	public function getLog()
+	public function hasLogger()
+	{
+		if (false === $this->logger){
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	/**
+	 * Set a logger
+	 * @param object $logger
+	 */
+	public function setLogger($logger)
+	{
+		$this->logger = $logger;
+	}
+	
+	/**
+	 * Returns Zend logger
+	 * @return object
+	 */
+	public function getLogger()
 	{
 		return $this->logger;
 	}

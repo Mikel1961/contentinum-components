@@ -333,14 +333,14 @@ class Worker extends AbstractMapper
 					break;
 			}
 			// log if available
-			if (false !== ($log = $this->getLog ())) {
-				$log->info ( $msg . ' to ' . $this->getEntityName () );
+			if (true === $this->hasLogger()) {
+				$this->logger->info($msg . ' to ' . $this->getEntityName () );
 			}
 			return $msg;
 		} catch ( \Exception $e ) {
 			// log if available
-			if (false !== ($log = $this->getLog ())) {
-				$log->crit ( $this->getEntityName () . ' ' . $stage . ' database table ' . $e->getMessage () );
+			if (true === $this->hasLogger()) {
+				$this->logger->crit($this->getEntityName () . ' ' . $stage . ' database table ' . $e->getMessage () );
 			}
 			throw new SaveMapperException ( $this->getEntityName () . ' ' . $stage . ' database table ' . $e->getMessage () );
 		}
