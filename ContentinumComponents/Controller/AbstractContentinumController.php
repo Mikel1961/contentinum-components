@@ -49,6 +49,12 @@ abstract class AbstractContentinumController extends AbstractActionController
 	protected $entity;
 	
 	/**
+	 * Contentinum\Service\Applog
+	 * @var Contentinum\Service\Applog
+	 */
+	protected $logger;
+	
+	/**
 	 * Get mapper worker
 	 * @return \Contentinum\Mapper\Process
 	 */
@@ -82,5 +88,30 @@ abstract class AbstractContentinumController extends AbstractActionController
 	public function setEntity($entity)
 	{
 		$this->entity = $entity;
-	}	
+	}
+	
+	/**
+	 * Get application logger
+	 * @return object $logger
+	 */
+	public function getLogger() 
+	{
+		return $this->logger;
+	}
+
+	/**
+	 * Set application logger
+	 * @param object $logger
+	 */
+	public function setLogger($logger = null, $factory = null) 
+	{
+		if ($logger){
+			$this->logger = $logger;
+		}		
+		if (null === $logger && null !== $factory){
+			$this->logger = $this->getServiceLocator()->get($factory);
+		}
+
+	}
+	
 }

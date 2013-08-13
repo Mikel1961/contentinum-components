@@ -28,12 +28,10 @@
  */
 namespace ContentinumComponents\Controller;
 
-use Zend\Mvc\Controller\AbstractController;
+use ContentinumComponents\Controller\AbstractContentinumController;
 use ContentinumComponents\Forms\AbstractForms;
 use Zend\Mvc\MvcEvent;
-use ContentinumComponents\Mapper\Process;
 use Zend\View\Model\ViewModel;
-use ContentinumComponents\Entity\AbstractEntity;
 
 /**
  * Contentinum Abstract Form Controller
@@ -41,7 +39,7 @@ use ContentinumComponents\Entity\AbstractEntity;
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  *        
  */
-abstract class AbstractFormController extends AbstractController 
+abstract class AbstractFormController extends AbstractContentinumController
 {
 	/**
 	 * AbstractForms 
@@ -54,18 +52,6 @@ abstract class AbstractFormController extends AbstractController
 	 * @var Zend\Form
 	 */
 	protected $form;
-	
-	/**
-	 * Worker
-	 * @var Process
-	 */
-	protected $worker;
-	
-	/**
-	 * AbstractEntity
-	 * @var AbstractEntity
-	 */
-	protected $entity;
 	
 	/**
 	 * Form action
@@ -218,42 +204,6 @@ abstract class AbstractFormController extends AbstractController
 	public function getForm() 
 	{
 		return $this->form;
-	}
-
-	/**
-	 * Get mapper worker
-	 * @return \Contentinum\Mapper\Process
-	 */
-	public function getWorker()
-	{
-		return $this->worker;
-	}
-	
-	/**
-	 * Set mapper worker
-	 * @param Process $worker
-	 */
-	public function setWorker($worker)
-	{
-		$this->worker = $worker;
-	}
-	
-	/**
-	 * Return entity
-	 * @return \Contentinum\Entity\AbstractEntity
-	 */
-	public function getEntity()
-	{
-		return $this->entity;
-	}
-	
-	/**
-	 * Set Entity
-	 * @param \Contentinum\Entity\AbstractEntity $entity
-	 */
-	public function setEntity($entity)
-	{
-		$this->entity = $entity;
 	}
 	
 	/**
