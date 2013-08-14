@@ -28,6 +28,9 @@
 namespace ContentinumComponents\Html\Element;
 
 use ContentinumComponents\Html\Element\InterfaceElement;
+use ContentinumComponents\Html\Element\View\Content;
+use ContentinumComponents\Html\Element\View\Elements;
+use ContentinumComponents\Html\Element\View\Element;
 /**
  * Factory html element
  *
@@ -39,22 +42,22 @@ class FactoryElement implements InterfaceElement
     /**
      * create xhtml elements
      *
-     * @return Contentinum_Html_Element_View_Content
+     * @return ContentinumComponents\Html\Element\View\Content
      */
     public function createContentElements ()
     {
-        $div = new Contentinum_Html_Element_View_Content();
+        $div = new Content();
         return $div;
     }
 
     /**
      * create a xhtml element
      *
-     * @return Contentinum_Html_Element_View_Elements
+     * @return ContentinumComponents\Html\Element\View\Elements
      */
     public function createElement ()
     {
-        $elements = new Contentinum_Html_Element_View_Elements();
+        $elements = new Elements();
         return $elements;
     }
 
@@ -64,11 +67,11 @@ class FactoryElement implements InterfaceElement
      * @param string $content
      * @param string $attribute tag attributes
      * @param string $tag html tag
-     * @return Contentinum_Html_Element_View_Element
+     * @return ContentinumComponents\Html\Element\View\Element
      */
     public function createContentElement ($content, $attribute = false, $tag = false)
     {
-        $element = new Contentinum_Html_Element_View_Element($content, $attribute, $tag);
+        $element = new Element($content, $attribute, $tag);
         return $element;
     }
 }

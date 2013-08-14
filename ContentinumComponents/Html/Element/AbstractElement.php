@@ -27,6 +27,7 @@
  */
 namespace ContentinumComponents\Html\Element;
 
+use ContentinumComponents\Html\Elements\AbstractElements;
 /**
  * Abstract class html element
  *
@@ -67,9 +68,9 @@ abstract class AbstractElement
     /**
      * Instance of Contentinum_Html_Elements_Abstract
      *
-     * @param Contentinum_Html_Elements_Abstract $element Contentinum_Html_Elements_Abstract objects
+     * @param ContentinumComponents\Html\Elements\AbstractElements $element
      */
-    public function setElement (Contentinum_Html_Elements_Abstract $element)
+    public function setElement (AbstractElements $element)
     {
         $this->_elements[] = $element;
     }
