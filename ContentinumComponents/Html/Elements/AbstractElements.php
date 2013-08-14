@@ -27,6 +27,7 @@
  */
 namespace ContentinumComponents\Html\Elements;
 
+use ContentinumComponents\Html\Elements\AbstractTag;
 /**
  * Abstract class html tag element
  *
@@ -89,9 +90,9 @@ abstract class AbstractElements
     /**
      * Instance of Contentinum_Html_Elements_Tag
      *
-     * @param Contentinum_Html_Elements_Tag $tagElement Contentinum_Html_Elements_Tag object
+     * @param Contentinum_Html_Elements_Tag $tagElement AbstractTag object
      */
-    public function setTagElement (Contentinum_Html_Elements_Tag $tagElement)
+    public function setTagElement (AbstractTag $tagElement)
     {
         $this->_tagElements[] = $tagElement;
     }
