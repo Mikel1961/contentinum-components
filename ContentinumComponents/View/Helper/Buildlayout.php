@@ -43,7 +43,7 @@ class Buildlayout extends AbstractHelper
 	 */
 	public function __invoke($template,$key)
 	{
-		$structure = $template->$key->toArray();
+		$structure = $template->$key->sequence->toArray();
 		$sequence = new HtmlLayoutSequence();
 		$sequence->set($structure);
 		return $sequence->execute();
