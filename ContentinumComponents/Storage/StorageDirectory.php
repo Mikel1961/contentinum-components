@@ -42,17 +42,21 @@ class StorageDirectory extends AbstractStorage
 	 * @param string $class name model class of directory api
 	 * @return array entries
 	 */
-	public function fetchAll ($dir, $entity = null)
+	public function fetchAll ($entityName = null)
 	{
-	    if ($entity){
-	    	$this->setEntity($entity);
+	    if (null === $entityName){
+	    	$entity = $this->getEntity();
+	    	$entityName = $entity->getEntityName();
+	    } else {
+	    	$entity = new $entityName();
 	    }
+	    
 		$resultSet = $this->getStorage()
-		->setCurrent($dir)
+		->setCurrent($entity->getCurrentPath())
 		->fetchAll();
 		$entries = array();
 		foreach ($resultSet as $row) {
-			$entry = $this->getEntity();
+			$entry = new $entityName();
 			$entry->setOptions($row);
 			$entries[] = $entry;
 		}

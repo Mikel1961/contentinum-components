@@ -48,14 +48,8 @@ abstract class AbstractStorage extends AbstractManager
 	 * @see \ContentinumComponents\Storage\AbstractManager::getEntity()
 	 */
 	public function getEntity() 
-	{
-		
-		if(!$this->entity){
-			$this->setEntity(new StorageEntity());
-		}
-		
+	{	
 		return $this->entity;
-		
 	}
 
 	/**
@@ -92,6 +86,7 @@ abstract class AbstractStorage extends AbstractManager
 	public function setEntity($entity) 
 	{
 		$this->entity = $entity;
+		return $this;
 	}
 
 	/**
@@ -103,6 +98,7 @@ abstract class AbstractStorage extends AbstractManager
 			$name = $this->entity->getEntityName();
 		}
 		$this->entityName = $name;
+		return $this;
 	}
 
 	/**
@@ -115,6 +111,8 @@ abstract class AbstractStorage extends AbstractManager
 		if (! $this->storage instanceof StorageManager) {
 			throw new InvalidValueStorageException ( 'There is no storage manager initiated !' );
 		}
+		
+		return $this;
 	}
 
 	/**

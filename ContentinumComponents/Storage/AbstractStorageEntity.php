@@ -35,7 +35,7 @@ use ContentinumComponents\Entity\AbstractEntity;
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  *
  */
-class StorageEntity extends AbstractEntity
+abstract class AbstractStorageEntity extends AbstractEntity
 {
     /**
      * File name
@@ -168,6 +168,12 @@ class StorageEntity extends AbstractEntity
 		return get_object_vars($this);
 		
 	}
+	
+	/**
+	 * Get path of current file storage
+	 */
+	abstract public function getCurrentPath();
+	
 	/**
 	 * @return the $filename
 	 */

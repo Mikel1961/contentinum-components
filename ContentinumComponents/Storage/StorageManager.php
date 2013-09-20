@@ -103,6 +103,11 @@ class StorageManager
 	 * @var int
 	 */
 	protected $mode = 0755;
+	/**
+	 * Repository name (entity class name for directories)
+	 * @var string
+	 */
+	protected $repositoryName = '';
 
 	/**
 	 * Construct
@@ -400,11 +405,9 @@ class StorageManager
 	{
 		$path = $this->getDocumentRoot() . $this->path;
 		if (false !== ($dir = $this->getCurrent())) {
-			$path = $path . '/' . $dir;
+			$path = $path . '' . $dir;
 		}
-	
-		//Zend_Debug::dump($path);exit;
-	
+
 		if (is_dir($path)) {
 			$result = $row = array();
 			$iterator = new \DirectoryIterator($path);
@@ -468,5 +471,36 @@ class StorageManager
 		}
 		return false;
 	}	
+	
+	/**
+	 * Set repository name and set current directory
+	 * @param string $repositoryName
+	 * @return \ContentinumComponents\Storage\StorageManager
+	 */
+	public function getRepository($repositoryName)
+	{
+		$this->repositoryName = $repositoryName;
+		$entity = new $repositoryName();
+		$this->setCurrent($entity->getCurrentPath());
+		return $this;
+	}
+	
+	/**
+	 * Find all content (directories and files) in a specified directory
+	 * @return multitype:unknown
+	 */
+	public function findAll()
+	{
+		$result = $this->fetchAll();
+		$entries = array();
+		$entityName = $this->repositoryName;
+		foreach ($result as $row) {
+			$entry = new $entityName();
+			$entry->setOptions($row);
+			$entries[] = $entry;
+		}
+		return $entries;		
+		
+	}
 	
 }
