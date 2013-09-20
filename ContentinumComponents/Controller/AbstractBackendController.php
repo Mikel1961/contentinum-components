@@ -46,9 +46,9 @@ abstract class AbstractBackendController extends AbstractContentinumController
      */
 	public function onDispatch(MvcEvent $e) 
 	{
-		$page = $e->getRouteMatch ()->getParam ( 'controller' );
+		$ctrl = $e->getRouteMatch ()->getParam ( 'controller' );
 		$e->getRouteMatch ()->setParam ( 'action', 'application' );
-		$e->setResult ( $this->application ( $page, $this->getServiceLocator ()->get ( 'Contentinum\Acl\DefaultRole' ), $this->getServiceLocator ()->get ( 'Contentinum\Acl\Acl' ) ) );
+		$e->setResult ( $this->application ($ctrl, str_replace('\\', '_' ,$ctrl), $this->getServiceLocator()->get('Mcwork\Pages'), $this->getServiceLocator ()->get ( 'Contentinum\Acl\DefaultRole' ), $this->getServiceLocator ()->get ( 'Contentinum\Acl\Acl' ) ) );
 	}
 	
 	/**
