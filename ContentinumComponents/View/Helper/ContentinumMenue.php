@@ -33,12 +33,22 @@ use Zend\Navigation\AbstractContainer;
 use Zend\Navigation\Page\AbstractPage;
 
 /**
- * Set page main content
+ * Copy method renderNormalMenu() and htmlify()
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
 class ContentinumMenue extends Menu
 {
+	/**
+	 * Set Submenu class attribute
+	 * @var string
+	 */
+	protected $subUlClass = '';
 
+
+    /**
+     * Copy from Zend View Helper Menu
+     * @see \Zend\View\Helper\Navigation\Menu::renderNormalMenu()
+     */ 
     protected function renderNormalMenu(
         AbstractContainer $container,
         $ulClass,
@@ -107,7 +117,7 @@ class ContentinumMenue extends Menu
                 if ($ulClass && $depth ==  0) {
                     $ulClass = ' class="' . $ulClass . '"';
                 } else {
-                    $ulClass = '';
+                    $ulClass = $this->subUlClass;
                 }
                 $html .= $myIndent . '<ul' . $ulClass . '>' . self::EOL;
             } elseif ($prevDepth > $depth) {
@@ -131,9 +141,20 @@ class ContentinumMenue extends Menu
                 $liClasses[] = 'active';
             }
             // Add CSS class from page to <li>
-            if ($addClassToListItem && $page->getClass()) {
-                $liClasses[] = $page->getClass();
-            }
+            //if ($addClassToListItem && $page->getClass()) {
+              //  $liClasses[] = $page->getClass();
+            //}
+            
+            if(true == ($subUlClass = $page->get('subUlClass'))){
+            	$this->subUlClass = ' class="' . $subUlClass . '"';
+            } else {
+            	$this->subUlClass = '';
+            }            
+            
+            
+            if(true == ($listClass = $page->get('listClass'))){
+            	$liClasses[] = $listClass;
+            }            
             $liClass = empty($liClasses) ? '' : ' class="' . implode(' ', $liClasses) . '"';
 
             $html .= $myIndent . '    <li' . $liClass . '>' . self::EOL
@@ -157,15 +178,8 @@ class ContentinumMenue extends Menu
     }
 	
     /**
-     * Returns an HTML string containing an 'a' element for the given page if
-     * the page's href is not empty, and a 'span' element if it is empty
-     *
-     * Overrides {@link AbstractHelper::htmlify()}.
-     *
-     * @param  AbstractPage $page               page to generate HTML for
-     * @param  bool         $escapeLabel        Whether or not to escape the label
-     * @param  bool         $addClassToListItem Whether or not to add the page class to the list item
-     * @return string
+     * Copy from Zend helper menu
+     * @see \Zend\View\Helper\Navigation\Menu::htmlify()
      */
     public function htmlify(AbstractPage $page, $escapeLabel = true, $addClassToListItem = false)
     {
