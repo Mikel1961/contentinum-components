@@ -57,5 +57,5 @@ abstract class AbstractBackendController extends AbstractContentinumController
 	 * @param string $role current user role
 	 * @param Zend\Acl\Acl $acl
 	 */
-	abstract protected function application($page, $role = null, $acl = null);
+	abstract protected function application($ctrl, $page, $mcworkpages, $role = null, $acl = null);
 }
