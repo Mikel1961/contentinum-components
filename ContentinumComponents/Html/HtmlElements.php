@@ -90,9 +90,9 @@ class HtmlElements
     /**
      * Construct
      *
-     * @param FactoryElement $htmlFactory FactoryElement
+     * @param object $htmlFactory
      */
-    public function __construct (FactoryElement $htmlFactory)
+    public function __construct ($htmlFactory)
     {
         $this->_htmlFactory = $htmlFactory;
     }
