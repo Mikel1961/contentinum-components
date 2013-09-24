@@ -27,7 +27,7 @@
  */
 namespace ContentinumComponents\View\Helper;
 
-use Zend\Form\View\Helper\AbstractHelper;
+use Zend\View\Helper\AbstractHelper;
 
 /**
  * Select content by language

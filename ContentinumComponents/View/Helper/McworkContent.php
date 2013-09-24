@@ -36,7 +36,7 @@ use Zend\Form\View\Helper\AbstractHelper;
 class McworkContent extends AbstractHelper
 {
 
-	public function __invoke($content, $page, $key)
+	public function __invoke( $page, $content, $key)
 	{
 		if (isset($content->$key) && strlen($content->$key) > 0){
 			return $content->$key;
@@ -45,7 +45,7 @@ class McworkContent extends AbstractHelper
 				case 'headline':
 				case 'subheadline':
 					return $page;
-				
+				break;
 				default:
 					return '';
 			}
