@@ -27,7 +27,7 @@
  */
 namespace ContentinumComponents\Storage;
 
-
+use ContentinumComponents\Storage\Exeption\InvalidValueStorageException;
 /**
  * File manager(s)
  *
@@ -38,6 +38,62 @@ class StorageFiles extends AbstractStorage
 {
 	const ERROR_READ_FILE = 'Can not open or read the file, missing filename!';
 	const ERROR_METHOD_READ_FILE = 'No method to read file content define!';
-
 	
+	/**
+	 * Filename
+	 *
+	 * @var unknown_type
+	 */
+	protected $_file;
+	
+	/**
+	 * Get filename
+	 *
+	 * @return the $_file
+	 */
+	public function getFile ()
+	{
+		return $this->_file;
+	}
+	
+	/**
+	 * Set Filename
+	 *
+	 * @param string $_file filename or filename and path to file
+	 * @return Contentinum_Model_File
+	 */
+	public function setFile ($file)
+	{
+		$this->_file = $file;
+		return $this;
+	}	
+	
+	/**
+	 * 
+	 * @param unknown $path
+	 * @param unknown $file
+	 * @return unknown|boolean
+	 */
+	public function fetchFileContent($path = null,$file = null)
+	{
+		if (!$path){
+			if (method_exists($this->getEntity(), 'getCurrentPath')){
+				$path = $this->getEntity()->getCurrentPath();
+			}
+			if (!$path){
+				throw new InvalidValueStorageException('No directory path given');
+			} 
+		}
+		
+		if (!$file){
+			if (null == ($file = $this->getFile())){
+				throw new InvalidValueStorageException('No file name given');
+			}
+		}
+		
+		if (false != ($content = @file_get_contents($this->getStorage()->setPath($path)->setCurrent($file)->getAdapter ()))){
+			return $content;
+		}
+		return false;
+	}
 }
