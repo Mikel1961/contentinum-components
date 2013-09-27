@@ -33,29 +33,70 @@ use Zend\Mvc\MvcEvent;
 
 /**
  * Contentinum Backend Abstract Controller
+ * 
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
- *
+ *        
  */
 abstract class AbstractBackendController extends AbstractContentinumController 
 {
-    /**
-     * Get current controller/page request
-     * Set/Get general settings requirements of page
-     * Start application
-     * @see \Zend\Mvc\Controller\AbstractActionController::onDispatch()
-     */
+	/**
+	 * Get current controller/page request
+	 * Set/Get general settings requirements of page
+	 * Start application
+	 * 
+	 * @see \Zend\Mvc\Controller\AbstractActionController::onDispatch()
+	 */
 	public function onDispatch(MvcEvent $e) 
 	{
 		$ctrl = $e->getRouteMatch ()->getParam ( 'controller' );
-		$e->getRouteMatch ()->setParam ( 'action', 'application' );
-		$e->setResult ( $this->application ($ctrl, str_replace('\\', '_' ,$ctrl), $this->getServiceLocator()->get('Mcwork\Pages'), $this->getServiceLocator ()->get ( 'Contentinum\Acl\DefaultRole' ), $this->getServiceLocator ()->get ( 'Contentinum\Acl\Acl' ) ) );
+		$page = str_replace ( '\\', '_', $ctrl );
+		$mcworkpages = $this->getServiceLocator ()->get ( 'Mcwork\Pages' );
+		
+		switch ($this->getAction($mcworkpages, $page)) {
+			case 'displaycontent' :
+				$e->getRouteMatch ()->setParam ( 'action', 'displaycontent' );
+				$apps = $this->displaycontent ( $ctrl, $page, $mcworkpages, $this->getServiceLocator ()->get ( 'Contentinum\Acl\DefaultRole' ), $this->getServiceLocator ()->get ( 'Contentinum\Acl\Acl' ) );
+				break;
+			default :
+				$e->getRouteMatch ()->setParam ( 'action', 'application' );
+				$apps = $this->application ( $ctrl, $page, $mcworkpages, $this->getServiceLocator ()->get ( 'Contentinum\Acl\DefaultRole' ), $this->getServiceLocator ()->get ( 'Contentinum\Acl\Acl' ) );
+		}
+		
+		$e->setResult ( $apps );
+	}
+	
+	/**
+	 *
+	 * @param \Zend\Config\Config $mcworkpages        	
+	 * @param string $page        	
+	 * @return string
+	 */
+	protected function getAction($mcworkpages, $page) 
+	{
+		if (isset ( $mcworkpages->$page ) && isset ( $mcworkpages->$page->action )) {
+			if (strlen ( $mcworkpages->$page->action ) > 1) {
+				return $mcworkpages->$page->action;
+			}
+		}
+		return '';
 	}
 	
 	/**
 	 * Application method
+	 * 
 	 * @param string $page controller/page name
 	 * @param string $role current user role
-	 * @param Zend\Acl\Acl $acl
+	 * @param Zend\Acl\Acl $acl        	
 	 */
 	abstract protected function application($ctrl, $page, $mcworkpages, $role = null, $acl = null);
+	
+	/**
+	 *
+	 * @param string $ctrl controller       	
+	 * @param string $page controller name        	
+	 * @param \Zend\Config\Config $mcworkpages        	
+	 * @param string $role user role        	
+	 * @param string $acl user access list       	
+	 */
+	abstract protected function displaycontent($ctrl, $page, $mcworkpages, $role = null, $acl = null);
 }
