@@ -31,7 +31,7 @@ use Zend\View\Helper\AbstractHelper;
 
 /**
  * Handle layout sequence
- * 
+ *
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
 class Filesize extends AbstractHelper 
@@ -39,7 +39,7 @@ class Filesize extends AbstractHelper
 	
 	/**
 	 * Converts bytes into KB, MB, GB or TB
-	 * 
+	 *
 	 * @param int $bytes
 	 *        	file size in bytes
 	 * @return string
@@ -51,21 +51,26 @@ class Filesize extends AbstractHelper
 		}
 		if ($bytes < 1024) {
 			$size = $bytes . ' bytes';
-		}
-		if ($bytes >= 1024 && $bytes < 1048576) {
-			$size = ceil ( $bytes / 1024 ) . ' KB';
-		}
-		
-		if ($bytes >= 1048576 && $bytes < 1073741824) {
-			$size = ceil ( $bytes / 1048576 ) . ' MB';
-		}
-		
-		if ($bytes >= 1073741824 && $bytes < 1099511627776) {
-			$size = ceil ( $bytes / 1073741824 ) . ' GB';
 		} else {
-			$size = ceil ( $bytes / 1099511627776 ) . ' TB';
+			if ($bytes >= 1024 && $bytes < 1048576) {
+				$size = ceil ( $bytes / 1024 ) . ' KB';
+			} else {
+				
+				if ($bytes >= 1048576 && $bytes < 1073741824) {
+					$size = ceil ( $bytes / 1048576 ) . ' MB';
+				} else {
+					
+					if ($bytes >= 1073741824 && $bytes < 1099511627776) {
+						$size = ceil ( $bytes / 1073741824 ) . ' GB';
+					} else {
+						
+						if ($bytes >= 1099511627776) {
+							$size = ceil ( $bytes / 1099511627776 ) . ' TB';
+						}
+					}
+				}
+			}
 		}
-		
 		return $size;
 	}
 }
