@@ -53,6 +53,14 @@ abstract class AbstractBackendController extends AbstractContentinumController
 		$mcworkpages = $this->getServiceLocator ()->get ( 'Mcwork\Pages' );
 		
 		switch ($this->getAction($mcworkpages, $page)) {
+			case 'setnullcontent' :
+				$e->getRouteMatch ()->setParam ( 'action', 'downloadcontent' );
+				$apps = $this->savecontent ( $ctrl, $page, $mcworkpages, $this->getServiceLocator ()->get ( 'Contentinum\Acl\DefaultRole' ), $this->getServiceLocator ()->get ( 'Contentinum\Acl\Acl' ) );
+				break;			
+			case 'downloadcontent' :
+				$e->getRouteMatch ()->setParam ( 'action', 'downloadcontent' );
+				$apps = $this->downloadcontent ( $ctrl, $page, $mcworkpages, $this->getServiceLocator ()->get ( 'Contentinum\Acl\DefaultRole' ), $this->getServiceLocator ()->get ( 'Contentinum\Acl\Acl' ) );
+				break;			
 			case 'displaycontent' :
 				$e->getRouteMatch ()->setParam ( 'action', 'displaycontent' );
 				$apps = $this->displaycontent ( $ctrl, $page, $mcworkpages, $this->getServiceLocator ()->get ( 'Contentinum\Acl\DefaultRole' ), $this->getServiceLocator ()->get ( 'Contentinum\Acl\Acl' ) );
@@ -99,4 +107,24 @@ abstract class AbstractBackendController extends AbstractContentinumController
 	 * @param string $acl user access list       	
 	 */
 	abstract protected function displaycontent($ctrl, $page, $mcworkpages, $role = null, $acl = null);
+	
+	/**
+	 *
+	 * @param string $ctrl controller
+	 * @param string $page controller name
+	 * @param \Zend\Config\Config $mcworkpages
+	 * @param string $role user role
+	 * @param string $acl user access list
+	 */
+	abstract protected function downloadcontent($ctrl, $page, $mcworkpages, $role = null, $acl = null);	
+	
+	/**
+	 *
+	 * @param string $ctrl controller
+	 * @param string $page controller name
+	 * @param \Zend\Config\Config $mcworkpages
+	 * @param string $role user role
+	 * @param string $acl user access list
+	 */
+	abstract protected function savecontent($ctrl, $page, $mcworkpages, $role = null, $acl = null);	
 }
