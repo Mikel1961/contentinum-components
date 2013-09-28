@@ -68,10 +68,12 @@ class StorageFiles extends AbstractStorage
 		return $this;
 	}	
 	
+
 	/**
 	 * 
-	 * @param unknown $path
-	 * @param unknown $file
+	 * @param string $path
+	 * @param string $file
+	 * @throws InvalidValueStorageException
 	 * @return unknown|boolean
 	 */
 	public function fetchFileContent($path = null,$file = null)
@@ -95,5 +97,38 @@ class StorageFiles extends AbstractStorage
 			return $content;
 		}
 		return false;
+	}
+	
+	/**
+	 * 
+	 * @param string $data file content data
+	 * @param string $path
+	 * @param string $file
+	 * @throws InvalidValueStorageException
+	 * @return boolean
+	 */
+	public function setFileContent($data, $path = null,$file = null)
+	{
+		if (!$path){
+			if (method_exists($this->getEntity(), 'getCurrentPath')){
+				$path = $this->getEntity()->getCurrentPath();
+			}
+			if (!$path){
+				throw new InvalidValueStorageException('No directory path given');
+			}
+		}
+		
+		if (!$file){
+			if (null == ($file = $this->getFile())){
+				throw new InvalidValueStorageException('No file name given');
+			}
+		}
+
+		if ( file_put_contents($this->getStorage()->setPath($path)->setCurrent($file)->getAdapter (), $data) ){
+			return true;
+		} else {
+			return false;
+		}
+		
 	}
 }
