@@ -53,7 +53,7 @@ abstract class AbstractBackendController extends AbstractContentinumController
 		$mcworkpages = $this->getServiceLocator ()->get ( 'Mcwork\Pages' );
 		
 		switch ($this->getAction($mcworkpages, $page)) {
-			case 'setnullcontent' :
+			case 'savecontent' :
 				$e->getRouteMatch ()->setParam ( 'action', 'downloadcontent' );
 				$apps = $this->savecontent ( $ctrl, $page, $mcworkpages, $this->getServiceLocator ()->get ( 'Contentinum\Acl\DefaultRole' ), $this->getServiceLocator ()->get ( 'Contentinum\Acl\Acl' ) );
 				break;			
