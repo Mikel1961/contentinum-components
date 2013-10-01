@@ -53,9 +53,9 @@ abstract class AbstractBackendController extends AbstractContentinumController
 		$mcworkpages = $this->getServiceLocator ()->get ( 'Mcwork\Pages' );
 		
 		switch ($this->getAction($mcworkpages, $page)) {
-			case 'savecontent' :
+			case 'contenthandle' :
 				$e->getRouteMatch ()->setParam ( 'action', 'downloadcontent' );
-				$apps = $this->savecontent ( $ctrl, $page, $mcworkpages, $this->getServiceLocator ()->get ( 'Contentinum\Acl\DefaultRole' ), $this->getServiceLocator ()->get ( 'Contentinum\Acl\Acl' ) );
+				$apps = $this->contenthandle ( $ctrl, $page, $mcworkpages, $this->getServiceLocator ()->get ( 'Contentinum\Acl\DefaultRole' ), $this->getServiceLocator ()->get ( 'Contentinum\Acl\Acl' ) );
 				break;			
 			case 'downloadcontent' :
 				$e->getRouteMatch ()->setParam ( 'action', 'downloadcontent' );
@@ -126,5 +126,5 @@ abstract class AbstractBackendController extends AbstractContentinumController
 	 * @param string $role user role
 	 * @param string $acl user access list
 	 */
-	abstract protected function savecontent($ctrl, $page, $mcworkpages, $role = null, $acl = null);	
+	abstract protected function contenthandle($ctrl, $page, $mcworkpages, $role = null, $acl = null);	
 }
