@@ -55,8 +55,51 @@ abstract class AbstractManager
      * @var object
      */
     protected $entity;
+	
+	/**
+	 * log priorites
+	 * 
+	 * @var array
+	 */
+	protected $priorities = array (
+			'EMERG' => 0,
+			'ALERT' => 1,
+			'CRIT' => 2,
+			'ERR' => 3,
+			'WARN' => 4,
+			'NOTICE' => 5,
+			'INFO' => 6,
+			'DEBUG' => 7 
+	);
 
     /**
+	 * @return the $priorities
+	 */
+	public function getPriorities() 
+	{
+		return $this->priorities;
+	}
+	
+	/**
+	 * @return the $priorities
+	 */
+	public function getPriority($key)
+	{
+		if (isset($this->priorities[$key])){
+			return $this->priorities[$key];
+		}
+		return 1;
+	}	
+
+	/**
+	 * @param multitype: $priorities
+	 */
+	public function setPriorities($priorities) 
+	{
+		$this->priorities = $priorities;
+	}
+
+	/**
      * Abtstract function to set entity name
      *
      * @param string $name entity name

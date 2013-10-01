@@ -40,6 +40,30 @@ use Zend\Mvc\MvcEvent;
 abstract class AbstractBackendController extends AbstractContentinumController 
 {
 	/**
+	 * Backend log priorites
+	 *
+	 * @var array
+	 */
+	protected $priorities = array (
+			'EMERG' => 20,
+			'ALERT' => 21,
+			'CRIT' => 22,
+			'ERR' => 23,
+			'WARN' => 24,
+			'NOTICE' => 25,
+			'INFO' => 26,
+			'DEBUG' => 27
+	);	
+	
+	/**
+	 * @return backend log $priorities
+	 */
+	public function getPriorities() 
+	{
+		return $this->priorities;
+	}
+
+	/**
 	 * Get current controller/page request
 	 * Set/Get general settings requirements of page
 	 * Start application

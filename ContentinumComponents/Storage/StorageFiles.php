@@ -93,19 +93,19 @@ class StorageFiles extends AbstractStorage
 		
 		if ( ! is_file($dir) ){
 			if (true == ($log = $this->getLogger())){
-				$log->err(self::ERROR_FILE_EXIST);
+				$log->log($this->getPriority('err'),self::ERROR_FILE_EXIST);
 			}
 			throw new InvalidValueStorageException(self::ERROR_FILE_EXIST);
 		}
 		
 		if (false !== ($content = @file_get_contents($dir))){
 			if (true == ($log = $this->getLogger())){
-				$log->info(self::SUCCESS_READ_FILE . ': '. $dir);
+				$log->log($this->getPriority('info'),self::SUCCESS_READ_FILE . ': '. $dir);
 			}			
 			return $content;
 		} else {
 			if (true == ($log = $this->getLogger())){
-				$log->err(self::ERROR_READ_FILE);
+				$log->log($this->getPriority('err'),self::ERROR_READ_FILE);
 			}			
 			throw new InvalidValueStorageException(self::ERROR_READ_FILE);
 		}
@@ -127,19 +127,19 @@ class StorageFiles extends AbstractStorage
 		
 		if ( ! is_file($dir) ){
 			if (true == ($log = $this->getLogger())){
-				$log->err(self::ERROR_FILE_EXIST . ': ' . $dir);
+				$log->log($this->getPriority('err'),self::ERROR_FILE_EXIST . ': ' . $dir);
 			}			
 			throw new InvalidValueStorageException(self::ERROR_FILE_EXIST);
 		}
 		
 		if ( false === @file_put_contents($dir, $data) ){
 			if (true == ($log = $this->getLogger())){
-				$log->err(self::ERROR_WRITE_FILE . ': ' . $dir);
+				$log->log($this->getPriority('err'),self::ERROR_WRITE_FILE . ': ' . $dir);
 			}
 			throw new InvalidValueStorageException(self::ERROR_READ_FILE);
 		} else {
 			if (true == ($log = $this->getLogger())){
-				$log->info(self::SUCCESS_WRITE_FILE . ': '. $dir);
+				$log->log($this->getPriority('info'),self::SUCCESS_WRITE_FILE . ': '. $dir);
 			}			
 			return self::SUCCESS_WRITE_FILE;
 		}
@@ -162,19 +162,19 @@ class StorageFiles extends AbstractStorage
 
 		if ( ! is_file($dir) ){
 			if (true == ($log = $this->getLogger())){
-				$log->err(self::ERROR_FILE_EXIST);
+				$log->log($this->getPriority('err'),self::ERROR_FILE_EXIST);
 			}
 			throw new InvalidValueStorageException(self::ERROR_FILE_EXIST);
 		}
 
 		if (! copy($dir, $dest)){
 			if (true == ($log = $this->getLogger())){
-				$log->err(self::ERROR_COPY_FILE .': '. $dir . ' to ' . $dest );
+				$log->log($this->getPriority('err'),self::ERROR_COPY_FILE .': '. $dir . ' to ' . $dest );
 			}
 			throw new InvalidValueStorageException(self::ERROR_READ_FILE);			
 		} else {
 			if (true == ($log = $this->getLogger())){
-				$log->info(self::SUCCESS_COPY_FILE . ': '. $dir . ' to ' . $dest);
+				$$log->log($this->getPriority('info'),self::SUCCESS_COPY_FILE . ': '. $dir . ' to ' . $dest);
 			}			
 			return self::SUCCESS_COPY_FILE;
 		}
@@ -196,19 +196,19 @@ class StorageFiles extends AbstractStorage
 	
 		if ( ! is_file($dir) ){
 			if (true == ($log = $this->getLogger())){
-				$log->err(self::ERROR_FILE_EXIST);
+				$log->log($this->getPriority('err'),self::ERROR_FILE_EXIST);
 			}
 			throw new InvalidValueStorageException(self::ERROR_FILE_EXIST);
 		}
 	
 		if ( false === @unlink($dir) ){
 			if (true == ($log = $this->getLogger())){
-				$log->err(self::ERROR_DELETE_FILE . ': ' . $dir );
+				$log->log($this->getPriority('err'),self::ERROR_DELETE_FILE . ': ' . $dir );
 			}
 			throw new InvalidValueStorageException(self::ERROR_READ_FILE);
 		} else {
 			if (true == ($log = $this->getLogger())){
-				$log->info(self::SUCCESS_DELETE_FILE . ': ' . $dir);
+				$log->log($this->getPriority('info'),self::SUCCESS_DELETE_FILE . ': ' . $dir);
 			}
 			return self::SUCCESS_DELETE_FILE;
 		}
