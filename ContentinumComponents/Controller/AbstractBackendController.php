@@ -56,6 +56,17 @@ abstract class AbstractBackendController extends AbstractContentinumController
 	);	
 	
 	/**
+	 * @return the $priorities
+	 */
+	public function getPriority($key)
+	{
+		if (isset($this->priorities[$key])){
+			return $this->priorities[$key];
+		}
+		return 1;
+	}	
+	
+	/**
 	 * @return backend log $priorities
 	 */
 	public function getPriorities() 
