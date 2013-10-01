@@ -27,7 +27,6 @@
  */
 namespace ContentinumComponents\Storage;
 
-
 use ContentinumComponents\Storage\Exeption\InvalidValueStorageException;
 /**
  * Abstract class file and directory manager(s)
