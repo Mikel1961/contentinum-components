@@ -37,12 +37,46 @@ use ContentinumComponents\Storage\Exeption\InvalidValueStorageException;
  */
 abstract class AbstractStorage extends AbstractManager
 {
+	
+	const ERROR_STORAGE_PATH = 'No directory path given';
+	const ERROR_STORAGE_MANAGER = 'There is no storage manager initiated';
+	const ERROR_FILE = 'No file name given';
 	/**
 	 * Logger
 	 * @var object
 	 */
 	protected $logger = false;	
 	
+	/**
+	 * Set a logger
+	 * @param object $logger
+	 */
+	public function setLogger($logger)
+	{
+		$this->logger = $logger;
+	}
+	
+	/**
+	 * Returns Zend logger
+	 * @return object
+	 */
+	public function getLogger()
+	{
+		return $this->logger;
+	}
+
+	/**
+	 * Check if logger available
+	 * @return boolean
+	 */
+	public function hasLogger()
+	{
+		if (false === $this->logger){
+			return false;
+		} else {
+			return true;
+		}
+	}	
 	
 	/**
 	 * @see \ContentinumComponents\Storage\AbstractManager::getEntity()
@@ -73,7 +107,10 @@ abstract class AbstractStorage extends AbstractManager
 		}
 		
 		if (! $this->storage instanceof StorageManager ) {
-			throw new InvalidValueStorageException( 'There is no storage manager initiated !' );
+			if (true == ($log = $this->getLogger())){
+				$log->err(self::ERROR_STORAGE_MANAGER);
+			}			
+			throw new InvalidValueStorageException( self::ERROR_STORAGE_MANAGER );
 		}
 		
 		return $this->storage;
@@ -109,40 +146,13 @@ abstract class AbstractStorage extends AbstractManager
 	    $this->storage = $storage;
 		
 		if (! $this->storage instanceof StorageManager) {
-			throw new InvalidValueStorageException ( 'There is no storage manager initiated !' );
+			if (true == ($log = $this->getLogger())){
+				$log->err(self::ERROR_STORAGE_MANAGER);
+			}			
+			throw new InvalidValueStorageException ( self::ERROR_STORAGE_MANAGER );
 		}
 		
 		return $this;
 	}
-
-	/**
-	 * Check if logger available
-	 * @return boolean
-	 */
-	public function hasLogger()
-	{
-		if (false === $this->logger){
-			return false;
-		} else {
-			return true;
-		}
-	}
 	
-	/**
-	 * Set a logger
-	 * @param object $logger
-	 */
-	public function setLogger($logger)
-	{
-		$this->logger = $logger;
-	}
-	
-	/**
-	 * Returns Zend logger
-	 * @return object
-	 */
-	public function getLogger()
-	{
-		return $this->logger;
-	}	
 }

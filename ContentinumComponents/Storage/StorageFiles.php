@@ -37,8 +37,17 @@ use ContentinumComponents\Storage\Exeption\InvalidValueStorageException;
 class StorageFiles extends AbstractStorage
 {
 	const ERROR_FILE_EXIST = 'The file does not exist or it was a false name or place specified';
-	const ERROR_READ_FILE = 'Can not open or read the file, missing filename!';
-	const ERROR_METHOD_READ_FILE = 'No method to read file content define!';
+	const ERROR_READ_FILE = 'Can not open and read the file';
+	const ERROR_WRITE_FILE = 'Can not open and write the file';
+	const ERROR_METHOD_READ_FILE = 'No method to read file content define';
+	const ERROR_DELETE_FILE = 'Can not delete this file';
+	const ERROR_COPY_FILE = 'File has been deleted';
+	const SUCCESS_COPY_FILE = 'File was copied';
+	const SUCCESS_READ_FILE = 'File content is displayed';
+	const SUCCESS_WRITE_FILE = 'File content has changed';
+	const SUCCESS_EMPTY_FILE = 'File has been emptied';
+	const SUCCESS_DELETE_FILE = 'File has been deleted';
+
 	
 	/**
 	 * Filename
@@ -91,7 +100,7 @@ class StorageFiles extends AbstractStorage
 		
 		if (false !== ($content = @file_get_contents($dir))){
 			if (true == ($log = $this->getLogger())){
-				$log->info('Read content from file '. $dir);
+				$log->info(self::SUCCESS_READ_FILE . ': '. $dir);
 			}			
 			return $content;
 		} else {
@@ -118,21 +127,21 @@ class StorageFiles extends AbstractStorage
 		
 		if ( ! is_file($dir) ){
 			if (true == ($log = $this->getLogger())){
-				$log->err(self::ERROR_FILE_EXIST);
+				$log->err(self::ERROR_FILE_EXIST . ': ' . $dir);
 			}			
 			throw new InvalidValueStorageException(self::ERROR_FILE_EXIST);
 		}
 		
 		if ( false === @file_put_contents($dir, $data) ){
 			if (true == ($log = $this->getLogger())){
-				$log->err(self::ERROR_READ_FILE);
+				$log->err(self::ERROR_WRITE_FILE . ': ' . $dir);
 			}
 			throw new InvalidValueStorageException(self::ERROR_READ_FILE);
 		} else {
 			if (true == ($log = $this->getLogger())){
-				$log->info('Write content in file '. $dir);
+				$log->info(self::SUCCESS_WRITE_FILE . ': '. $dir);
 			}			
-			return true;
+			return self::SUCCESS_WRITE_FILE;
 		}
 		
 	}
@@ -160,16 +169,51 @@ class StorageFiles extends AbstractStorage
 
 		if (! copy($dir, $dest)){
 			if (true == ($log = $this->getLogger())){
-				$log->err(self::ERROR_READ_FILE);
+				$log->err(self::ERROR_COPY_FILE .': '. $dir . ' to ' . $dest );
 			}
 			throw new InvalidValueStorageException(self::ERROR_READ_FILE);			
 		} else {
 			if (true == ($log = $this->getLogger())){
-				$log->info('Copy file '. $dir . ' to ' . $dest);
+				$log->info(self::SUCCESS_COPY_FILE . ': '. $dir . ' to ' . $dest);
 			}			
-			return true;
+			return self::SUCCESS_COPY_FILE;
 		}
 	}
+	
+	/**
+	 * Warpper method for unlink
+	 * @param string $data file content data
+	 * @param string $path
+	 * @param string $file
+	 * @throws InvalidValueStorageException
+	 * @return boolean
+	 */
+	public function deleteFile($path = null,$file = null)
+	{
+		$path = $this->issetPath($path);
+		$file = $this->issetFile($file);
+		$dir = $this->getStorage()->setPath($path)->setCurrent($file)->getAdapter ();
+	
+		if ( ! is_file($dir) ){
+			if (true == ($log = $this->getLogger())){
+				$log->err(self::ERROR_FILE_EXIST);
+			}
+			throw new InvalidValueStorageException(self::ERROR_FILE_EXIST);
+		}
+	
+		if ( false === @unlink($dir) ){
+			if (true == ($log = $this->getLogger())){
+				$log->err(self::ERROR_DELETE_FILE . ': ' . $dir );
+			}
+			throw new InvalidValueStorageException(self::ERROR_READ_FILE);
+		} else {
+			if (true == ($log = $this->getLogger())){
+				$log->info(self::SUCCESS_DELETE_FILE . ': ' . $dir);
+			}
+			return self::SUCCESS_DELETE_FILE;
+		}
+	
+	}	
 	
 	/**
 	 * Check if a path has been specified, or if it can be determined
