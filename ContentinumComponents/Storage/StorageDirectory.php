@@ -27,6 +27,8 @@
  */
 namespace ContentinumComponents\Storage;
 
+use ContentinumComponents\Storage\AbstractStorage;
+use ContentinumComponents\Storage\Exeption\ErrorLogicStorageException;
 /**
  * Directory manager(s)
  *
@@ -35,14 +37,20 @@ namespace ContentinumComponents\Storage;
  */
 class StorageDirectory extends AbstractStorage
 {
-	
+	const DIR_ADD_SUCCESS = 'success';
+	const DIR_ADD_ERROR = 'error';
+	const DIR_RM_SUCCESS = 'success';
+	const DIR_RM_ERROR = 'error';
+	const DIR_COPY_SUCCESS = 'success';
+	const DIR_COPY_ERROR = 'error';
+
 	/**
 	 * Fetch all content from this directory
 	 *
 	 * @param string $class name model class of directory api
 	 * @return array entries
 	 */
-	public function fetchAll ($entityName = null)
+	public function fetchAll ($entityName = null, $cd = null)
 	{
 	    if (null === $entityName){
 	    	$entity = $this->getEntity();
@@ -52,7 +60,7 @@ class StorageDirectory extends AbstractStorage
 	    }
 	    
 		$resultSet = $this->getStorage()
-		->setCurrent($entity->getCurrentPath())
+		->setCurrent($entity->getCurrentPath() . $cd)
 		->fetchAll();
 		$entries = array();
 		foreach ($resultSet as $row) {
@@ -62,5 +70,104 @@ class StorageDirectory extends AbstractStorage
 		}
 		return $entries;
 	}	
+	
+	/**
+	 * Create a new folder
+	 * @param string $newDir name of new folder
+	 * @param string $entityName base path directory (adatpter)
+	 * @param string $cd curent directory
+	 * @throws ErrorLogicStorageException
+	 * @return string
+	 */
+	public function makeDirectory($newDir, $entityName = null, $cd = null)
+	{
+		if (null === $entityName){
+			$entity = $this->getEntity();
+			$entityName = $entity->getEntityName();
+		} else {
+			$entity = new $entityName();
+		}	
+		$path = $this->getStorage()->getDocumentRoot();	
+		$path .= '/' . $entity->getCurrentPath();
+		if ($cd){
+			$path .= '/' . $cd;
+		}
+		try {
+			$this->getStorage()->create($path. DS . $newDir);
+			if (true == ($log = $this->getLogger())){
+				$log->info(self::DIR_ADD_SUCCESS . ' in ' .$path);
+			}	
+			return self::DIR_ADD_SUCCESS;
+		} catch (\Exception $e){
+			if (true == ($log = $this->getLogger())){
+				$log->err(self::DIR_ADD_ERROR. ': ' . $e->getMessage());
+			}	
+			throw new ErrorLogicStorageException(self::DIR_ADD_ERROR);		
+		}
+		
+	}
+
+    /**
+     * Remove files and directories recursively
+     * 
+     * @param string $rmDir            
+     * @param string $entityName            
+     * @param string $cd            
+     * @throws ErrorLogicStorageException
+     */
+    public function removeDirectory($rmDir, $entityName = null, $cd = null)
+    {
+        if (null === $entityName) {
+            $entity = $this->getEntity();
+            $entityName = $entity->getEntityName();
+        } else {
+            $entity = new $entityName();
+        }
+        $path = $this->getStorage()->getDocumentRoot();
+        $path .= '/' . $entity->getCurrentPath();
+        if ($cd) {
+            $path .= '/' . $cd;
+        }
+        try {
+            $this->getStorage()->rmDirectory($path . DS . $rmDir);
+            
+            if (true == ($log = $this->getLogger())) {
+                $log->info(self::DIR_RM_SUCCESS);
+            }
+            return self::DIR_RM_SUCCESS;
+        } catch (\Exception $e) {
+            if (true == ($log = $this->getLogger())) {
+                $log->err(self::DIR_RM_ERROR . ': ' . $e->getMessage());
+            }
+            throw new ErrorLogicStorageException(self::DIR_RM_ERROR);
+	    }	        
+	           
+	}
+		
+	/**
+	 * Copy files and directories recursively
+	 * @param string $source source folder
+	 * @param string $dest destination folder
+	 * @throws ErrorLogicStorageException
+	 * @return string
+	 */
+	public function copyDirectory($source, $dest)
+	{
+	    $source = $this->getStorage()->setPath($source)->getAdapter ();
+	    $dest = $this->getStorage()->setPath($dest)->getAdapter ();
+	    try {
+	    	$this->getStorage()->copyRecursive($source,$dest);
+	    
+	    	if (true == ($log = $this->getLogger())) {
+	    		$log->info(self::DIR_COPY_SUCCESS);
+	    	}
+	    	return self::DIR_COPY_SUCCESS;
+	    } catch (\Exception $e) {
+	    	if (true == ($log = $this->getLogger())) {
+	    		$log->err(self::DIR_COPY_ERROR . ': ' . $e->getMessage());
+	    	}
+	    	throw new ErrorLogicStorageException(self::DIR_COPY_ERROR);
+	    }	    
+	}
 	
 }

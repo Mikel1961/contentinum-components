@@ -40,6 +40,15 @@ class StorageManager
 	const CONFIG_DIRECTORY_PATH = 'path';
 	const CONFIG_FTP = 'ftp';
 	
+	const UNLINK_FILE = 'Delete file failed';
+	const COPY_FILE_ERROR = 'Error during copy file';
+	const CREATE_DIR_LOOP = 'Infinite loop detected';
+	const CREATE_DIR_EXISTS = 'Folder already exists';
+	const CREATE_DIR_BASEDIR = 'Path not in open_basedir paths';
+	const CREATE_DIR_ERROR = 'Could not create directory';
+	const RM_DIR_ERROR = 'Could not remove directory';
+	const FETCH_ALL_DIR_ERR = 'Directory not exists or not found';
+	
 	/**
 	 * Images extension
 	 *
@@ -310,10 +319,86 @@ class StorageManager
 		if (@unlink($file)) {
 			return true;
 		} else {
-			$filename = basename($file);
-			throw new ErrorLogicStorageException('Delete failed: ' . $filename);
+			throw new ErrorLogicStorageException(self::UNLINK_FILE);
 		}
 	}
+	
+	/**
+	 * Remove files and directories recursively
+	 * @param string $directory
+	 * @param boolen $empty
+	 * @throws ErrorLogicStorageException
+	 * @return boolean
+	 */
+	public function rmDirectory($directory, $empty = false)
+	{
+		if (substr($directory, - 1) == DS) {
+			$directory = substr($directory, 0, - 1);
+		}
+		if (! file_exists($directory) || ! is_dir($directory)) {
+			return false;
+		} elseif (is_readable($directory)) {
+			$handle = opendir($directory);
+			while (false !== ($item = readdir($handle))) {
+				if ($item != '.' && $item != '..') {
+					$path = $directory . DS . $item;
+					if (is_dir($path)) {
+						$this->rmDirectory($path);
+					} else {
+						$this->unlinkFile($path);
+					}
+				}
+			}
+			closedir($handle);
+			if ($empty == false) {
+				if (! rmdir($directory)) {
+					throw new ErrorLogicStorageException(self::RM_DIR_ERROR);
+				}
+			}
+		}
+		return true;
+	}	
+	
+	/**
+	 * Copy files recursively
+	 * @param string $source source path or file
+	 * @param string $dest destination path with/or file
+	 * @throws ErrorLogicStorageException
+	 * @return boolean
+	 */
+	public function copyRecursive($source, $dest){
+	
+		// Simple copy for a file
+		if (is_file($source)) {
+		    if (@copy($source, $dest)){
+		        return true;
+		    } else {
+		        throw new ErrorLogicStorageException(self::COPY_FILE_ERROR);
+		    }
+		}
+	
+		// Make destination directory
+		if (!is_dir($dest)) {
+			$this->create($dest);
+		}
+	
+		// Loop through the folder
+		$dir = dir($source);
+		while (false !== $entry = $dir->read()) {
+			// Skip pointers
+			if ($entry == '.' || $entry == '..') {
+				continue;
+			}
+	
+			// Deep copy directories
+			$this->copyRecursive($source.DS.$entry, $dest.DS.$entry);
+		}
+	
+		// Clean up
+		$dir->close();
+	
+		return true;
+	}	
 	
 	/**
 	 * Create a folder -- and all necessary parent folders
@@ -334,7 +419,7 @@ class StorageManager
 			$nested ++;
 			if (($nested > 20) || ($parent == $path)) {
 				$nested --;
-				throw new ErrorLogicStorageException('Infinite loop detected');
+				throw new ErrorLogicStorageException(self::CREATE_DIR_LOOP);
 			}
 			try {
 				self::create($parent);
@@ -348,7 +433,7 @@ class StorageManager
 		}
 		// Check if dir already exists
 		if (is_dir($path)) {
-			throw new ErrorLogicStorageException('Folder already exists');
+			throw new ErrorLogicStorageException(self::CREATE_DIR_EXISTS);
 		}
 		// Check for safe mode
 		if (true === $this->ftp) { // Connect the FTP client
@@ -379,7 +464,7 @@ class StorageManager
 				if ($inOBD == false) {
 					// throw exception because the path to be created is not in
 					// open_basedir
-					throw new ErrorLogicStorageException('Path not in open_basedir paths');
+					throw new ErrorLogicStorageException(self::CREATE_DIR_BASEDIR);
 				}
 			}
 			// First set umask
@@ -387,7 +472,7 @@ class StorageManager
 			// Create the path
 			if (! $ret = @mkdir($path, $this->mode)) {
 				@ umask($origmask);
-				throw new ErrorLogicStorageException('Could not create directory:' . $path);
+				throw new ErrorLogicStorageException(self::CREATE_DIR_ERROR);
 			}
 			// Reset umask
 			@ umask($origmask);
@@ -443,7 +528,7 @@ class StorageManager
 			asort($result);
 			return $result;
 		} else {
-			throw new ErrorLogicStorageException('Directory not exists or not found !');
+			throw new ErrorLogicStorageException(self::FETCH_ALL_DIR_ERR);
 		}
 	}
 	

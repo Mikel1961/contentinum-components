@@ -200,18 +200,19 @@ class StorageFiles extends AbstractStorage
 			}
 			throw new InvalidValueStorageException(self::ERROR_FILE_EXIST);
 		}
-	
-		if ( false === @unlink($dir) ){
+		
+		try {
+		    $this->getStorage()->unlinkFile($dir);
+		    if (true === ($log = $this->getLogger())){
+		    	$log->info(self::SUCCESS_DELETE_FILE . ': ' . $dir);
+		    }
+		    return self::SUCCESS_DELETE_FILE;		    
+		} catch (\Exception $e){
 			if (true == ($log = $this->getLogger())){
 				$log->err(self::ERROR_DELETE_FILE . ': ' . $dir );
 			}
 			throw new InvalidValueStorageException(self::ERROR_READ_FILE);
-		} else {
-			if (true == ($log = $this->getLogger())){
-				$log->info(self::SUCCESS_DELETE_FILE . ': ' . $dir);
-			}
-			return self::SUCCESS_DELETE_FILE;
-		}
+		} 
 	
 	}	
 	
