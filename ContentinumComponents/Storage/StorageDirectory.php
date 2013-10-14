@@ -37,12 +37,12 @@ use ContentinumComponents\Storage\Exeption\ErrorLogicStorageException;
  */
 class StorageDirectory extends AbstractStorage
 {
-	const DIR_ADD_SUCCESS = 'success';
-	const DIR_ADD_ERROR = 'error';
-	const DIR_RM_SUCCESS = 'success';
-	const DIR_RM_ERROR = 'error';
-	const DIR_COPY_SUCCESS = 'success';
-	const DIR_COPY_ERROR = 'error';
+	const DIR_ADD_SUCCESS = 'add_dir_success';
+	const DIR_ADD_ERROR = 'add_dir_error';
+	const DIR_RM_SUCCESS = 'rm_dir_success';
+	const DIR_RM_ERROR = 'rm_dir_error';
+	const DIR_COPY_SUCCESS = 'cp_dir_success';
+	const DIR_COPY_ERROR = 'cp_dir_error';
 
 	/**
 	 * Fetch all content from this directory
