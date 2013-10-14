@@ -88,9 +88,9 @@ class StorageDirectory extends AbstractStorage
 			$entity = new $entityName();
 		}	
 		$path = $this->getStorage()->getDocumentRoot();	
-		$path .= '/' . $entity->getCurrentPath();
+		$path .= DS . $entity->getCurrentPath();
 		if ($cd){
-			$path .= '/' . $cd;
+			$path .= DS . $cd;
 		}
 		try {
 			$this->getStorage()->create($path. DS . $newDir);
@@ -111,7 +111,7 @@ class StorageDirectory extends AbstractStorage
      * Remove files and directories recursively
      * 
      * @param string $rmDir            
-     * @param string $entityName            
+     * @param string $entityName base path directory (adatpter)            
      * @param string $cd            
      * @throws ErrorLogicStorageException
      */
@@ -124,9 +124,9 @@ class StorageDirectory extends AbstractStorage
             $entity = new $entityName();
         }
         $path = $this->getStorage()->getDocumentRoot();
-        $path .= '/' . $entity->getCurrentPath();
+        $path .= DS . $entity->getCurrentPath();
         if ($cd) {
-            $path .= '/' . $cd;
+            $path .= DS . $cd;
         }
         try {
             $this->getStorage()->rmDirectory($path . DS . $rmDir);
@@ -169,5 +169,33 @@ class StorageDirectory extends AbstractStorage
 	    	throw new ErrorLogicStorageException(self::DIR_COPY_ERROR);
 	    }	    
 	}
+	
+	/**
+	 * Is directory, warpper method for is_dir
+	 * @param string $dir directory
+	 * @param string $entityName base path directory (adatpter) 
+	 * @param string $cd current path
+	 * @return boolean
+	 */
+	public function isDirectory($dir, $entityName = null, $cd = null)
+	{
+		if (null === $entityName){
+			$entity = $this->getEntity();
+			$entityName = $entity->getEntityName();
+		} else {
+			$entity = new $entityName();
+		}
+		$path = $this->getStorage()->getDocumentRoot();
+		$path .= DS . $entity->getCurrentPath();
+		if ($cd){
+			$path .= DS . $cd;
+		}
+		if (@is_dir($path.DS.$dir)){
+		    return true;
+		} else {
+		    return false;
+		}
+	}
+	
 	
 }
