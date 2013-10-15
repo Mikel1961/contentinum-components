@@ -60,7 +60,7 @@ class StorageDirectory extends AbstractStorage
 	    }
 	    
 		$resultSet = $this->getStorage()
-		->setCurrent($entity->getCurrentPath() . $cd)
+		->setCurrent($entity->getCurrentPath() . DS . $cd)
 		->fetchAll();
 		$entries = array();
 		foreach ($resultSet as $row) {
