@@ -49,6 +49,7 @@ class MediasTableView extends AbstractHelper
             $i = 0;
             $iClass = 0;
             $headlines = array(
+                '#' => array(),
                 'Filename' => array(),
                 'Size' => array(
                     'head' => array(
@@ -65,7 +66,8 @@ class MediasTableView extends AbstractHelper
                     'body' => array(
                         'class' => 'hide-for-small text-right'
                     )
-                )
+                ),
+                '#' => array(),
             );
 
             
@@ -98,14 +100,16 @@ class MediasTableView extends AbstractHelper
                         
                         $i ++;
                         $rowContent = array();
+                        $rowContent[] = '&nbsp;';
                         $up = '';
                         if ($this->view->currentFolder) {
                             $array = explode(DS, $this->view->currentFolder);
                             if (null != array_pop($array)) {
-                                $up = '/' . implode('_', $array);
+                                $up = '/' . implode($this->view->seperator, $array);
                             }
                         }
                         $rowContent[] = '<a href="/mcwork/medias' . $up . '" class="small button"><i class="icon-arrow-up"></i></a>';
+                        $rowContent[] = '&nbsp;';
                         $rowContent[] = '&nbsp;';
                         $rowContent[] = '&nbsp;';
                         $tableFactory->setHtmlContent($rowContent);
@@ -119,14 +123,16 @@ class MediasTableView extends AbstractHelper
                     
                     $i ++;
                     $rowContent = array();
+                    $rowContent[] = '<input type="checkbox" value="'.$entry->filename.'" name="cb[]">';
                     $down = $entry->filename;
                     if ($this->view->currentFolder) {
                         $down = $this->view->currentFolder . DS . $entry->filename;
                     }
                     
-                    $rowContent[] = '<a href="/mcwork/medias/' . str_replace(DS, '_', $down) . '"><i class="icon-folder-close"></i> ' . $entry->filename . '</a>'; // . $this->mcworkTableEdit ( $tbl );
+                    $rowContent[] = '<a href="/mcwork/medias/' . str_replace(DS, $this->view->seperator, $down) . '"><i class="icon-folder-close"></i> ' . $entry->filename . '</a>'; // . $this->mcworkTableEdit ( $tbl );
                     $rowContent[] = '&nbsp;';
                     $rowContent[] = date("d.m.Y H:i:s", $entry->time);
+                    $rowContent[] = '<i class="icon-cog"></i>';
                     $tableFactory->setHtmlContent($rowContent);
                 }
             }
@@ -136,7 +142,7 @@ class MediasTableView extends AbstractHelper
                     
                     $i ++;
                     $rowContent = array();
-                    
+                    $rowContent[] = '<input type="checkbox" value="'.$entry->filename.'" name="cb[]">';
                     $rowContent[] = '<i class="icon-file"></i> ' . $entry->filename; // . $this->mcworkTableEdit ( $tbl );
                     $size = '';
                     if ($entry->width && $entry->height) {
@@ -145,6 +151,7 @@ class MediasTableView extends AbstractHelper
                     
                     $rowContent[] = $size . $this->view->filesize($entry->size);
                     $rowContent[] = date("d.m.Y H:i:s", $entry->time);
+                    $rowContent[] = '<i class="icon-cog"></i>';
                     $tableFactory->setHtmlContent($rowContent);
                 }
             }
@@ -154,10 +161,9 @@ class MediasTableView extends AbstractHelper
             $element = new \Zend\Form\Element\Hidden('current-folder');
             $element->setAttribute('id', 'current-folder');
             if ($this->view->currentFolder) {
-                $element->setValue($this->currentFolder);
+                $element->setValue($this->view->currentFolder);
             }
             $html .= $this->view->formhidden($element);
-            $html .= $this->view->translate($this->view->mcworkContent($this->view->page, $this->view->pagecontent, 'content'));
         }
         return $html;
     }
