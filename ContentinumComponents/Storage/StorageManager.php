@@ -40,6 +40,8 @@ class StorageManager
 	const CONFIG_DIRECTORY_PATH = 'path';
 	const CONFIG_FTP = 'ftp';
 	
+	const RENAME_FILE = 'Failed to rename the file or directory';
+	const RENAME_FILE_EXISTS = 'A file or directory with this name already exists';
 	const UNLINK_FILE = 'Delete file failed';
 	const COPY_FILE_ERROR = 'Error during copy file';
 	const CREATE_DIR_LOOP = 'Infinite loop detected';
@@ -47,6 +49,9 @@ class StorageManager
 	const CREATE_DIR_BASEDIR = 'Path not in open_basedir paths';
 	const CREATE_DIR_ERROR = 'Could not create directory';
 	const RM_DIR_ERROR = 'Could not remove directory';
+	const ZIP_MODUL_ERROR = 'Zip PHP module is not installed on this server';
+	const ZIP_CREATE_ERROR = 'Archive could not be created';
+	const UNZIP_FILE_ERROR = 'Unable to unzip this file';
 	const FETCH_ALL_DIR_ERR = 'Directory not exists or not found';
 	
 	/**
@@ -322,6 +327,47 @@ class StorageManager
 			throw new ErrorLogicStorageException(self::UNLINK_FILE);
 		}
 	}
+
+	/**
+	 * Renimae file or folder
+	 * @param unknown $fileName
+	 * @param unknown $newFileName
+	 * @throws ErrorLogicStorageException
+	 * @return boolean
+	 */
+    public function renameFile($fileName, $newFileName)
+    {
+        if (! file_exists($newFileName)) {
+            if (@rename($fileName, $fileName)) {
+                return true;
+            } else {
+                throw new ErrorLogicStorageException(self::RENAME_FILE);
+            }
+        } else {
+            throw new ErrorLogicStorageException(self::RENAME_FILE_EXISTS);
+        }
+    }	
+    
+    /**
+     * 
+     * @param unknown $files
+     * @param unknown $source
+     * @param unknown $destination
+     */
+    public function moveFiles($files, $source, $destination){
+    
+    	// batch move
+    	foreach($files as $file){
+    		if (!file_exists($destination.DS.$file)){
+    			if(strpos($destination.DS.$file, $source.DS.$file.DS) !== false){
+    				continue;
+    			}
+    			$this->renameFile($source.DS.$file, $destination.DS.$file);
+
+    		}
+    	}
+    	return;
+    }    
 	
 	/**
 	 * Remove files and directories recursively
@@ -336,7 +382,7 @@ class StorageManager
 			$directory = substr($directory, 0, - 1);
 		}
 		if (! file_exists($directory) || ! is_dir($directory)) {
-			return false;
+			throw new ErrorLogicStorageException(self::RM_DIR_ERROR);
 		} elseif (is_readable($directory)) {
 			$handle = opendir($directory);
 			while (false !== ($item = readdir($handle))) {
@@ -481,6 +527,107 @@ class StorageManager
 	}
 
 	/**
+	 * 
+	 * @param unknown $items
+	 * @param unknown $destination
+	 * @param unknown $cd
+	 * @throws ErrorLogicStorageException
+	 */
+    public function zipFiles($items, $destination, $cd)
+    {
+        if (! extension_loaded('zip')) {
+            throw new ErrorLogicStorageException(self::ZIP_MODUL_ERROR);
+        }
+        
+        if (substr($destination, - 4, 4) != '.zip') {
+            $destination = $destination . '.zip';
+        }
+        
+        $zip = new \ZipArchive();
+        
+        if (! $zip->open($destination, \ZipArchive::CREATE)) {
+            throw new ErrorLogicStorageException(self::ZIP_CREATE_ERROR);
+        }
+        
+        $startdir = str_replace('\\', '/', $cd);
+        
+        foreach ($items as $source) {
+            
+            $source = $cd . DS . $source;
+            
+            $source = str_replace('\\', '/', $source);
+            
+            if (is_dir($source) === true) {
+                $subdir = str_replace($startdir . '/', '', $source) . '/';
+                $zip->addEmptyDir($subdir);
+                
+                $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source), \RecursiveIteratorIterator::SELF_FIRST);
+                
+                foreach ($files as $file) {
+                    
+                    $file = str_replace('\\', '/', $file);
+                    
+                    // Ignore "." and ".." folders
+                    if (in_array(substr($file, strrpos($file, '/') + 1), array(
+                        '.',
+                        '..'
+                    )))
+                        continue;
+                    
+                    if (is_dir($file) === true) {
+                        $zip->addEmptyDir($subdir . str_replace($source . '/', '', $file . '/'));
+                    } else 
+                        if (is_file($file) === true) {
+                            $zip->addFile($file, $subdir . str_replace($source . '/', '', $file));
+                        }
+                }
+            } else 
+                if (is_file($source) === true) {
+                    $zip->addFile($source, basename($source));
+                }
+        }
+        
+        $zip->close();
+        
+        return;
+    }
+
+    /**
+     * 
+     * @param unknown $file
+     * @param unknown $cd
+     * @throws ErrorLogicStorageException
+     */
+    public function unzipFile($file, $cd)
+    {
+        if (! extension_loaded('zip')) {
+            throw new ErrorLogicStorageException(self::ZIP_MODUL_ERROR);
+        }
+        
+        $file = $cd . DS . $file;
+        
+        $zip = new \ZipArchive();
+        if ($zip->open($file) === TRUE) {
+            
+            $entries = array();
+            for ($idx = 0; $idx < $zip->numFiles; $idx ++) {
+                $zname = $zip->getNameIndex($idx);
+                if ($zname == pathinfo($file, PATHINFO_BASENAME)){
+                    continue;
+                }
+                $entries[] = $zname;
+            }
+            
+            $zip->extractTo($_SESSION['cwd'] . DS, $entries);
+            $zip->close();
+        } else {
+            throw new ErrorLogicStorageException(self::UNZIP_FILE_ERROR);
+        }
+        
+        return;
+    }    
+
+	/**
 	 * Get directory content
 	 *
 	 * @param string $dir
@@ -515,6 +662,7 @@ class StorageManager
 				$row['path'] = $element->getPath();
 				$row['pathname'] = $element->getPathname();
 				$row['type'] = $element->getType();
+				$row['mimetype'] = mime_content_type($element->getPathname());
 				$row['size'] = $element->getSize();
 				$row['time'] = $element->getMTime();
 				$row['perms'] = $element->getPerms();

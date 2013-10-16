@@ -43,6 +43,10 @@ class StorageDirectory extends AbstractStorage
 	const DIR_RM_ERROR = 'rm_dir_error';
 	const DIR_COPY_SUCCESS = 'cp_dir_success';
 	const DIR_COPY_ERROR = 'cp_dir_error';
+	const DIR_RENAME_SUCCESS = 'rename_dir_success';
+	const DIR_RENAME_ERROR = 'rename_dir_error';
+	const DIR_MOVE_SUCCESS = 'move_dir_success';
+	const DIR_MOVE_ERROR = 'move_dir_error';	
 
 	/**
 	 * Fetch all content from this directory
@@ -115,7 +119,7 @@ class StorageDirectory extends AbstractStorage
      * @param string $cd            
      * @throws ErrorLogicStorageException
      */
-    public function removeDirectory($rmDir, $entityName = null, $cd = null)
+    public function removeDirectory($rmItem, $entityName = null, $cd = null)
     {
         if (null === $entityName) {
             $entity = $this->getEntity();
@@ -129,8 +133,11 @@ class StorageDirectory extends AbstractStorage
             $path .= DS . $cd;
         }
         try {
-            $this->getStorage()->rmDirectory($path . DS . $rmDir);
-            
+            if ( is_file($path . DS . $rmItem)  ){
+                $this->getStorage()->unlinkFile($path . DS . $rmItem);
+            } else {
+                $this->getStorage()->rmDirectory($path . DS . $rmItem);
+            }
             if (true == ($log = $this->getLogger())) {
                 $log->info(self::DIR_RM_SUCCESS);
             }
@@ -171,6 +178,59 @@ class StorageDirectory extends AbstractStorage
 	}
 	
 	/**
+	 * 
+	 * @param unknown $sourceName
+	 * @param unknown $destName
+	 * @throws ErrorLogicStorageException
+	 * @return string
+	 */
+	public function renameDirItem($sourceName, $destName)
+	{
+	    $source = $this->getStorage()->setPath($sourceName)->getAdapter ();
+	    $dest = $this->getStorage()->setPath($destName)->getAdapter ();
+	    try {
+	    	$this->getStorage()->renameFile($source,$dest);
+	    	 
+	    	if (true == ($log = $this->getLogger())) {
+	    		$log->info(self::DIR_RENAME_SUCCESS);
+	    	}
+	    	return self::DIR_RENAME_SUCCESS;
+	    } catch (\Exception $e) {
+	    	if (true == ($log = $this->getLogger())) {
+	    		$log->err(self::DIR_RENMAE_ERROR . ': ' . $e->getMessage());
+	    	}
+	    	throw new ErrorLogicStorageException(self::DIR_RENAME_ERROR);
+	    }	    
+	}
+	
+	/**
+	 * 
+	 * @param unknown $files
+	 * @param unknown $sourceName
+	 * @param unknown $destName
+	 * @throws ErrorLogicStorageException
+	 * @return string
+	 */
+	public function moveDirItem($files,$sourceName, $destName)
+	{
+		$source = $this->getStorage()->setPath($sourceName)->getAdapter ();
+		$dest = $this->getStorage()->setPath($destName)->getAdapter ();
+		try {
+			$this->getStorage()->moveFiles($files, $source, $dest);
+			 
+			if (true == ($log = $this->getLogger())) {
+				$log->info(self::DIR_MOVE_SUCCESS);
+			}
+			return self::DIR_MOVE_SUCCESS;
+		} catch (\Exception $e) {
+			if (true == ($log = $this->getLogger())) {
+				$log->err(self::DIR_MOVE_ERROR . ': ' . $e->getMessage());
+			}
+			throw new ErrorLogicStorageException(self::DIR_MOVE_ERROR);
+		}
+	}	
+	
+	/**
 	 * Is directory, warpper method for is_dir
 	 * @param string $dir directory
 	 * @param string $entityName base path directory (adatpter) 
@@ -196,6 +256,4 @@ class StorageDirectory extends AbstractStorage
 		    return false;
 		}
 	}
-	
-	
 }

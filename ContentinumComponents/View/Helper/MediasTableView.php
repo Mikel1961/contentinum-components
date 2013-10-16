@@ -67,7 +67,14 @@ class MediasTableView extends AbstractHelper
                         'class' => 'hide-for-small text-right'
                     )
                 ),
-                '#' => array(),
+                '&nbsp;' => array(
+                    'head' => array(
+                    		'class' => 'cellToolbar'
+                    ),
+                    'body' => array(
+                    		'class' => 'cellToolbar'
+                    ),
+                ),
             );
 
             
@@ -132,7 +139,12 @@ class MediasTableView extends AbstractHelper
                     $rowContent[] = '<a href="/mcwork/medias/' . str_replace(DS, $this->view->seperator, $down) . '"><i class="icon-folder-close"></i> ' . $entry->filename . '</a>'; // . $this->mcworkTableEdit ( $tbl );
                     $rowContent[] = '&nbsp;';
                     $rowContent[] = date("d.m.Y H:i:s", $entry->time);
-                    $rowContent[] = '<i class="icon-cog"></i>';
+                                    
+                    $btn = '<button class="action-info" data-time="'.date("d.m.Y H:i:s", $entry->time).'" ';
+                    $btn .= 'data-crypt="'.$entry->filename.'" data-name="'.$entry->filename.'"';
+                    $btn .= 'data-type="dir" type="button"><i class="icon-cog"></i></button>';
+                     
+                    $rowContent[] = $btn;
                     $tableFactory->setHtmlContent($rowContent);
                 }
             }
@@ -148,10 +160,17 @@ class MediasTableView extends AbstractHelper
                     if ($entry->width && $entry->height) {
                         $size = '(' . $entry->width . ' x ' . $entry->height . ' px) ';
                     }
-                    
-                    $rowContent[] = $size . $this->view->filesize($entry->size);
+                    $filesize = $this->view->filesize($entry->size);
+                    $rowContent[] = $size . $filesize;
                     $rowContent[] = date("d.m.Y H:i:s", $entry->time);
-                    $rowContent[] = '<i class="icon-cog"></i>';
+                    
+                    $btn = '<button class="tbl-info tiny" data-time="'.date("d.m.Y H:i:s", $entry->time).'" ';
+                    $btn .= 'data-size="'. $filesize .'"';
+                    $btn .= 'data-crypt="'.$entry->filename.'" data-name="'.$entry->filename.'" ';
+                    $btn .= 'data-link="'.$entry->path.'" ';
+                    $btn .= 'data-type="'.$entry->mimetype.'" type="button"><i class="icon-cog"></i></button>';                    
+                    
+                    $rowContent[] = $btn;
                     $tableFactory->setHtmlContent($rowContent);
                 }
             }

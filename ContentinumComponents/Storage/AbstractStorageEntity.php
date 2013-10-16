@@ -86,6 +86,12 @@ abstract class AbstractStorageEntity extends AbstractEntity
 	protected $type;
 	
 	/**
+	 * Mime content type
+	 * @var string
+	 */
+	protected $mimetype;
+	
+	/**
 	 * File size
 	 * @var string
 	 */
@@ -309,6 +315,25 @@ abstract class AbstractStorageEntity extends AbstractEntity
 		$this->type = $type;
 		return $this;
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getMimetype() 
+	{
+		return $this->mimetype;
+	}
+	
+	/**
+	 * @param string $mimetype
+	 * @return \ContentinumComponents\Storage\AbstractStorageEntity
+	 */
+	public function setMimetype($mimetype) 
+	{
+		$this->mimetype = $mimetype;
+		return $this;
+	}
+	
 
 	/**
 	 * @return the $size
