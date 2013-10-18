@@ -28,269 +28,409 @@
 namespace ContentinumComponents\Storage;
 
 use ContentinumComponents\Storage\AbstractStorage;
+use ContentinumComponents\Storage\AbstractStorageEntity;
 use ContentinumComponents\Storage\Exeption\ErrorLogicStorageException;
+use ContentinumComponents\Storage\Exeption\InvalidValueStorageException;
+
 /**
  * Directory manager(s)
  *
- * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
- *        
+ * @author Michael Jochum, michael.jochum@jochum-mediaservices.de  
  */
 class StorageDirectory extends AbstractStorage
 {
-	const DIR_ADD_SUCCESS = 'add_dir_success';
-	const DIR_ADD_ERROR = 'add_dir_error';
-	const DIR_RM_SUCCESS = 'rm_dir_success';
-	const DIR_RM_ERROR = 'rm_dir_error';
-	const DIR_COPY_SUCCESS = 'cp_dir_success';
-	const DIR_COPY_ERROR = 'cp_dir_error';
-	const DIR_RENAME_SUCCESS = 'rename_dir_success';
-	const DIR_RENAME_ERROR = 'rename_dir_error';
-	const DIR_MOVE_SUCCESS = 'move_dir_success';
-	const DIR_MOVE_ERROR = 'move_dir_error';	
-
-	/**
-	 * Fetch all content from this directory
-	 *
-	 * @param string $class name model class of directory api
-	 * @return array entries
-	 */
-	public function fetchAll ($entityName = null, $cd = null)
-	{
-	    if (null === $entityName){
-	    	$entity = $this->getEntity();
-	    	$entityName = $entity->getEntityName();
-	    } else {
-	    	$entity = new $entityName();
-	    }
-	    
-		$resultSet = $this->getStorage()
-		->setCurrent($entity->getCurrentPath() . DS . $cd)
-		->fetchAll();
-		$entries = array();
-		foreach ($resultSet as $row) {
-			$entry = new $entityName();
-			$entry->setOptions($row);
-			$entries[] = $entry;
-		}
-		return $entries;
-	}	
-	
-	/**
-	 * Create a new folder
-	 * @param string $newDir name of new folder
-	 * @param string $entityName base path directory (adatpter)
-	 * @param string $cd curent directory
-	 * @throws ErrorLogicStorageException
-	 * @return string
-	 */
-	public function makeDirectory($newDir, $entityName = null, $cd = null)
-	{
-		if (null === $entityName){
-			$entity = $this->getEntity();
-			$entityName = $entity->getEntityName();
-		} else {
-			$entity = new $entityName();
-		}	
-		$path = $this->getStorage()->getDocumentRoot();	
-		$path .= DS . $entity->getCurrentPath();
-		if ($cd){
-			$path .= DS . $cd;
-		}
-		try {
-			$this->getStorage()->create($path. DS . $newDir);
-			if (true == ($log = $this->getLogger())){
-				$log->info(self::DIR_ADD_SUCCESS . ' in ' .$path);
-			}	
-			return self::DIR_ADD_SUCCESS;
-		} catch (\Exception $e){
-			if (true == ($log = $this->getLogger())){
-				$log->err(self::DIR_ADD_ERROR. ': ' . $e->getMessage());
-			}	
-			throw new ErrorLogicStorageException(self::DIR_ADD_ERROR);		
-		}
-		
-	}
+    const ERROR_STORAGE_ENTITY = 'Incorrect or missing entity to continue working';
+    const DIR_ADD_SUCCESS = 'add_dir_success';
+    const DIR_ADD_ERROR = 'add_dir_error';
+    const DIR_RM_SUCCESS = 'rm_dir_success';
+    const DIR_RM_ERROR = 'rm_dir_error';
+    const DIR_COPY_SUCCESS = 'cp_dir_success';
+    const DIR_COPY_ERROR = 'cp_dir_error';
+    const DIR_RENAME_SUCCESS = 'rename_dir_success';
+    const DIR_RENAME_ERROR = 'rename_dir_error';
+    const DIR_MOVE_SUCCESS = 'move_dir_success';
+    const DIR_MOVE_ERROR = 'move_dir_error';
+    const DIR_ZIP_SUCCESS = 'zip_dir_success';
+    const DIR_ZIP_ERROR = 'zip_dir_error';    
 
     /**
-     * Remove files and directories recursively
-     * 
-     * @param string $rmDir            
-     * @param string $entityName base path directory (adatpter)            
-     * @param string $cd            
-     * @throws ErrorLogicStorageException
+     * Fetch all content from this directory
+     * @param AbstractStorageEntity $entity
+     * @param string $cd current folder
+     * @throws InvalidValueStorageException
+     * @return multitype:array:AbstractStorageEntity
      */
-    public function removeDirectory($rmItem, $entityName = null, $cd = null)
+    public function fetchAll(AbstractStorageEntity $entity = null, $cd = null)
     {
-        if (null === $entityName) {
+        if (null === $entity) {
             $entity = $this->getEntity();
-            $entityName = $entity->getEntityName();
-        } else {
-            $entity = new $entityName();
+        } 
+        
+        if (! $entity instanceof AbstractStorageEntity) {
+			if (true == ($log = $this->getLogger())){
+				$log->err(self::ERROR_STORAGE_ENTITY);
+			}			
+			throw new InvalidValueStorageException( self::ERROR_STORAGE_ENTITY );
         }
+        
+        $entityName = $entity->getEntityName();
+        
+        $resultSet = $this->getStorage()
+            ->setCurrent($entity->getCurrentPath() . DS . $cd)
+            ->fetchAll();
+        $entries = array();
+        foreach ($resultSet as $row) {
+            $entry = new $entityName();
+            $entry->setOptions($row);
+            $entries[] = $entry;
+        }
+        return $entries;
+    }
+   
+    /**
+     * Create a new directory
+     * @param string $directory name of the new drecitory
+     * @param AbstractStorageEntity $entity
+     * @param string $cd current folder within to create the new directory
+     * @throws InvalidValueStorageException
+     * @throws ErrorLogicStorageException
+     * @return string
+     */
+    public function makeDirectory($directory, AbstractStorageEntity $entity = null, $cd = null)
+    {
+        if (null === $entity) {
+            $entity = $this->getEntity();
+        } 
+        
+        if (! $entity instanceof AbstractStorageEntity) {
+			if (true == ($log = $this->getLogger())){
+				$log->err(self::ERROR_STORAGE_ENTITY);
+			}			
+			throw new InvalidValueStorageException( self::ERROR_STORAGE_ENTITY );
+        }
+        
         $path = $this->getStorage()->getDocumentRoot();
         $path .= DS . $entity->getCurrentPath();
         if ($cd) {
             $path .= DS . $cd;
         }
         try {
-            if ( is_file($path . DS . $rmItem)  ){
-                $this->getStorage()->delete($path . DS . $rmItem);
-            } else {
-                $this->getStorage()->remove($path . DS . $rmItem);
-            }
+            $this->getStorage()->create($path . DS . $directory);
             if (true == ($log = $this->getLogger())) {
-                $log->info(self::DIR_RM_SUCCESS);
+                $log->info(self::DIR_ADD_SUCCESS . ' ' . $directory . ' in ' . $path);
+            }
+            return self::DIR_ADD_SUCCESS;
+        } catch (\Exception $e) {
+            if (true == ($log = $this->getLogger())) {
+                $log->err(self::DIR_ADD_ERROR . ' ' . $directory . ': ' . $e->getMessage());
+            }
+            throw new ErrorLogicStorageException(self::DIR_ADD_ERROR);
+        }
+    }
+    
+    /**
+     * Remove files and directories recursively
+     * @param array $items files, folders to delete
+     * @param AbstractStorageEntity $entity
+     * @param string $cd current folder source items
+     * @throws InvalidValueStorageException
+     * @throws ErrorLogicStorageException
+     * @return string
+     */
+    public function removeDirectory(array $items, AbstractStorageEntity $entity = null, $cd = null)
+    {
+        if (null === $entity) {
+            $entity = $this->getEntity();
+        } 
+        
+        if (! $entity instanceof AbstractStorageEntity) {
+			if (true == ($log = $this->getLogger())){
+				$log->err(self::ERROR_STORAGE_ENTITY);
+			}			
+			throw new InvalidValueStorageException( self::ERROR_STORAGE_ENTITY );
+        }
+        
+        $path = $this->getStorage()->getDocumentRoot();
+        $path .= DS . $entity->getCurrentPath();
+        if ($cd) {
+            $path .= DS . $cd;
+        }
+        try {
+            foreach ($items as $item) {
+                if (isset($item['value'])){
+                    $item = $item['value'];
+                }
+                if (is_file($path . DS . $item)) {
+                    $this->getStorage()->delete($path . DS . $item);
+                } else {
+                    $this->getStorage()->remove($path . DS . $item);
+                }
+                if (true == ($log = $this->getLogger())) {
+                    $log->info(self::DIR_RM_SUCCESS . ' ' . $item . ' in ' . $path);
+                }
             }
             return self::DIR_RM_SUCCESS;
         } catch (\Exception $e) {
             if (true == ($log = $this->getLogger())) {
-                $log->err(self::DIR_RM_ERROR . ': ' . $e->getMessage());
+                $log->err(self::DIR_RM_ERROR . ' ' . $item . ': ' . $e->getMessage());
             }
             throw new ErrorLogicStorageException(self::DIR_RM_ERROR);
-	    }	        
-	           
-	}
-	
-	/**
-	 * 
-	 * @param unknown $sourceName
-	 * @param unknown $destName
-	 * @throws ErrorLogicStorageException
-	 * @return string
-	 */
-	public function renameDirectory($sourceName, $destName,$entityName = null, $cd = null)
-	{
-	    if (null === $entityName) {
-	    	$entity = $this->getEntity();
-	    	$entityName = $entity->getEntityName();
-	    } else {
-	    	$entity = new $entityName();
-	    }	    
-	    $this->getStorage()->setPath(DS.$entity->getCurrentPath());
-	    if ($cd){
-	       $this->getStorage()->setCurrent($cd);
-	    }
-	    $source = $this->getStorage()->getAdapter ();
-	    $dest = $this->getStorage()->getAdapter ();
-	    try {
-	    	$this->getStorage()->rename($source.DS.$sourceName,$dest.DS.$destName);
-	    	 
-	    	if (true == ($log = $this->getLogger())) {
-	    		$log->info(self::DIR_RENAME_SUCCESS);
-	    	}
-	    	return self::DIR_RENAME_SUCCESS;
-	    } catch (\Exception $e) {
-	    	if (true == ($log = $this->getLogger())) {
-	    		$log->err(self::DIR_RENMAE_ERROR . ': ' . $e->getMessage());
-	    	}
-	    	throw new ErrorLogicStorageException(self::DIR_RENAME_ERROR);
-	    }	    
-	}
-	
-	/**
-	 * 
-	 * @param unknown $files
-	 * @param unknown $sourceName
-	 * @param unknown $destName
-	 * @throws ErrorLogicStorageException
-	 * @return string
-	 */
-	public function moveDirectory($files,$source, $destination, $entityName = null, $cd = null)
-	{
-	    if (null === $entityName) {
-	    	$entity = $this->getEntity();
-	    	$entityName = $entity->getEntityName();
-	    } else {
-	    	$entity = new $entityName();
-	    }
-	    		
-	    $destination = $this->getStorage()->getDocumentRoot() . DS . $destination;
-	    
-	    $this->getStorage()->setPath( DS . $entity->getCurrentPath());
-	    if ($cd){
-	    	$this->getStorage()->setCurrent($cd);
-	    }	    
-	    $source = $this->getStorage()->getAdapter ();
-	    
-		try {
-			$this->getStorage()->move($files, $source, $destination );
-			 
+        }
+    }
+    
+    /**
+     * Rename folders or files
+     * @param string $name source name
+     * @param string $rename new file or folder name
+     * @param AbstractStorageEntity $entity
+     * @param string $cd current folder source item
+     * @throws InvalidValueStorageException
+     * @throws ErrorLogicStorageException
+     * @return string
+     */
+    public function renameDirectory($name, $rename, AbstractStorageEntity $entity = null, $cd = null)
+    {
+        if (null === $entity) {
+            $entity = $this->getEntity();
+        } 
+        
+        if (! $entity instanceof AbstractStorageEntity) {
+			if (true == ($log = $this->getLogger())){
+				$log->err(self::ERROR_STORAGE_ENTITY);
+			}			
+			throw new InvalidValueStorageException( self::ERROR_STORAGE_ENTITY );
+        }
+        
+        $this->getStorage()->setPath(DS . $entity->getCurrentPath());
+        if ($cd) {
+            $this->getStorage()->setCurrent($cd);
+        }
+        $source = $this->getStorage()->getAdapter();
+        $destination = $this->getStorage()->getAdapter();
+        try {
+            $this->getStorage()->rename($source . DS . $name, $destination . DS . $rename);
+            
+            if (true == ($log = $this->getLogger())) {
+                $log->info(self::DIR_RENAME_SUCCESS . ' ' . $name . ' to ' . $rename);
+            }
+            return self::DIR_RENAME_SUCCESS;
+        } catch (\Exception $e) {
+            if (true == ($log = $this->getLogger())) {
+                $log->err(self::DIR_RENMAE_ERROR . ' ' . $name . ': ' . $e->getMessage());
+            }
+            throw new ErrorLogicStorageException(self::DIR_RENAME_ERROR);
+        }
+    }
+    
+    /**
+     * Move folder and/or files
+     * @param array $items files, folders to move
+     * @param string $destination destination path
+     * @param AbstractStorageEntity $entity AbstractStorageEntity
+     * @param string $cd current folder source item
+     * @throws InvalidValueStorageException
+     * @throws ErrorLogicStorageException
+     * @return string
+     */
+    public function moveDirectory(array $items, $destination, AbstractStorageEntity $entity = null, $cd = null)
+    {
+        if (null === $entity) {
+            $entity = $this->getEntity();
+        } 
+        
+        if (! $entity instanceof AbstractStorageEntity) {
+			if (true == ($log = $this->getLogger())){
+				$log->err(self::ERROR_STORAGE_ENTITY);
+			}			
+			throw new InvalidValueStorageException( self::ERROR_STORAGE_ENTITY );
+        }
+        
+        $destination = $this->getStorage()->getDocumentRoot() . DS . $destination;
+        
+        $this->getStorage()->setPath(DS . $entity->getCurrentPath());
+        if ($cd) {
+            $this->getStorage()->setCurrent($cd);
+        }
+        $source = $this->getStorage()->getAdapter();
+        
+        try {
+            $this->getStorage()->move($items, $source, $destination);
+            if (true == ($log = $this->getLogger())) {
+                $log->info(self::DIR_MOVE_SUCCESS);
+            }
+            return self::DIR_MOVE_SUCCESS;
+        } catch (\Exception $e) {
+            if (true == ($log = $this->getLogger())) {
+                $log->err(self::DIR_MOVE_ERROR . ': ' . $e->getMessage());
+            }
+            throw new ErrorLogicStorageException(self::DIR_MOVE_ERROR);
+        }
+    }
+    
+    /**
+     * Copy files and directories recursively
+     * 
+     * @param array $items source files or folder
+     * @param string $destination destination folder
+     * @param AbstractStorageEntity $entity
+     * @param string $cd current folder source item
+     * @throws InvalidValueStorageException
+     * @throws ErrorLogicStorageException
+     * @return string
+     */
+    public function copyDirectory(array $items, $destination, AbstractStorageEntity $entity = null, $cd = null)
+    {
+        if (null === $entity) {
+            $entity = $this->getEntity();
+        } 
+        
+        if (! $entity instanceof AbstractStorageEntity) {
+			if (true == ($log = $this->getLogger())){
+				$log->err(self::ERROR_STORAGE_ENTITY);
+			}			
+			throw new InvalidValueStorageException( self::ERROR_STORAGE_ENTITY );
+        }
+        
+        $destination = $this->getStorage()->getDocumentRoot() . DS . $destination;
+        
+        $this->getStorage()->setPath(DS . $entity->getCurrentPath());
+        if ($cd) {
+            $this->getStorage()->setCurrent($cd);
+        }
+        $source = $this->getStorage()->getAdapter();
+        
+        try {
+            foreach ($items as $item) {
+                $this->getStorage()->copy($source . DS . $item['value'], $destination . DS . $item['value']);
+                if (true == ($log = $this->getLogger())) {
+                    $log->info(self::DIR_COPY_SUCCESS . ' ' . $item['value'] . ' from ' . $source . ' to ' . $destination);
+                }
+            }
+            return self::DIR_COPY_SUCCESS;
+        } catch (\Exception $e) {
+            if (true == ($log = $this->getLogger())) {
+                $log->err(self::DIR_COPY_ERROR . ': ' . $e->getMessage());
+            }
+            throw new ErrorLogicStorageException(self::DIR_COPY_ERROR);
+        }
+    }
+    
+    /**
+     * Zip files and directories recursively
+     * @param array $items files, folders to delete
+     * @param string $destination name of zip archive
+     * @param AbstractStorageEntity $entity
+     * @param string $cd current folder source items
+     * @throws InvalidValueStorageException
+     * @throws ErrorLogicStorageException
+     * @return string
+     */
+    public function zipDirectory(array $items, $destination, AbstractStorageEntity $entity = null, $cd = null)
+    {
+    	if (null === $entity) {
+    		$entity = $this->getEntity();
+    	}
+    
+    	if (! $entity instanceof AbstractStorageEntity) {
+    		if (true == ($log = $this->getLogger())){
+    			$log->err(self::ERROR_STORAGE_ENTITY);
+    		}
+    		throw new InvalidValueStorageException( self::ERROR_STORAGE_ENTITY );
+    	}
+    
+    	$path = $this->getStorage()->getDocumentRoot();
+    	$path .= DS . $entity->getCurrentPath();
+    	if ($cd) {
+    		$path .= DS . $cd;
+    	}
+    	try {
+    	    $this->getStorage()->zip($items, $destination, $path);
 			if (true == ($log = $this->getLogger())) {
-				$log->info(self::DIR_MOVE_SUCCESS);
+				$log->info(self::DIR_ZIP_SUCCESS . ' ' . $path);
 			}
-			return self::DIR_MOVE_SUCCESS;
-		} catch (\Exception $e) {
-			if (true == ($log = $this->getLogger())) {
-				$log->err(self::DIR_MOVE_ERROR . ': ' . $e->getMessage());
-			}
-			throw new ErrorLogicStorageException(self::DIR_MOVE_ERROR);
-		}
-	}	
-	
-	/**
-	 * Copy files and directories recursively
-	 * @param array $source source files or folder
-	 * @param string $dest destination folder
-	 * @throws ErrorLogicStorageException
-	 * @return string
-	 */
-	public function copyDirectory(array $source, $destination, $entityName = null, $cd = null)
-	{
-		if (null === $entityName) {
-			$entity = $this->getEntity();
-			$entityName = $entity->getEntityName();
-		} else {
-			$entity = new $entityName();
-		}
-		$destination = $this->getStorage()->getDocumentRoot() . DS . $destination;
-		 
-		$this->getStorage()->setPath( DS . $entity->getCurrentPath());
-		if ($cd){
-			$this->getStorage()->setCurrent($cd);
-		}
-		 
-		$sourceDir= $this->getStorage()->getAdapter ();
-	
-		try {
-			foreach ($source as $item){
-				$this->getStorage()->copy($sourceDir.DS.$item['value'],$destination.DS.$item['value']);
-			}
-			if (true == ($log = $this->getLogger())) {
-				$log->info(self::DIR_COPY_SUCCESS);
-			}
-			return self::DIR_COPY_SUCCESS;
-		} catch (\Exception $e) {
-			if (true == ($log = $this->getLogger())) {
-				$log->err(self::DIR_COPY_ERROR . ': ' . $e->getMessage());
-			}
-			throw new ErrorLogicStorageException(self::DIR_COPY_ERROR);
-		}
-	}	
-	
-	/**
-	 * Is directory, warpper method for is_dir
-	 * @param string $dir directory
-	 * @param string $entityName base path directory (adatpter) 
-	 * @param string $cd current path
-	 * @return boolean
-	 */
-	public function isDirectory($dir, $entityName = null, $cd = null)
-	{
-		if (null === $entityName){
-			$entity = $this->getEntity();
-			$entityName = $entity->getEntityName();
-		} else {
-			$entity = new $entityName();
-		}
-		$path = $this->getStorage()->getDocumentRoot();
-		$path .= DS . $entity->getCurrentPath();
-		if ($cd){
-			$path .= DS . $cd;
-		}
-		if (@is_dir($path.DS.$dir)){
-		    return true;
-		} else {
-		    return false;
-		}
-	}
+    		return self::DIR_ZIP_SUCCESS;
+    	} catch (\Exception $e) {
+    		if (true == ($log = $this->getLogger())) {
+    			$log->err(self::DIR_ZIP_ERROR . ': ' . $e->getMessage());
+    		}
+    		throw new ErrorLogicStorageException(self::DIR_ZIP_ERROR);
+    	}
+    } 
+
+    
+    /**
+     * Unzip a item
+     * @param string $file name zip archive file
+     * @param AbstractStorageEntity $entity
+     * @param string $cd current folder within to create the new directory
+     * @throws InvalidValueStorageException
+     * @throws ErrorLogicStorageException
+     * @return string
+     */
+    public function unzipDirectory($file, AbstractStorageEntity $entity = null, $cd = null)
+    {
+    	if (null === $entity) {
+    		$entity = $this->getEntity();
+    	}
+    
+    	if (! $entity instanceof AbstractStorageEntity) {
+    		if (true == ($log = $this->getLogger())){
+    			$log->err(self::ERROR_STORAGE_ENTITY);
+    		}
+    		throw new InvalidValueStorageException( self::ERROR_STORAGE_ENTITY );
+    	}
+    
+    	$path = $this->getStorage()->getDocumentRoot();
+    	$path .= DS . $entity->getCurrentPath();
+    	if ($cd) {
+    		$path .= DS . $cd;
+    	}
+    	try {
+    		$this->getStorage()->unzip($file, $path);
+    		if (true == ($log = $this->getLogger())) {
+    			$log->info(self::DIR_UNZIP_SUCCESS . ' ' . $file . ' in ' . $path);
+    		}
+    		return self::DIR_UNZIP_SUCCESS;
+    	} catch (\Exception $e) {
+    		if (true == ($log = $this->getLogger())) {
+    			$log->err(self::DIR_UNZIP_ERROR . ' ' . $file . ': ' . $e->getMessage());
+    		}
+    		throw new ErrorLogicStorageException(self::DIR_UNZIP_ERROR);
+    	}
+    }    
+    
+
+    /**
+     * Is directory, warpper method for is_dir
+     * 
+     * @param string $directory folder name
+     * @param AbstractStorageEntity $entity
+     * @param string $cd current folder source item
+     * @throws InvalidValueStorageException
+     * @return boolean
+     */
+    public function isDirectory($directory, AbstractStorageEntity $entity = null, $cd = null)
+    {
+        if (null === $entity) {
+            $entity = $this->getEntity();
+        } 
+        
+        if (! $entity instanceof AbstractStorageEntity) {
+			if (true == ($log = $this->getLogger())){
+				$log->err(self::ERROR_STORAGE_ENTITY);
+			}			
+			throw new InvalidValueStorageException( self::ERROR_STORAGE_ENTITY );
+        }
+        
+        $path = $this->getStorage()->getDocumentRoot();
+        $path .= DS . $entity->getCurrentPath();
+        if ($cd) {
+            $path .= DS . $cd;
+        }
+        if (@is_dir($path . DS . $directory)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

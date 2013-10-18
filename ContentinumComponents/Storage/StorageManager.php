@@ -337,7 +337,7 @@ class StorageManager
 	 */
     public function rename($source, $destination)
     {
-        if (! file_exists($source)) {
+        if (! file_exists($destination)) {
             if (@rename($source, $destination)) {
                 return true;
             } else {
@@ -557,6 +557,9 @@ class StorageManager
         $startdir = str_replace('\\', '/', $cd);
         
         foreach ($items as $source) {
+            if (isset($source['value'])){
+                $source = $source['value'];
+            }
             
             $source = $cd . DS . $source;
             
