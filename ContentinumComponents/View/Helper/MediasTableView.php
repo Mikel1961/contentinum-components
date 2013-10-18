@@ -44,13 +44,22 @@ class MediasTableView extends AbstractHelper
         if (empty($entries)) {
             $html = '<p>' . $this->view->translate('No documents or images found') . '</p>';
         } else {
+            $url = 'http://labs.contentinum5.net/mcwork/medias/download/';
+            $cddownload = '';
+            if ($this->view->currentFolder) {
+            	$cddownload = str_replace( DS, $this->seperator, $this->view->currentFolder );
+            }
             $tableFactory = new HtmlTable(new FactoryTable());
             $tableFactory->setAttributes('class', 'table table-hover table-nomargin table-bordered');
             $i = 0;
             $iClass = 0;
             $headlines = array(
                 '#' => array(),
-                'Filename' => array(),
+                'Filename' => array(
+                    'body' => array(
+                    		'class' => 'filename'
+                    )
+                ),
                 'Size' => array(
                     'head' => array(
                         'class' => 'hide-for-small text-right'
@@ -140,8 +149,8 @@ class MediasTableView extends AbstractHelper
                     $rowContent[] = '&nbsp;';
                     $rowContent[] = date("d.m.Y H:i:s", $entry->time);
                                     
-                    $btn = '<button class="action-info" data-time="'.date("d.m.Y H:i:s", $entry->time).'" ';
-                    $btn .= 'data-crypt="'.$entry->filename.'" data-name="'.$entry->filename.'"';
+                    $btn = '<button class="tbl-info tiny" data-time="'.date("d.m.Y H:i:s", $entry->time).'" ';
+                    $btn .= 'data-crypt="'.$entry->filename.'" data-name="'.$entry->filename.'" ';
                     $btn .= 'data-type="dir" type="button"><i class="icon-cog"></i></button>';
                      
                     $rowContent[] = $btn;
@@ -155,7 +164,7 @@ class MediasTableView extends AbstractHelper
                     $i ++;
                     $rowContent = array();
                     $rowContent[] = '<input type="checkbox" value="'.$entry->filename.'" name="cb[]">';
-                    $rowContent[] = '<i class="icon-file"></i> ' . $entry->filename; // . $this->mcworkTableEdit ( $tbl );
+                    $rowContent[] = '<i class="icon-file"></i> ' . $entry->filename;
                     $size = '';
                     if ($entry->width && $entry->height) {
                         $size = '(' . $entry->width . ' x ' . $entry->height . ' px) ';
@@ -165,9 +174,10 @@ class MediasTableView extends AbstractHelper
                     $rowContent[] = date("d.m.Y H:i:s", $entry->time);
                     
                     $btn = '<button class="tbl-info tiny" data-time="'.date("d.m.Y H:i:s", $entry->time).'" ';
-                    $btn .= 'data-size="'. $filesize .'"';
+                    $btn .= 'data-size="'. $filesize .'" ';
                     $btn .= 'data-crypt="'.$entry->filename.'" data-name="'.$entry->filename.'" ';
-                    $btn .= 'data-link="'.$entry->path.'" ';
+                    $btn .= 'data-link="'.$entry->pathname.'" ';
+                    $btn .= 'data-download="'.$url.$entry->filename . '/' . $cddownload. '" ';
                     $btn .= 'data-type="'.$entry->mimetype.'" type="button"><i class="icon-cog"></i></button>';                    
                     
                     $rowContent[] = $btn;

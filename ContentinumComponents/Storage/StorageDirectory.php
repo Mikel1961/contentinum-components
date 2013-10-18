@@ -134,9 +134,9 @@ class StorageDirectory extends AbstractStorage
         }
         try {
             if ( is_file($path . DS . $rmItem)  ){
-                $this->getStorage()->unlinkFile($path . DS . $rmItem);
+                $this->getStorage()->delete($path . DS . $rmItem);
             } else {
-                $this->getStorage()->rmDirectory($path . DS . $rmItem);
+                $this->getStorage()->remove($path . DS . $rmItem);
             }
             if (true == ($log = $this->getLogger())) {
                 $log->info(self::DIR_RM_SUCCESS);
@@ -150,32 +150,6 @@ class StorageDirectory extends AbstractStorage
 	    }	        
 	           
 	}
-		
-	/**
-	 * Copy files and directories recursively
-	 * @param string $source source folder
-	 * @param string $dest destination folder
-	 * @throws ErrorLogicStorageException
-	 * @return string
-	 */
-	public function copyDirectory($source, $dest)
-	{
-	    $source = $this->getStorage()->setPath($source)->getAdapter ();
-	    $dest = $this->getStorage()->setPath($dest)->getAdapter ();
-	    try {
-	    	$this->getStorage()->copyRecursive($source,$dest);
-	    
-	    	if (true == ($log = $this->getLogger())) {
-	    		$log->info(self::DIR_COPY_SUCCESS);
-	    	}
-	    	return self::DIR_COPY_SUCCESS;
-	    } catch (\Exception $e) {
-	    	if (true == ($log = $this->getLogger())) {
-	    		$log->err(self::DIR_COPY_ERROR . ': ' . $e->getMessage());
-	    	}
-	    	throw new ErrorLogicStorageException(self::DIR_COPY_ERROR);
-	    }	    
-	}
 	
 	/**
 	 * 
@@ -184,12 +158,22 @@ class StorageDirectory extends AbstractStorage
 	 * @throws ErrorLogicStorageException
 	 * @return string
 	 */
-	public function renameDirItem($sourceName, $destName)
+	public function renameDirectory($sourceName, $destName,$entityName = null, $cd = null)
 	{
-	    $source = $this->getStorage()->setPath($sourceName)->getAdapter ();
-	    $dest = $this->getStorage()->setPath($destName)->getAdapter ();
+	    if (null === $entityName) {
+	    	$entity = $this->getEntity();
+	    	$entityName = $entity->getEntityName();
+	    } else {
+	    	$entity = new $entityName();
+	    }	    
+	    $this->getStorage()->setPath(DS.$entity->getCurrentPath());
+	    if ($cd){
+	       $this->getStorage()->setCurrent($cd);
+	    }
+	    $source = $this->getStorage()->getAdapter ();
+	    $dest = $this->getStorage()->getAdapter ();
 	    try {
-	    	$this->getStorage()->renameFile($source,$dest);
+	    	$this->getStorage()->rename($source.DS.$sourceName,$dest.DS.$destName);
 	    	 
 	    	if (true == ($log = $this->getLogger())) {
 	    		$log->info(self::DIR_RENAME_SUCCESS);
@@ -211,12 +195,25 @@ class StorageDirectory extends AbstractStorage
 	 * @throws ErrorLogicStorageException
 	 * @return string
 	 */
-	public function moveDirItem($files,$sourceName, $destName)
+	public function moveDirectory($files,$source, $destination, $entityName = null, $cd = null)
 	{
-		$source = $this->getStorage()->setPath($sourceName)->getAdapter ();
-		$dest = $this->getStorage()->setPath($destName)->getAdapter ();
+	    if (null === $entityName) {
+	    	$entity = $this->getEntity();
+	    	$entityName = $entity->getEntityName();
+	    } else {
+	    	$entity = new $entityName();
+	    }
+	    		
+	    $destination = $this->getStorage()->getDocumentRoot() . DS . $destination;
+	    
+	    $this->getStorage()->setPath( DS . $entity->getCurrentPath());
+	    if ($cd){
+	    	$this->getStorage()->setCurrent($cd);
+	    }	    
+	    $source = $this->getStorage()->getAdapter ();
+	    
 		try {
-			$this->getStorage()->moveFiles($files, $source, $dest);
+			$this->getStorage()->move($files, $source, $destination );
 			 
 			if (true == ($log = $this->getLogger())) {
 				$log->info(self::DIR_MOVE_SUCCESS);
@@ -227,6 +224,46 @@ class StorageDirectory extends AbstractStorage
 				$log->err(self::DIR_MOVE_ERROR . ': ' . $e->getMessage());
 			}
 			throw new ErrorLogicStorageException(self::DIR_MOVE_ERROR);
+		}
+	}	
+	
+	/**
+	 * Copy files and directories recursively
+	 * @param array $source source files or folder
+	 * @param string $dest destination folder
+	 * @throws ErrorLogicStorageException
+	 * @return string
+	 */
+	public function copyDirectory(array $source, $destination, $entityName = null, $cd = null)
+	{
+		if (null === $entityName) {
+			$entity = $this->getEntity();
+			$entityName = $entity->getEntityName();
+		} else {
+			$entity = new $entityName();
+		}
+		$destination = $this->getStorage()->getDocumentRoot() . DS . $destination;
+		 
+		$this->getStorage()->setPath( DS . $entity->getCurrentPath());
+		if ($cd){
+			$this->getStorage()->setCurrent($cd);
+		}
+		 
+		$sourceDir= $this->getStorage()->getAdapter ();
+	
+		try {
+			foreach ($source as $item){
+				$this->getStorage()->copy($sourceDir.DS.$item['value'],$destination.DS.$item['value']);
+			}
+			if (true == ($log = $this->getLogger())) {
+				$log->info(self::DIR_COPY_SUCCESS);
+			}
+			return self::DIR_COPY_SUCCESS;
+		} catch (\Exception $e) {
+			if (true == ($log = $this->getLogger())) {
+				$log->err(self::DIR_COPY_ERROR . ': ' . $e->getMessage());
+			}
+			throw new ErrorLogicStorageException(self::DIR_COPY_ERROR);
 		}
 	}	
 	

@@ -316,7 +316,7 @@ class StorageManager
 	 * @param mixed $file The file name or an array of file names
 	 * @return boolean True on success
 	 */
-	public function unlinkFile ($file)
+	public function delete ($file)
 	{
 		$file = $this->clean($file);
 		// In case of restricted permissions we zap it one way or the other
@@ -329,16 +329,16 @@ class StorageManager
 	}
 
 	/**
-	 * Renimae file or folder
-	 * @param unknown $fileName
-	 * @param unknown $newFileName
+	 * Rename file or folder
+	 * @param string $source file or folder name
+	 * @param string $destination new file or folder name
 	 * @throws ErrorLogicStorageException
 	 * @return boolean
 	 */
-    public function renameFile($fileName, $newFileName)
+    public function rename($source, $destination)
     {
-        if (! file_exists($newFileName)) {
-            if (@rename($fileName, $fileName)) {
+        if (! file_exists($source)) {
+            if (@rename($source, $destination)) {
                 return true;
             } else {
                 throw new ErrorLogicStorageException(self::RENAME_FILE);
@@ -354,15 +354,18 @@ class StorageManager
      * @param unknown $source
      * @param unknown $destination
      */
-    public function moveFiles($files, $source, $destination){
+    public function move($files, $source, $destination){
     
     	// batch move
     	foreach($files as $file){
+    	    if (isset($file['value'])){
+    	        $file = $file['value'];
+    	    }
     		if (!file_exists($destination.DS.$file)){
     			if(strpos($destination.DS.$file, $source.DS.$file.DS) !== false){
     				continue;
     			}
-    			$this->renameFile($source.DS.$file, $destination.DS.$file);
+    			$this->rename($source.DS.$file, $destination.DS.$file);
 
     		}
     	}
@@ -376,7 +379,7 @@ class StorageManager
 	 * @throws ErrorLogicStorageException
 	 * @return boolean
 	 */
-	public function rmDirectory($directory, $empty = false)
+	public function remove($directory, $empty = false)
 	{
 		if (substr($directory, - 1) == DS) {
 			$directory = substr($directory, 0, - 1);
@@ -389,9 +392,9 @@ class StorageManager
 				if ($item != '.' && $item != '..') {
 					$path = $directory . DS . $item;
 					if (is_dir($path)) {
-						$this->rmDirectory($path);
+						$this->remove($path);
 					} else {
-						$this->unlinkFile($path);
+						$this->delete($path);
 					}
 				}
 			}
@@ -405,6 +408,8 @@ class StorageManager
 		return true;
 	}	
 	
+
+	
 	/**
 	 * Copy files recursively
 	 * @param string $source source path or file
@@ -412,7 +417,7 @@ class StorageManager
 	 * @throws ErrorLogicStorageException
 	 * @return boolean
 	 */
-	public function copyRecursive($source, $dest){
+	public function copy($source, $dest){
 	
 		// Simple copy for a file
 		if (is_file($source)) {
@@ -437,7 +442,7 @@ class StorageManager
 			}
 	
 			// Deep copy directories
-			$this->copyRecursive($source.DS.$entry, $dest.DS.$entry);
+			$this->copy($source.DS.$entry, $dest.DS.$entry);
 		}
 	
 		// Clean up
@@ -533,7 +538,7 @@ class StorageManager
 	 * @param unknown $cd
 	 * @throws ErrorLogicStorageException
 	 */
-    public function zipFiles($items, $destination, $cd)
+    public function zip($items, $destination, $cd)
     {
         if (! extension_loaded('zip')) {
             throw new ErrorLogicStorageException(self::ZIP_MODUL_ERROR);
@@ -571,9 +576,9 @@ class StorageManager
                     if (in_array(substr($file, strrpos($file, '/') + 1), array(
                         '.',
                         '..'
-                    )))
+                    ))) {
                         continue;
-                    
+                    }
                     if (is_dir($file) === true) {
                         $zip->addEmptyDir($subdir . str_replace($source . '/', '', $file . '/'));
                     } else 
@@ -598,7 +603,7 @@ class StorageManager
      * @param unknown $cd
      * @throws ErrorLogicStorageException
      */
-    public function unzipFile($file, $cd)
+    public function unzip($file, $cd)
     {
         if (! extension_loaded('zip')) {
             throw new ErrorLogicStorageException(self::ZIP_MODUL_ERROR);
@@ -625,6 +630,138 @@ class StorageManager
         }
         
         return;
+    }
+
+    /**
+     *
+     * @param unknown $path            
+     * @param string $skip_files            
+     * @param string $link_prefix            
+     * @return string
+     */
+    public function getDirectoryTree($path, $skip_files = false, $link_prefix = '')
+    {
+        $objects = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path), \RecursiveIteratorIterator::SELF_FIRST);
+        
+        $dom = new \DomDocument("1.0");
+        
+        $li = $dom;
+        $ul = $dom->createElement('ul');
+        $li->appendChild($ul);
+        $el = $dom->createElement('li');
+        $la = $dom->createElement('a', 'home');
+        $href = $dom->createAttribute('href');
+        $href->value = '#';
+        $class = $dom->createAttribute('class');
+        $class->value = 'setlink';
+        $dl = $dom->createAttribute('data-link');
+        $dl->value = $path;
+        $la->appendChild($href);
+        $la->appendChild($class);
+        $la->appendChild($dl);
+        $el->appendChild($la);
+        $ul->appendChild($el);
+        
+        $node = $ul;
+        $depth = - 1;
+        $reps = $this->getDocumentRoot();
+        
+        foreach ($objects as $object) {
+            
+            $name = $object->getFilename();
+            
+            // skip unwanted files
+            if ($name == '.' || $name == '..'){
+                continue;
+            }
+            $path = str_replace('\\', '/', $object->getPathname());
+            $isDir = is_dir($path);
+                        
+            $skip = false;
+            
+            if (($isDir == false && $skip_files == true)) {
+                // skip unwanted files
+                $skip = true;
+            } elseif ($isDir == false) {
+                // this is regural file, no links here
+                $link = '';
+            } else {
+                // this is dir
+                $link = str_replace($reps, '', $path);
+            }
+            
+            if ($objects->getDepth() == $depth) {
+                // the depth hasnt changed so just add another li
+                if (! $skip) {
+                    $el = $dom->createElement('li');
+                    $la = $dom->createElement('a', $name);
+                    $href = $dom->createAttribute('href');
+                    $href->value = '#';
+                    $class = $dom->createAttribute('class');
+                    $class->value = 'setlink';
+                    $dl = $dom->createAttribute('data-link');                    
+                    $dl->value = $link;
+                    $la->appendChild($href);
+                    $la->appendChild($class);
+                    $la->appendChild($dl);
+                    $el->appendChild($la);                    
+                    if (! $isDir){
+                        $el->appendChild($dom->createAttribute('isfile'));
+                    }
+                    $node->appendChild($el);
+                }
+            } elseif ($objects->getDepth() > $depth) {
+                // the depth increased, the last li is a non-empty folder
+                $li = $node->lastChild;
+                $ul = $dom->createElement('ul');
+                $li->appendChild($ul);
+                if (! $skip) {
+                    $el = $dom->createElement('li');
+                    $la = $dom->createElement('a', $name);
+                    $href = $dom->createAttribute('href');
+                    $href->value = '#';
+                    $class = $dom->createAttribute('class');
+                    $class->value = 'setlink';
+                    $dl = $dom->createAttribute('data-link');                    
+                    $dl->value = $link;
+                    $la->appendChild($href);
+                    $la->appendChild($class);
+                    $la->appendChild($dl);
+                    $el->appendChild($la);
+                    if (! $isDir){
+                        $el->appendChild($dom->createAttribute('isfile'));
+                    }
+                    $ul->appendChild($el);
+                }
+                $node = $ul;
+            } else {
+                // the depth decreased, going up $difference directories
+                $difference = $depth - $objects->getDepth();
+                for ($i = 0; $i < $difference; $difference --) {
+                    $node = $node->parentNode->parentNode;
+                }
+                if (! $skip) {
+                    $el = $dom->createElement('li');
+                    $la = $dom->createElement('a', $name);
+                    $href = $dom->createAttribute('href');
+                    $href->value = '#';
+                    $class = $dom->createAttribute('class');
+                    $class->value = 'setlink';
+                    $dl = $dom->createAttribute('data-link');                    
+                    $dl->value = $link;
+                    $la->appendChild($href);
+                    $la->appendChild($class);
+                    $la->appendChild($dl);
+                    $el->appendChild($la);
+                    if (! $isDir){
+                        $el->appendChild($dom->createAttribute('isfile'));
+                    }
+                    $node->appendChild($el);
+                }
+            }
+            $depth = $objects->getDepth();
+        }
+        return $dom->saveHtml();
     }    
 
 	/**
@@ -733,7 +870,6 @@ class StorageManager
 			$entries[] = $entry;
 		}
 		return $entries;		
-		
 	}
 	
 }

@@ -202,7 +202,7 @@ class StorageFiles extends AbstractStorage
 		}
 		
 		try {
-		    $this->getStorage()->unlinkFile($dir);
+		    $this->getStorage()->delete($dir);
 		    if (true === ($log = $this->getLogger())){
 		    	$log->info(self::SUCCESS_DELETE_FILE . ': ' . $dir);
 		    }
