@@ -51,7 +51,9 @@ class StorageDirectory extends AbstractStorage
     const DIR_MOVE_SUCCESS = 'move_dir_success';
     const DIR_MOVE_ERROR = 'move_dir_error';
     const DIR_ZIP_SUCCESS = 'zip_dir_success';
-    const DIR_ZIP_ERROR = 'zip_dir_error';    
+    const DIR_ZIP_ERROR = 'zip_dir_error';  
+    const DIR_UNZIP_SUCCESS = 'unzip_success';
+    const DIR_UNZIP_ERROR = 'unzip_error';      
 
     /**
      * Fetch all content from this directory
@@ -344,7 +346,7 @@ class StorageDirectory extends AbstractStorage
     		$path .= DS . $cd;
     	}
     	try {
-    	    $this->getStorage()->zip($items, $destination, $path);
+    	    $this->getStorage()->zip($items, $path. DS . $destination, $path);
 			if (true == ($log = $this->getLogger())) {
 				$log->info(self::DIR_ZIP_SUCCESS . ' ' . $path);
 			}

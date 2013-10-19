@@ -532,13 +532,13 @@ class StorageManager
 	}
 
 	/**
-	 * 
-	 * @param unknown $items
-	 * @param unknown $destination
-	 * @param unknown $cd
+	 * Build and save a zip archive
+	 * @param array $items array with name of files and/or directories
+	 * @param string $destination destination path and archive file name
+	 * @param string $paht path to save the archive file
 	 * @throws ErrorLogicStorageException
 	 */
-    public function zip($items, $destination, $cd)
+    public function zip($items, $destination, $path)
     {
         if (! extension_loaded('zip')) {
             throw new ErrorLogicStorageException(self::ZIP_MODUL_ERROR);
@@ -554,14 +554,14 @@ class StorageManager
             throw new ErrorLogicStorageException(self::ZIP_CREATE_ERROR);
         }
         
-        $startdir = str_replace('\\', '/', $cd);
+        $startdir = str_replace('\\', '/', $path);
         
         foreach ($items as $source) {
             if (isset($source['value'])){
                 $source = $source['value'];
             }
             
-            $source = $cd . DS . $source;
+            $source = $path . DS . $source;
             
             $source = str_replace('\\', '/', $source);
             
@@ -594,39 +594,39 @@ class StorageManager
                     $zip->addFile($source, basename($source));
                 }
         }
-        
+
         $zip->close();
         
         return;
     }
-
+    
     /**
-     * 
-     * @param unknown $file
-     * @param unknown $cd
+     * Unzip archive
+     * @param string $archive name of zip archive
+     * @param string $path directory path to zip archive
      * @throws ErrorLogicStorageException
      */
-    public function unzip($file, $cd)
+    public function unzip($archive, $path)
     {
         if (! extension_loaded('zip')) {
             throw new ErrorLogicStorageException(self::ZIP_MODUL_ERROR);
         }
         
-        $file = $cd . DS . $file;
+        $archive = $path . DS . $archive;
         
         $zip = new \ZipArchive();
-        if ($zip->open($file) === TRUE) {
+        if ($zip->open($archive) === true) {
             
             $entries = array();
             for ($idx = 0; $idx < $zip->numFiles; $idx ++) {
                 $zname = $zip->getNameIndex($idx);
-                if ($zname == pathinfo($file, PATHINFO_BASENAME)){
+                if ($zname == pathinfo($archive, PATHINFO_BASENAME)){
                     continue;
                 }
                 $entries[] = $zname;
             }
             
-            $zip->extractTo($_SESSION['cwd'] . DS, $entries);
+            $zip->extractTo($path . DS, $entries);
             $zip->close();
         } else {
             throw new ErrorLogicStorageException(self::UNZIP_FILE_ERROR);
