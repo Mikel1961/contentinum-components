@@ -821,6 +821,35 @@ class StorageManager
 	}
 	
 	/**
+	 * Properties
+	 * @param string $path file path to resource
+	 * @param string $item file or dir item
+	 * @return Ambigous <mixed, multitype:unknown string number boolean >
+	 */
+	public function getProperties($path, $item)
+	{
+	    $prop = array();
+	    $path = $path . DS . $item;
+	    if (file_exists($path)  &&  is_file($path)){
+	        $prop = pathinfo($path);
+	        $prop['mimetype'] = mime_content_type($path);
+	        $prop['type'] = filetype($path);
+	        $prop['size'] = filesize($path);
+	        $prop['time'] = filemtime($path);
+	        $prop['perms'] = fileperms($path);
+	        $prop['readable'] = is_readable($path);
+	        $prop['writable'] = is_writable($path);
+	        $prop['executable'] = is_executable($path);	
+	        if (true === $this->isImages($prop['extension'])) {
+	        	list ($width, $height, $type, $attr) = @getimagesize($path);
+	        	$prop['width'] = $width;
+	        	$prop['height'] = $height;
+	        }	             
+	    }
+	    return $prop;
+	}
+	
+	/**
 	 * Gets the extension of a file name
 	 *
 	 * @param string $file The file name

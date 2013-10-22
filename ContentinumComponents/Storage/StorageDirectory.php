@@ -53,7 +53,8 @@ class StorageDirectory extends AbstractStorage
     const DIR_ZIP_SUCCESS = 'zip_dir_success';
     const DIR_ZIP_ERROR = 'zip_dir_error';  
     const DIR_UNZIP_SUCCESS = 'unzip_success';
-    const DIR_UNZIP_ERROR = 'unzip_error';      
+    const DIR_UNZIP_ERROR = 'unzip_error';  
+    const DIR_PROPERTIES = 'error_dir_props';    
 
     /**
      * Fetch all content from this directory
@@ -364,7 +365,7 @@ class StorageDirectory extends AbstractStorage
      * Unzip a item
      * @param string $file name zip archive file
      * @param AbstractStorageEntity $entity
-     * @param string $cd current folder within to create the new directory
+     * @param string $cd current folder within the zip archive
      * @throws InvalidValueStorageException
      * @throws ErrorLogicStorageException
      * @return string
@@ -399,7 +400,45 @@ class StorageDirectory extends AbstractStorage
     		}
     		throw new ErrorLogicStorageException(self::DIR_UNZIP_ERROR);
     	}
-    }    
+    }  
+
+    /**
+     * Get properties from file or folder
+     * 
+     * @param string $item file or folder name
+     * @param AbstractStorageEntity $entity
+     * @param string $cd current folder
+     * @throws InvalidValueStorageException
+     * @throws ErrorLogicStorageException
+     * @return Ambigous <\ContentinumComponents\Storage\Ambigous, mixed, multitype:unknown string number boolean >
+     */
+    public function getFileProperties($item, AbstractStorageEntity $entity = null, $cd = nul)
+    {
+        if (null === $entity) {
+        	$entity = $this->getEntity();
+        }
+        
+        if (! $entity instanceof AbstractStorageEntity) {
+        	if (true == ($log = $this->getLogger())){
+        		$log->err(self::ERROR_STORAGE_ENTITY);
+        	}
+        	throw new InvalidValueStorageException( self::ERROR_STORAGE_ENTITY );
+        }
+        
+        $path = $this->getStorage()->getDocumentRoot();
+        $path .= DS . $entity->getCurrentPath();
+        if ($cd) {
+        	$path .= DS . $cd;
+        }
+        try {
+        	return $this->getStorage()->getProperties($path, $item);
+        } catch (\Exception $e) {
+        	if (true == ($log = $this->getLogger())) {
+        		$log->err(self::DIR_PROPERTIES . ' ' . $item . ': ' . $e->getMessage());
+        	}
+        	throw new ErrorLogicStorageException(self::DIR_PROPERTIES);
+        }        
+    }
     
 
     /**
