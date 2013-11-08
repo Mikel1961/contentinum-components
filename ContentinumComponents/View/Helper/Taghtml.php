@@ -31,7 +31,7 @@ use Zend\View\Helper\AbstractHelper;
 use ContentinumComponents\Html\HtmlAttribute;
 
 /**
- * Set content in html tag
+ * Set content in html tag and set attributtes
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
 class Taghtml extends AbstractHelper
