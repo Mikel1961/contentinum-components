@@ -51,6 +51,7 @@ class Process extends Worker
 			$datas = $this->foreignMapper($datas);
 			parent::save($entity, $datas, self::SAVE_INSERT,$datas[$entity->getPrimaryKey()]);
 		} else {
+		    $datas = $this->foreignMapper($datas);
 			parent::save($entity, $datas, self::SAVE_UPDATE);
 		}
 	}

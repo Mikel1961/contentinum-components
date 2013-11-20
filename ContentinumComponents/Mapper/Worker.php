@@ -100,6 +100,12 @@ class Worker extends AbstractMapper
 	protected $targetEntities = array();	
 	
 	/**
+	 * Parameter to build query
+	 * @var boolen|array
+	 */
+	protected $hasEntriesParams = false;
+	
+	/**
 	 * Construct
 	 * @param EntityManager $storage
 	 * @param string $charset
@@ -109,6 +115,33 @@ class Worker extends AbstractMapper
 		$this->setStorage($storage,$charset);
 	}	
 		
+	/**
+	 * @return the $hasEntriesParams
+	 */
+	public function getHasEntriesParams($key = null) 
+	{
+		if (isset($this->hasEntriesParams[$key])){
+		    return $this->hasEntriesParams[$key];
+		}
+	    return $this->hasEntriesParams;
+	}
+	
+	/**
+	 * @param Ambigous <\ContentinumComponents\Mapper\boolen, multitype:> $hasEntriesParams
+	 */
+	public function addHasEntriesParams($key,$param)
+	{
+		$this->hasEntriesParams[$key] = $param;
+	}	
+
+	/**
+	 * @param Ambigous <\ContentinumComponents\Mapper\boolen, multitype:> $hasEntriesParams
+	 */
+	public function setHasEntriesParams($hasEntriesParams) 
+	{
+		$this->hasEntriesParams = $hasEntriesParams;
+	}
+
 	/**
 	 * Get the fields they are processed before insert
 	 * 
@@ -426,12 +459,12 @@ class Worker extends AbstractMapper
 		$row = $em->createQuery($sql)->execute();
 		if (1 >= $row){
 			$msg = 'Delete data record succesfully';
-			if (false !== ($log = $this->getLog())) {
+			if (false !== ($log = $this->getLogger())) {
 				$log->info($msg . ' in ' . $entity->getEntityName());
 			}
 			return $msg;
 		} else {
-			if (false !== ($log = $this->getLog())) {
+			if (false !== ($log = $this->getLogger())) {
 				$log->crit('Found no clear status or wrong parameter to delete in ' . $entity->getEntityName());
 			}
 			throw new NoDataMapperException('Found no clear status or wrong parameter to delete');
@@ -464,6 +497,28 @@ class Worker extends AbstractMapper
 		}
 		return $conn->exec($sql);
 	}	
+	
+	/**
+	 * Check if data records are available
+	 * @param string $tableEntity 
+	 * @param string $column entity referer column name
+	 * @param string|int $value column value
+	 * @return boolean
+	 */
+	public function hasEntries($tableEntity, $column, $value)
+	{
+	    $em = $this->getStorage(null);
+	    $builder = $em->createQueryBuilder();
+	    $builder->add('select', 'main')->add('from', $tableEntity . ' AS main');
+	    $builder->add('where', 'main.'.$column.' = ?' . 1);
+	    $builder->setParameter(1, $value);
+	    $query = $builder->getQuery();	    
+	    if (!$query->getResult()){
+	        return false;
+	    } else {	        
+	        return true;
+	    }	    
+	}
 	
 	/**
 	 * Unset fields before prepare datas to INSERT or UPDATE a table row

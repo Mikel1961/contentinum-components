@@ -1,5 +1,4 @@
 <?php
-
 /**
  * contentinum - accessibility websites
  *
@@ -86,7 +85,7 @@ abstract class AbstractForms
 	 * Decoration form fields
 	 * @var array
 	 */
-	protected $decorators = array( 'deco-row' => array('tag' => 'div', 'attributes' => array('class' => 'form_element')), 
+	protected $decorators = array( 'deco-row' => array('tag' => 'div', 'attributes' => array('class' => 'form-element')), 
 			                       'deco-desc' => array('tag' => 'span', 'attributes' => array('class' => 'desc')),
 	                               'deco-error' => array('tag' => 'span', 'separator' => '<br />', 'attributes' => array('class' => 'error', 'role' => 'alert')),
 	                               'deco-abort-btn' => array('label' => 'Cancel', 'attributes' => array('class' => 'button')));

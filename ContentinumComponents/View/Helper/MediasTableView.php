@@ -164,7 +164,36 @@ class MediasTableView extends AbstractHelper
                     $i ++;
                     $rowContent = array();
                     $rowContent[] = '<input type="checkbox" value="'.$entry->filename.'" name="cb[]">';
-                    $rowContent[] = '<i class="icon-file"></i> ' . $entry->filename;
+                    
+                    switch ($entry->mimetype){
+                    	case 'application/zip':
+                    	    $icon = '<i class="icon-archive"></i> ';
+                    	    break;
+                    	case 'image/jpeg':
+                    	    $icon = '<i class="icon-picture"></i> ';
+                    	    break;                    	    
+                        default:
+                            $icon = '<i class="icon-file"></i> ';
+                    }
+                    
+                    switch ($entry->extension){
+                        case 'wmv':
+                        case 'mp4':
+                        case 'ogv':
+                        case 'webm':
+                        	$icon = '<i class="icon-film"></i> ';
+                        	break;
+                    	case 'jpeg':
+                    	case 'jpg':
+                	    case 'png':
+                	    case 'JPG': 
+                	    case 'JPEG':                   	    
+                    		$icon = '<i class="icon-picture"></i> ';
+                    		break;                        	
+                        default:                        
+                    }
+                    
+                    $rowContent[] = $icon . $entry->filename;
                     $size = '';
                     if ($entry->width && $entry->height) {
                         $size = '(' . $entry->width . ' x ' . $entry->height . ' px) ';

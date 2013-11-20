@@ -29,7 +29,6 @@
 namespace ContentinumComponents\Mapper;
 
 use Doctrine\ORM\EntityManager;
-use ContentinumComponents\Entity\AbstractEntity;
 use ContentinumComponents\Storage\AbstractManager;
 use ContentinumComponents\Mapper\Exeption\InvalidValueMapperException;
 

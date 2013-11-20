@@ -114,26 +114,45 @@ class RenderForm extends AbstractHelper
 				$label = $abortDeco['label'];
 			}
 			if ($this->view->abortation){
-				$html = $this->renderButton($label,$abortDeco);
+				$html .= $this->renderButton($label,$abortDeco);
 			}
 		}
 		
 		$html .= $this->renderErrors($element);
-
 		$html .= $this->renderDescription($element->getOption('description'));
 		
 		if (true == ($deco = $element->getOption('deco-row'))) {
-			$attributes = '';
-			if ( isset($deco['attributes'])){
-				$attributes = HtmlAttribute::attributeArray($deco['attributes']);
-			}			
-			$html = '<' . $deco['tag'] . '' . $attributes .'>' . $html .'</' . $deco['tag'] . '>';  
+		    if (isset($deco['tags'])){
+		        $html = $this->buildDecco($deco, $html);
+		    } else {
+    			$attributes = '';
+    			if ( isset($deco['attributes'])){
+    				$attributes = HtmlAttribute::attributeArray($deco['attributes']);
+    			}			
+    			$html = '<' . $deco['tag'] . '' . $attributes .'>' . $html .'</' . $deco['tag'] . '>'; 
+		    } 
 			
 		}
 		
 		return $html;
 		
 	}	
+	
+	private function buildDecco($deco, $html)
+	{
+	    $start = $end = '';
+	    foreach ($deco['tags'] as $element){
+	        $attributes = '';
+	        if ( isset($element['attributes'])){
+	        	$attributes = HtmlAttribute::attributeArray($element['attributes']);
+	        }	        
+	        
+	        $start .= '<' . $element['tag'] . $attributes . '>';
+	        $end .= '</' . $element['tag'] . '>'; 
+	    }
+	    return $start . $html . $end;
+	}
+
 	
 	/**
 	 * Build form field error messages
@@ -145,25 +164,39 @@ class RenderForm extends AbstractHelper
 		$html = '';
 		$tag = false;
 		$attributes = false;
-		if (true == ($deco = $element->getOption('deco-error'))) {
-			if ( isset($deco['tag']) ){
-				$tag = $deco['tag'];
-			}
-			if ( isset($deco['attributes'])){
-				$attributes = HtmlAttribute::attributeArray($deco['attributes']);
-			}
-			
-			$err = $this->view->formElementErrors();
-			
-			if (false !== $tag){
-				$err->setMessageOpenFormat('<'.$tag.''.$attributes. '>');
-				$err->setMessageCloseString('</' . $tag . '>');
-			}
-			
-			if (isset($deco['separator'])){
-				$err->setMessageSeparatorString($deco['separator']);
-			}
-			$html = $err->render($element); 
+		if ($this->view->formElementErrors()){
+    		if (true == ($deco = $element->getOption('deco-error'))) {
+    			if ( isset($deco['tag']) ){
+    				$tag = $deco['tag'];
+    			}
+    			if ( isset($deco['attributes'])){
+    				$attributes = HtmlAttribute::attributeArray($deco['attributes']);
+    			}
+    			
+    			$err = $this->view->formElementErrors();
+    			
+    			if (false !== $tag){
+    				$err->setMessageOpenFormat('<'.$tag.''.$attributes. '>');
+    				$err->setMessageCloseString('</' . $tag . '>');
+    			}
+    			
+    			if (isset($deco['separator'])){
+    				$err->setMessageSeparatorString($deco['separator']);
+    			}
+    			$html = $err->render($element); 
+    		}
+		} else {
+		    if (true == ($msg = $element->getOption('deco-error-msg'))  ){
+		        if (true == ($deco = $element->getOption('deco-error'))) {
+		            if ( isset($deco['tag']) ){
+		            	$tag = $deco['tag'];
+		            }
+		            if ( isset($deco['attributes'])){
+		            	$attributes = HtmlAttribute::attributeArray($deco['attributes']);
+		            }
+		            $html = '<'.$tag.''.$attributes. '>' . $msg . '</' . $tag . '>'; 		            
+		        }
+		    }
 		}
 		return $html;
 
@@ -174,14 +207,14 @@ class RenderForm extends AbstractHelper
 	 * @param array $desc
 	 * @return string
 	 */
-	private function renderDescription($desc)
+	private function renderDescription($desc, $key = 'deco-desc')
 	{
 		$html = '';
 		if ( is_array($desc) && !empty($desc) ){
 			
 			$tag = 'span';
 			$attributes = '';
-			if (true == ($deco = $desc['deco-desc'])) {
+			if (true == ($deco = $desc[$key])) {
 				if ( isset($deco['tag']) ){
 					$tag = $deco['tag'];
 				}
@@ -224,9 +257,9 @@ class RenderForm extends AbstractHelper
 				$endTag = '</'. $decorator['tag'] . '>';
 			}
 		}
-		$html .= '<a' . $attributtes;
-		$html .= ' href="' . $this->view->url($this->view->abortation) . '">';
-		$html .= $label . '</a>' . $endTag;
+		$html .= '<button' . $attributtes;
+		$html .= ' data-urlabort="' . $this->view->url($this->view->abortation) . '">';
+		$html .= $label . '</button>' . $endTag;
 		return $html;
 	}	
 

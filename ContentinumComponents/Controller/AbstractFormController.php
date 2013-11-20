@@ -1,5 +1,4 @@
 <?php
-
 /**
  * contentinum - accessibility websites
  *
@@ -93,6 +92,9 @@ abstract class AbstractFormController extends AbstractContentinumController
 		}
 		
 		$routeMatch = $e->getRouteMatch ();
+		$ctrl = $routeMatch->getParam ( 'controller' );
+		$page = str_replace ( '\\', '_', $ctrl );
+		$mcworkpages = $this->getServiceLocator ()->get ( 'Mcwork\Pages' );		
 
 		if ($this->getRequest ()->isPost ()) {
 	
@@ -107,7 +109,7 @@ abstract class AbstractFormController extends AbstractContentinumController
 				$return = $this->process ();
 			} else {
 				$routeMatch->setParam ( 'action', 'error' );
-				$return = $this->error ();
+				$return = $this->error ($ctrl, $page, $mcworkpages, $this->getServiceLocator ()->get ( 'Contentinum\Acl\DefaultRole' ), $this->getServiceLocator ()->get ( 'Contentinum\Acl\Acl' ));
 			}
 		} else {
 			
@@ -116,7 +118,7 @@ abstract class AbstractFormController extends AbstractContentinumController
 			}
 			
 			$routeMatch->setParam ( 'action', 'show' );
-			$return = $this->show ();
+			$return = $this->show ($ctrl, $page, $mcworkpages, $this->getServiceLocator ()->get ( 'Contentinum\Acl\DefaultRole' ), $this->getServiceLocator ()->get ( 'Contentinum\Acl\Acl' ) );
 		}
 		
 		$e->setResult ( $return );
@@ -132,11 +134,16 @@ abstract class AbstractFormController extends AbstractContentinumController
 	 * Show form
 	 * @return \Zend\View\Model\ViewModel
 	 */
-	protected function show() 
+	protected function show($ctrl, $page, $mcworkpages, $role = null, $acl = null) 
 	{
-		$model = new ViewModel ( array (
-				'form' => $this->form 
-		) );
+		$content = false;
+	    if ($mcworkpages->$page) {
+	    	$content = $mcworkpages->$page;
+	    }
+	    
+	    $this->adminlayout($this->layout(), $mcworkpages, $page, $role, $acl, $this->getServiceLocator()->get('viewHelperManager'));
+	    $model = $this->buildView (array('form' => $this->form,'page' => $page,'pagecontent' => $content), $content, $mcworkpages);
+	    
 		if (null !== $this->toRoute){
 			$model->setVariable('abortation', $this->toRoute);
 		}
@@ -147,11 +154,15 @@ abstract class AbstractFormController extends AbstractContentinumController
 	 * Show form errors
 	 * @return \Zend\View\Model\ViewModel
 	 */
-	protected function error() 
+	protected function error($ctrl, $page, $mcworkpages, $role = null, $acl = null) 
 	{
-		return new ViewModel ( array (
-				'form' => $this->form 
-		) );
+	    $content = false;
+	    if ($mcworkpages->$page) {
+	    	$content = $mcworkpages->$page;
+	    }	    
+	    
+	    $this->adminlayout($this->layout(), $mcworkpages, $page, $role, $acl, $this->getServiceLocator()->get('viewHelperManager'));
+	    return $this->buildView (array('form' => $this->form,'page' => $page,'pagecontent' => $content), $content, $mcworkpages);	    
 	}
 	
 	/**
@@ -169,6 +180,35 @@ abstract class AbstractFormController extends AbstractContentinumController
 		}
 		unset($formFactory);		
 	}
+	
+	/**
+	 * Configure and preapre template view
+	 *
+	 * @param array $variables view template variables
+	 * @param \Zend\Config\Config $content page content
+	 * @param \Zend\Config\Config $mcworkpages
+	 * @return \Zend\View\Model\ViewModel
+	 */
+	protected function buildView (array $variables, $content, $mcworkpages)
+	{
+		$view = new ViewModel($variables);
+	
+		// get html widget, if specified ...
+		$widget = false;
+		if (isset($content->template_widget) && strlen($content->template_widget) >= 3) {
+			$widget = $content->template_widget;
+		}
+	
+		if (false === $widget && isset($mcworkpages->_defaults->template_widget) && strlen($mcworkpages->_defaults->template_widget) >= 3) {
+			$widget = $mcworkpages->_defaults->template_widget;
+		}
+	
+		if (false !== $widget) { // ... and set this if not false
+			$view->setVariable('widget', $widget);
+		}
+	
+		return $view;
+	}	
 	
 	/**
 	 * Get contentinum abstract form factory
