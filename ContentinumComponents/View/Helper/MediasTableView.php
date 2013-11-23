@@ -124,7 +124,7 @@ class MediasTableView extends AbstractHelper
                                 $up = '/' . implode($this->view->seperator, $array);
                             }
                         }
-                        $rowContent[] = '<a href="/mcwork/medias' . $up . '" class="small button"><i class="icon-arrow-up"></i></a>';
+                        $rowContent[] = '<a href="/mcwork/medias' . $up . '" class="small button"><i class="fa fa-arrow-up"></i></a>';
                         $rowContent[] = '&nbsp;';
                         $rowContent[] = '&nbsp;';
                         $rowContent[] = '&nbsp;';
@@ -145,7 +145,7 @@ class MediasTableView extends AbstractHelper
                         $down = $this->view->currentFolder . DS . $entry->filename;
                     }
                     
-                    $rowContent[] = '<a href="/mcwork/medias/' . str_replace(DS, $this->view->seperator, $down) . '"><i class="icon-folder-close"></i> ' . $entry->filename . '</a>'; // . $this->mcworkTableEdit ( $tbl );
+                    $rowContent[] = '<a href="/mcwork/medias/' . str_replace(DS, $this->view->seperator, $down) . '"><i class="fa fa-folder"></i> ' . $entry->filename . '</a>'; // . $this->mcworkTableEdit ( $tbl );
                     $rowContent[] = '&nbsp;';
                     $rowContent[] = date("d.m.Y H:i:s", $entry->time);
                                     
@@ -167,13 +167,13 @@ class MediasTableView extends AbstractHelper
                     
                     switch ($entry->mimetype){
                     	case 'application/zip':
-                    	    $icon = '<i class="icon-archive"></i> ';
+                    	    $icon = '<i class="fa fa-archive"></i> ';
                     	    break;
                     	case 'image/jpeg':
-                    	    $icon = '<i class="icon-picture"></i> ';
+                    	    $icon = '<i class="fa fa-picture-o"></i> ';
                     	    break;                    	    
                         default:
-                            $icon = '<i class="icon-file"></i> ';
+                            $icon = '<i class="fa-file"></i> ';
                     }
                     
                     switch ($entry->extension){
@@ -181,14 +181,14 @@ class MediasTableView extends AbstractHelper
                         case 'mp4':
                         case 'ogv':
                         case 'webm':
-                        	$icon = '<i class="icon-film"></i> ';
+                        	$icon = '<i class="fa-film"></i> ';
                         	break;
                     	case 'jpeg':
                     	case 'jpg':
                 	    case 'png':
                 	    case 'JPG': 
                 	    case 'JPEG':                   	    
-                    		$icon = '<i class="icon-picture"></i> ';
+                    		$icon = '<i class="fa fa-picture-o"></i> ';
                     		break;                        	
                         default:                        
                     }
@@ -207,7 +207,7 @@ class MediasTableView extends AbstractHelper
                     $btn .= 'data-crypt="'.$entry->filename.'" data-name="'.$entry->filename.'" ';
                     $btn .= 'data-link="'.$entry->pathname.'" ';
                     $btn .= 'data-download="'.$url.$entry->filename . '/' . $cddownload. '" ';
-                    $btn .= 'data-type="'.$entry->mimetype.'" type="button"><i class="icon-cog"></i></button>';                    
+                    $btn .= 'data-type="'.$entry->mimetype.'" type="button"><i class="fa fa-gear"></i></button>';                    
                     
                     $rowContent[] = $btn;
                     $tableFactory->setHtmlContent($rowContent);
