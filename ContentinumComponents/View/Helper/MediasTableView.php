@@ -151,7 +151,7 @@ class MediasTableView extends AbstractHelper
                                     
                     $btn = '<button class="tbl-info tiny" data-time="'.date("d.m.Y H:i:s", $entry->time).'" ';
                     $btn .= 'data-crypt="'.$entry->filename.'" data-name="'.$entry->filename.'" ';
-                    $btn .= 'data-type="dir" type="button"><i class="icon-cog"></i></button>';
+                    $btn .= 'data-type="dir" type="button"><i class="fa fa-gear"></i></button>';
                      
                     $rowContent[] = $btn;
                     $tableFactory->setHtmlContent($rowContent);
