@@ -88,7 +88,7 @@ abstract class AbstractForms
 	protected $decorators = array( 'deco-row' => array('tag' => 'div', 'attributes' => array('class' => 'form-element')), 
 			                       'deco-desc' => array('tag' => 'span', 'attributes' => array('class' => 'desc')),
 	                               'deco-error' => array('tag' => 'span', 'separator' => '<br />', 'attributes' => array('class' => 'error', 'role' => 'alert')),
-	                               'deco-abort-btn' => array('label' => 'Cancel', 'attributes' => array('class' => 'button')));
+	                               'deco-abort-btn' => array('label' => 'Cancel', 'attributes' => array('class' => 'button', 'id' => 'btnCancel')));
 	
 	/**
 	 * Construct

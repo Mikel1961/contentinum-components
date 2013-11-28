@@ -161,31 +161,20 @@ class RenderForm extends AbstractHelper
 	 */
 	private function renderErrors($element)
 	{
-		$html = '';
+		$html = false;
 		$tag = false;
 		$attributes = false;
 		if ($this->view->formElementErrors()){
-    		if (true == ($deco = $element->getOption('deco-error'))) {
-    			if ( isset($deco['tag']) ){
-    				$tag = $deco['tag'];
-    			}
-    			if ( isset($deco['attributes'])){
-    				$attributes = HtmlAttribute::attributeArray($deco['attributes']);
-    			}
-    			
-    			$err = $this->view->formElementErrors();
-    			
-    			if (false !== $tag){
-    				$err->setMessageOpenFormat('<'.$tag.''.$attributes. '>');
-    				$err->setMessageCloseString('</' . $tag . '>');
-    			}
-    			
-    			if (isset($deco['separator'])){
-    				$err->setMessageSeparatorString($deco['separator']);
-    			}
-    			$html = $err->render($element); 
-    		}
-		} else {
+		    $tag = 'span';
+			$err = $this->view->formElementErrors();
+			$err->setMessageOpenFormat('<span class="server-error" role="alert">');
+			$err->setMessageCloseString('</span>');
+			$err->setMessageSeparatorString('<br />');
+			$html = $err->render($element); 
+		} 
+		
+		
+		if (false != $html){
 		    if (true == ($msg = $element->getOption('deco-error-msg'))  ){
 		        if (true == ($deco = $element->getOption('deco-error'))) {
 		            if ( isset($deco['tag']) ){
