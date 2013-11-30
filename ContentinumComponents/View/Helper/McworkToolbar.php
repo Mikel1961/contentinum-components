@@ -29,6 +29,7 @@ namespace ContentinumComponents\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
 use ContentinumComponents\Html\HtmlAttribute;
+use ContentinumComponents\Tools\ArrayMergeRecursiveDistinct;
 
 /**
  * build table toolbar
@@ -55,7 +56,7 @@ class McworkToolbar extends AbstractHelper
         foreach ($links as $key => $link) {
             $standard = array();
             if (true === $std && ($standard = $this->getStandards($key))){
-                $link = array_merge_recursive($link,$standard);
+                $link = ArrayMergeRecursiveDistinct::merge($standard, $link);
             }
             $html .= '<li><a href="' . $link['href'] . '"';
             if (isset($link['attribs']) && is_array($link['attribs'])) {
