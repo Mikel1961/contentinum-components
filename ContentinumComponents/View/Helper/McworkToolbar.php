@@ -1,5 +1,4 @@
 <?php
-
 /**
  * contentinum - accessibility websites
  *
@@ -33,28 +32,66 @@ use ContentinumComponents\Html\HtmlAttribute;
 
 /**
  * build table toolbar
- * 
+ *
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
-class McworkToolbar extends AbstractHelper 
+class McworkToolbar extends AbstractHelper
 {
-	
+    protected $attribute = array();
+    protected $standards = array();
+
     /**
      * Build editing toolbar
-     * @param array $links
+     * 
+     * @param array $links            
      * @return string
      */
-	public function __invoke(array $links) 
-	{
-	    $html = '<ul class="toolbar-right">';
-	    foreach ($links as $link){
-	    	$html .= '<li><a href="' . $link['href'] . '"';
-	    	if ( isset($link['attribs']) && is_array($link['attribs'])){
-	    		$html .= HtmlAttribute::attributeArray($link['attribs']);
-	    	}
-	    	$html .= '>' . $link['label'] . '</a></li>';
-	    }
-	    $html .= '</ul>';
-	    return $html;	    
-	}
+    public function __invoke(array $links, $std = false, array $toolbarlist = null)
+    {
+        $this->setStandards($toolbarlist);
+        $html = '<ul';
+        $html .= HtmlAttribute::attributeArray($this->attribute);
+        $html .= '>';
+        foreach ($links as $key => $link) {
+            $standard = array();
+            if (true === $std && ($standard = $this->getStandards($key))){
+                $link = array_merge_recursive($link,$standard);
+            }
+            $html .= '<li><a href="' . $link['href'] . '"';
+            if (isset($link['attribs']) && is_array($link['attribs'])) {
+                $html .= HtmlAttribute::attributeArray($link['attribs']);
+            }
+            $html .= '>' . $link['label'] . '</a></li>';
+        }
+        $html .= '</ul>';
+        return $html;
+    }
+    
+    /**
+     * Set standards
+     * @param unknown $standards
+     */
+    protected function setStandards($standards)
+    {
+        if ( isset($standards['attribute']) ){
+            $this->attribute = $standards['attribute'];
+        }
+        
+        if ( isset($standards['standards']) ){
+            $this->standards = $standards['standards'];
+        }
+    }
+    
+    /**
+     * Get standard toolbar content
+     * @param unknown $key
+     * @return multitype:multitype:string multitype:string
+     */
+    protected function getStandards($key)
+    {
+        if ( isset($this->standards[$key]) ){
+            return $this->standards[$key];
+        }
+        return false;
+    }
 }
