@@ -246,9 +246,9 @@ class RenderForm extends AbstractHelper
 				$endTag = '</'. $decorator['tag'] . '>';
 			}
 		}
-		$html .= '<button' . $attributtes;
-		$html .= ' data-urlabort="' . $this->view->url($this->view->abortation) . '">';
-		$html .= $label . '</button>' . $endTag;
+		$html .= '<a' . $attributtes;
+		$html .= ' href="' . $this->view->url($this->view->abortation) . '">';
+		$html .= $label . '</a>' . $endTag;
 		return $html;
 	}	
 
