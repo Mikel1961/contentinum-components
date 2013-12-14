@@ -174,7 +174,7 @@ class RenderForm extends AbstractHelper
 		} 
 		
 		
-		if (false != $html){
+		if (false == $html){
 		    if (true == ($msg = $element->getOption('deco-error-msg'))  ){
 		        if (true == ($deco = $element->getOption('deco-error'))) {
 		            if ( isset($deco['tag']) ){
