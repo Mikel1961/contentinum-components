@@ -49,8 +49,11 @@ abstract class AbstractBackendController extends AbstractContentinumController
 	 */
 	public function onDispatch(MvcEvent $e) 
 	{
-		$ctrl = $e->getRouteMatch ()->getParam ( 'controller' );
+	    $uri = $this->getRequest()->getUri();
+	    $ctrl = $e->getRouteMatch ()->getParam ( 'controller' );
 		$page = str_replace ( '\\', '_', $ctrl );
+		$uripath = str_replace ( '/', '_',$uri->getPath());
+		$page = substr($uripath,1,strlen($uripath));
 		$mcworkpages = $this->getServiceLocator ()->get ( 'Mcwork\Pages' );
 		
 		switch ($this->getAction($mcworkpages, $page)) {

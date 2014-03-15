@@ -232,7 +232,7 @@ abstract class AbstractForms
 	 * @param array $columns
 	 * @return array
 	 */
-	public function getSelectOptions($fieldName,$columns = array('value' => 'id', 'label' => 'name'))
+	public function getSelectOptions($fieldName,$columns = array('value' => 'id', 'label' => 'name'), array $where = null)
 	{
 		$em = $this->storage->getStorage();
 		$entityName = $this->storage->getTargetEntity($fieldName);
@@ -242,6 +242,12 @@ abstract class AbstractForms
 		$builder = $em->createQueryBuilder ();
 		$builder->add ( 'select', 'main.' . implode(', main.', $columns) );
 		$builder->add ( 'from', $entityName . ' AS main' );
+		if ( is_array($where) && !empty($where) ){
+		    foreach ($where as $conditions){
+		        $builder->where($conditions['cond']);
+		        $builder->setParameter($conditions['param'][0],$conditions['param'][1]);
+		    }
+		}
 		$query = $builder->getQuery();
 		$datas = $query->getResult();
 		$options = array();
