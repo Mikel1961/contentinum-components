@@ -54,11 +54,13 @@ abstract class AbstractBackendController extends AbstractContentinumController
 		$page = str_replace ( '\\', '_', $ctrl );
 		$uripath = str_replace ( '/', '_',$uri->getPath());
 		$page = substr($uripath,1,strlen($uripath));
+		$spliturl = $this->getServiceLocator ()->get ( 'Mcwork\PagesUrlSplit' );
+		$page = $spliturl->split($page);
 		$mcworkpages = $this->getServiceLocator ()->get ( 'Mcwork\Pages' );
 		
 		switch ($this->getAction($mcworkpages, $page)) {
 			case 'contenthandle' :
-				$e->getRouteMatch ()->setParam ( 'action', 'downloadcontent' );
+				$e->getRouteMatch ()->setParam ( 'action', 'contenthandle' );
 				$apps = $this->contenthandle ( $ctrl, $page, $mcworkpages, $this->getServiceLocator ()->get ( 'Contentinum\Acl\DefaultRole' ), $this->getServiceLocator ()->get ( 'Contentinum\Acl\Acl' ) );
 				break;			
 			case 'downloadcontent' :
@@ -91,7 +93,7 @@ abstract class AbstractBackendController extends AbstractContentinumController
 			}
 		}
 		return '';
-	}
+	}	
 	
 	/**
 	 * Application method

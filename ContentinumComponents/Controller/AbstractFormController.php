@@ -72,6 +72,12 @@ abstract class AbstractFormController extends AbstractContentinumController
 	protected $toRoute;
 	
 	/**
+	 * Redirect to url
+	 * @var string
+	 */
+	protected $toUrl;
+		
+	/**
 	 * Construct set abstract forms
 	 * @param AbstractForms $factory
 	 */
@@ -89,11 +95,16 @@ abstract class AbstractFormController extends AbstractContentinumController
 	{
 		if (method_exists ( $this, 'prepare' )) {
 			$this->prepare ();
-		}
+		}	
 		
+		$uri = $this->getRequest()->getUri();
 		$routeMatch = $e->getRouteMatch ();
 		$ctrl = $routeMatch->getParam ( 'controller' );
 		$page = str_replace ( '\\', '_', $ctrl );
+		$uripath = str_replace ( '/', '_',$uri->getPath());
+		$page = substr($uripath,1,strlen($uripath));
+		$spliturl = $this->getServiceLocator ()->get ( 'Mcwork\PagesUrlSplit' );
+		$page = $spliturl->split($page);
 		$mcworkpages = $this->getServiceLocator ()->get ( 'Mcwork\Pages' );		
 
 		if ($this->getRequest ()->isPost ()) {
@@ -123,7 +134,7 @@ abstract class AbstractFormController extends AbstractContentinumController
 		
 		$e->setResult ( $return );
 		return $return;
-	}
+	}	
 	
 	/**
 	 * abstract class process form datas and insert or update database entry
@@ -206,7 +217,6 @@ abstract class AbstractFormController extends AbstractContentinumController
 		if (false !== $widget) { // ... and set this if not false
 			$view->setVariable('widget', $widget);
 		}
-	
 		return $view;
 	}	
 	
@@ -298,5 +308,23 @@ abstract class AbstractFormController extends AbstractContentinumController
 	public function setToRoute($toRoute)
 	{
 		$this->toRoute = $toRoute;
-	}	
+	}
+	
+	/**
+	 * Get the redirect url
+	 * @return the $toUrl
+	 */
+	public function getToUrl() 
+	{
+		return $this->toUrl;
+	}
+
+	/**
+	 * Set redirect url
+	 * @param string $toUrl
+	 */
+	public function setToUrl($toUrl) 
+	{
+		$this->toUrl = $toUrl;
+	}
 }
