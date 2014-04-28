@@ -38,6 +38,7 @@ use ContentinumComponents\Html\Table\FactoryTable;
  */
 class MediasTableView extends AbstractHelper
 {
+    CONST MEDIA_DIR_PATH = '/mcwork/medias/file';
 
     public function __invoke($entries)
     {
@@ -47,7 +48,7 @@ class MediasTableView extends AbstractHelper
             $url = 'http://labs.contentinum5.net/mcwork/medias/download/';
             $cddownload = '';
             if ($this->view->currentFolder) {
-            	$cddownload = str_replace( DS, $this->seperator, $this->view->currentFolder );
+            	$cddownload = str_replace( DS, $this->view->seperator, $this->view->currentFolder );
             }
             $tableFactory = new HtmlTable(new FactoryTable());
             $tableFactory->setAttributes('class', 'table table-hover table-nomargin table-bordered');
@@ -124,7 +125,7 @@ class MediasTableView extends AbstractHelper
                                 $up = '/' . implode($this->view->seperator, $array);
                             }
                         }
-                        $rowContent[] = '<a href="/mcwork/medias' . $up . '" class="small button"><i class="fa fa-arrow-up"></i></a>';
+                        $rowContent[] = '<a href="'. self::MEDIA_DIR_PATH .'/' . $up . '" class="small button"><i class="fa fa-arrow-up"></i></a>';
                         $rowContent[] = '&nbsp;';
                         $rowContent[] = '&nbsp;';
                         $rowContent[] = '&nbsp;';
@@ -145,7 +146,7 @@ class MediasTableView extends AbstractHelper
                         $down = $this->view->currentFolder . DS . $entry->filename;
                     }
                     
-                    $rowContent[] = '<a href="/mcwork/medias/' . str_replace(DS, $this->view->seperator, $down) . '"><i class="fa fa-folder"></i> ' . $entry->filename . '</a>'; // . $this->mcworkTableEdit ( $tbl );
+                    $rowContent[] = '<a href="'. self::MEDIA_DIR_PATH .'/' . str_replace(DS, $this->view->seperator, $down) . '"><i class="fa fa-folder"></i> ' . $entry->filename . '</a>'; // . $this->mcworkTableEdit ( $tbl );
                     $rowContent[] = '&nbsp;';
                     $rowContent[] = date("d.m.Y H:i:s", $entry->time);
                                     

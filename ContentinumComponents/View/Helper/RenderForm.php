@@ -82,11 +82,27 @@ class RenderForm extends AbstractHelper
 	private function renderElements($elements)
 	{
 		$html = '';
-	
 		foreach($elements as $element) {
-			$html .= $this->renderElement($element);
+			$tmp[] = $this->renderElement($element);
+			if (true == ($fieldset = $element->getOption('fieldset'))) {
+			    $attributes = '';
+			    if (isset($fieldset['attributes'])){
+			        $attributes = HtmlAttribute::attributeArray($fieldset['attributes']);
+			    }
+			    $html .= '<fieldset'. $attributes . '>';
+			    if (isset($fieldset['legend'])){
+			        $html .= '<legend>' . $fieldset['legend'] . '</legend>';
+			    }
+			    foreach ($tmp as $element){
+			        $html .= $element;
+			    }
+			    $html .= '</fieldset>';
+			    $tmp = array();
+			}
 		}
-	
+		foreach ($tmp as $element){
+		        $html .= $element;
+		}
 		return $html;
 	}
 	
@@ -247,7 +263,7 @@ class RenderForm extends AbstractHelper
 			}
 		}
 		$html .= '<a' . $attributtes;
-		$html .= ' href="' . $this->view->url($this->view->abortation) . '">';
+		$html .= ' href="/' . $this->view->abortation . '">';
 		$html .= $label . '</a>' . $endTag;
 		return $html;
 	}	
