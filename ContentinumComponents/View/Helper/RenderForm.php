@@ -79,8 +79,7 @@ class RenderForm extends AbstractHelper
     /**
      * Render a array from form field elements
      * 
-     * @param array $elements
-     *            array from form field elements
+     * @param array $elements array from form field elements
      * @return string
      */
     private function renderElements($elements)
@@ -161,6 +160,12 @@ class RenderForm extends AbstractHelper
         return $html;
     }
 
+    /**
+     * Set form element deco row
+     * @param unknown $deco
+     * @param unknown $html
+     * @return string
+     */
     private function buildDecco($deco, $html)
     {
         $start = $end = '';
