@@ -27,26 +27,13 @@
  */
 namespace ContentinumComponents\Forms\View\Helper;
 
-use ContentinumComponents\Forms\Elements\Note;
-use Zend\Form\View\Helper\FormElement as BaseFormElement;
 use Zend\Form\ElementInterface;
+use Zend\Form\View\Helper\AbstractHelper;
 
-class FormElement extends BaseFormElement
+class FormNote extends AbstractHelper
 {
 	public function render(ElementInterface $element)
 	{
-		$renderer = $this->getView();
-		if (!method_exists($renderer, 'plugin')) {
-			// Bail early if renderer is not pluggable
-			return '';
-		}
-
-		if ($element instanceof Note ) {
-		    
-			$helper = $renderer->plugin('formNote');
-			return $helper($element);
-		}
-
-		return parent::render($element);
+		return '<p>Hier sind wir</p>';
 	}
 }

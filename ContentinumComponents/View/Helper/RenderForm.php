@@ -263,7 +263,7 @@ class RenderForm extends AbstractHelper
 			}
 		}
 		$html .= '<a' . $attributtes;
-		$html .= ' href="/' . $this->view->abortation . '">';
+		$html .= ' href="' . $this->view->abortation . '">';
 		$html .= $label . '</a>' . $endTag;
 		return $html;
 	}	

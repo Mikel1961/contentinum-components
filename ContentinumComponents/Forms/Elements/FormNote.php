@@ -25,15 +25,12 @@
  * @link      https://github.com/Mikel1961/contentinum-components
  * @version   1.0.0
  */
-namespace ContentinumComponents\Forms\View\Helper;
+namespace ContentinumComponents\Forms\Elements;
 
-use Zend\Form\ElementInterface;
-use Zend\Form\View\Helper\AbstractHelper;
+use Zend\Form\Element;
 
-class Note extends AbstractHelper
+
+class Note extends Element
 {
-	public function render(ElementInterface $element)
-	{
-		return '<p>Hier sind wir</p>';
-	}
+    
 }
