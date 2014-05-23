@@ -29,8 +29,20 @@ namespace ContentinumComponents\Forms\Elements;
 
 use Zend\Form\Element;
 
-
+/**
+ * Form element note
+ * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
+ */
 class Note extends Element
 {
+    
+    /**
+     * Attributes
+     *
+     * @var array
+     */
+    protected $attributes = array(
+    		'type' => 'note',
+    );    
     
 }

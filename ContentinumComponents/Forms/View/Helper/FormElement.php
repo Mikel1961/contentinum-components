@@ -27,23 +27,32 @@
  */
 namespace ContentinumComponents\Forms\View\Helper;
 
-use ContentinumComponents\Forms\Elements\Note;
 use Zend\Form\View\Helper\FormElement as BaseFormElement;
 use Zend\Form\ElementInterface;
 
+/**
+ * Contentinum form elements
+ * @see \Zend\Form\View\Helper\FormElement
+ * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
+ */
 class FormElement extends BaseFormElement
 {
-	public function render(ElementInterface $element)
+	/**
+	 * Overwrites original function to select own form elements
+	 * @see \Zend\Form\View\Helper\FormElement::render()
+	 */
+    public function render(ElementInterface $element)
 	{
 		$renderer = $this->getView();
 		if (!method_exists($renderer, 'plugin')) {
 			// Bail early if renderer is not pluggable
 			return '';
 		}
-
-		if ($element instanceof Note ) {
-		    
-			$helper = $renderer->plugin('formNote');
+		
+		$type = $element->getAttribute('type');
+		
+		if ('note' == $type) {
+			$helper = $renderer->plugin('form_note');
 			return $helper($element);
 		}
 

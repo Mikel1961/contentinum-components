@@ -28,12 +28,32 @@
 namespace ContentinumComponents\Forms\View\Helper;
 
 use Zend\Form\ElementInterface;
-use Zend\Form\View\Helper\AbstractHelper;
+use Zend\Form\View\Helper\FormInput;
 
-class FormNote extends AbstractHelper
+/**
+ * Contentinum form element note
+ * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
+ */
+class FormNote extends FormInput
 {
-	public function render(ElementInterface $element)
-	{
-		return '<p>Hier sind wir</p>';
-	}
+
+    /**
+     * Print out html string from value attribute
+     * @param ElementInterface $element
+     * @return string
+     */
+    public function render(ElementInterface $element)
+    {
+        return $element->getValue();
+    }
+    
+    /**
+     * Use note form element
+     * @param ElementInterface $element
+     * @return string
+     */
+    protected function getType(ElementInterface $element)
+    {
+        return 'note';
+    }
 }
