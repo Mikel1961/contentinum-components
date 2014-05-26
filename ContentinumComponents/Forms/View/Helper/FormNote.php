@@ -31,7 +31,7 @@ use Zend\Form\ElementInterface;
 use Zend\Form\View\Helper\FormInput;
 
 /**
- * Contentinum form element note
+ * Contentinum form element note extend Zend FormInput
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
 class FormNote extends FormInput

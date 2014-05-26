@@ -38,6 +38,7 @@ class Note extends Element
     
     /**
      * Attributes
+     * Element type note
      *
      * @var array
      */

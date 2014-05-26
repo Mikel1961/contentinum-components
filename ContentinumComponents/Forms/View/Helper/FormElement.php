@@ -31,7 +31,7 @@ use Zend\Form\View\Helper\FormElement as BaseFormElement;
 use Zend\Form\ElementInterface;
 
 /**
- * Contentinum form elements
+ * Contentinum form elements extends Zend Form Element
  * @see \Zend\Form\View\Helper\FormElement
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
