@@ -87,7 +87,7 @@ abstract class AbstractForms
 	 * @var array
 	 */
 	protected $decorators = array( 'deco-row' => array('tag' => 'div', 'attributes' => array('class' => 'form-element')), 
-	                               'deco-tab-row' => array('tag' => 'p', 'attributes' => array('class' => 'form-element')),
+	                               'deco-tab-row' => array('tag' => 'p'),
 			                       'deco-desc' => array('tag' => 'span', 'attributes' => array('class' => 'desc')),
 	                               'deco-error' => array('tag' => 'span', 'separator' => '<br />', 'attributes' => array('class' => 'error', 'role' => 'alert')),
 	                               'deco-abort-btn' => array('label' => 'Cancel', 'attributes' => array('class' => 'button', 'id' => 'btnCancel')));
@@ -230,16 +230,24 @@ abstract class AbstractForms
 	
 	/**
 	 * Get options for form element select from database
-	 * @param string form field name reference to target entity
-	 * @param array $columns
-	 * @return array
+	 * 
+	 * @param string $fieldName targetentity key
+	 * @param array $columns database table columns to query
+	 * @param array $where refine your query
+	 * @param string $entityName database table reference
+	 * @param string $dist query build distinct yes=true, no=fales
+	 * @param array $options select option add before query result
+	 * @throws InvalidValueEntityException
+	 * @return multitype:unknown
 	 */
-	public function getSelectOptions($fieldName,$columns = array('value' => 'id', 'label' => 'name'), array $where = null)
+	public function getSelectOptions($fieldName,$columns = array('value' => 'id', 'label' => 'name'), array $where = null, $entityName = null, $dist = false, $options = array())
 	{
 		$em = $this->storage->getStorage();
-		$entityName = $this->storage->getTargetEntity($fieldName);
-		if (false === $entityName){
-			throw new InvalidValueEntityException('Entity can not be found or is not available!');
+		if (null === $entityName){
+    		$entityName = $this->storage->getTargetEntity($fieldName);
+    		if (false === $entityName){
+    			throw new InvalidValueEntityException('Entity can not be found or is not available!');
+    		}
 		}
 		$builder = $em->createQueryBuilder ();
 		$builder->add ( 'select', 'main.' . implode(', main.', $columns) );
@@ -250,9 +258,15 @@ abstract class AbstractForms
 		        $builder->setParameter($conditions['param'][0],$conditions['param'][1]);
 		    }
 		}
+		if (true === $dist){
+		    $builder->distinct();
+		}
 		$query = $builder->getQuery();
 		$datas = $query->getResult();
-		$options = array();
+		
+		if (!is_array($options) || !empty($options) ) {
+		    $options = array();
+		}
 		if ( is_array($datas) ){	
 			foreach ($datas as $row){
 				$options[$row[$columns['value']]] = $row[$columns['label']];
