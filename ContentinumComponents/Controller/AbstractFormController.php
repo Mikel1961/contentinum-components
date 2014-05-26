@@ -59,6 +59,12 @@ abstract class AbstractFormController extends AbstractContentinumController
 	protected $formAction;
 	
 	/**
+	 * Populate form standard values 
+	 * @var array
+	 */
+	protected $addPopulate;
+	
+	/**
 	 * Form action method
 	 * Default is POST
 	 * @var string
@@ -274,6 +280,24 @@ abstract class AbstractFormController extends AbstractContentinumController
 		$this->formAction = $formAction;
 	}
 	
+	/**
+	 * Get form standard values to populate
+	 * @return the $addPopulate
+	 */
+	public function getAddPopulate() 
+	{
+		return $this->addPopulate;
+	}
+
+	/**
+	 * Set form standard values to populate
+	 * @param multitype: $addPopulate
+	 */
+	public function setAddPopulate($addPopulate) 
+	{
+		$this->addPopulate = $addPopulate;
+	}
+
 	/**
 	 * Get form action method
 	 * @return string $formMethod
