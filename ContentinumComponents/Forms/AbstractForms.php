@@ -28,6 +28,7 @@
 namespace ContentinumComponents\Forms;
 
 use Zend\Form\Factory;
+use Zend\ServiceManager\ServiceLocatorInterface;
 use ContentinumComponents\Forms\Exception\ParamNotExistsException;
 use ContentinumComponents\Entity\Exeption\InvalidValueEntityException;
 
@@ -81,6 +82,13 @@ abstract class AbstractForms
 	 * @var boolen
 	 */
 	protected $validation = true;
+	
+	/**
+	 * Service Manager
+	 * 
+	 * @var use Zend\ServiceManager\ServiceLocatorInterface;
+	 */
+	protected $sl;
 		
 	/**
 	 * Decoration form fields
@@ -193,6 +201,23 @@ abstract class AbstractForms
 	{
 		$this->validation = $validation;
 	}
+	
+	/**
+	 * @return ServiceLocatorInterface
+	 */
+	public function getServiceLocator ()
+	{
+	    return $this->sl;
+	}
+	
+	/**
+	 * Set ServiceLocatorInterface
+	 * @param ServiceLocatorInterface $sl
+	 */
+	public function setServiceLocator (ServiceLocatorInterface $sl)
+	{
+	    $this->sl = $sl;
+	}
 
 	/**
 	 * @return the $decoration
@@ -271,6 +296,24 @@ abstract class AbstractForms
 			foreach ($datas as $row){
 				$options[$row[$columns['value']]] = $row[$columns['label']];
 			}
+		}
+		return $options;
+	}	
+	
+	/**
+	 * Get options from xml data files
+	 * @param string $key
+	 * @param array $options
+	 * @return multitype:NULL
+	 */
+	public function getOptions($key, $options = array())
+	{
+		$entries = $this->sl->get($key);
+		if (!is_array($options) || !empty($options) ) {
+			$options = array();
+		}
+		foreach ($entries as $key => $entry){
+			$options[$key] = $entry->name;
 		}
 		return $options;
 	}	
