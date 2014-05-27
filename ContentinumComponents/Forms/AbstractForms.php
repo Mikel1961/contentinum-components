@@ -304,16 +304,20 @@ abstract class AbstractForms
 	 * Get options from xml data files
 	 * @param string $key
 	 * @param array $options
+	 * @param string $valueKey
 	 * @return multitype:NULL
 	 */
-	public function getOptions($key, $options = array())
+	public function getOptions($key, $options = array(), $valueKey = null)
 	{
 		$entries = $this->sl->get($key);
 		if (!is_array($options) || !empty($options) ) {
 			$options = array();
 		}
-		foreach ($entries as $key => $entry){
-			$options[$key] = $entry->name;
+		foreach ($entries as $id => $entry){
+		    if (null !== $valueKey){
+		        $id = $entry->$valueKey;
+		    }
+			$options[$id] = $entry->name;
 		}
 		return $options;
 	}	
