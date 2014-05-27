@@ -33,7 +33,7 @@ use Zend\Mvc\MvcEvent;
 use Zend\View\Model\ViewModel;
 
 /**
- * Contentinum Abstract Form Controller
+ * Contentinum Abstract Backend Form Controller
  * 
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  *        

@@ -33,7 +33,7 @@ use ContentinumComponents\Forms\Exception\ParamNotExistsException;
 use ContentinumComponents\Entity\Exeption\InvalidValueEntityException;
 
 /**
- * Abtract Form class for mcwork modul
+ * Abtract Form class for mcwork modul (Backend)
  * 
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  *        
