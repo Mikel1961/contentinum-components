@@ -174,7 +174,7 @@ class MediasTableView extends AbstractHelper
                     	    $icon = '<i class="fa fa-picture-o"></i> ';
                     	    break;                    	    
                         default:
-                            $icon = '<i class="fa-file"></i> ';
+                            $icon = '<i class="fa fa-file"></i> ';
                     }
                     
                     switch ($entry->extension){
