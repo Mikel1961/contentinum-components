@@ -230,10 +230,10 @@ class Resize
 	 * @param int $height actual images height
 	 * @return boolen
 	 */
-	protected function _resizeImages ($width, $height, $ext)
+	protected function resizeImages ($width, $height, $ext)
 	{
 		// Get the new images size
-		$newSize = $this->_calculate($width, $height);
+		$newSize = $this->calculate($width, $height);
 		// Create a images with the new dimensions
 		$newImage = @imagecreatetruecolor($newSize['width'], $newSize['height']);
 		// copy exists images by resampled, is callable ...
@@ -276,7 +276,7 @@ class Resize
 		// Get file type
 		$ext = Extension::get($this->fileName);
 		// Check is a images
-		$this->_fileType($ext);
+		$this->fileType($ext);
 		// Get actual images size ...
 		list ($width, $height) = getimagesize($this->orgFile);
 		// Create a images with the new dimensions
