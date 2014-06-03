@@ -29,6 +29,7 @@ namespace ContentinumComponents\Images;
 
 /**
  * Get/set html images tag attribute
+ * Class warpper for getimagesize
  *
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  *

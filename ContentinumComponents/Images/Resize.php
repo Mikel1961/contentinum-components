@@ -32,7 +32,7 @@ use ContentinumComponents\File\Extension;
 use ContentinumComponents\File\Name;
 
 /**
- * Calculate size from a image to resize this
+ * Calculate size and resize a image
  *
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  *
