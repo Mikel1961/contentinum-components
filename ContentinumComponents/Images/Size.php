@@ -75,9 +75,11 @@ class Size
 	{
 		$this->src = $src;
 	}
+
 	/**
-	 * Get image size and infos
-	 *
+	 * 
+	 * @param string $src
+	 * @return \ContentinumComponents\Images\Size
 	 */
 	public function imgSize ($src = null)
 	{
@@ -89,8 +91,8 @@ class Size
 		// Set attributes
 		$this->width = $width;
 		$this->height = $height;
-		$this->type = $type;
 		$this->attr = $attr;
+		return $this;
 	}
 	/**
 	 * Get image attributes
@@ -101,6 +103,20 @@ class Size
 	{
 		return $this->attr;
 	}
+	
+	/**
+	 * Wrapper for image_type_to_mime_type and exif_imagetype 
+	 *
+	 * @param string $src
+	 */
+	public function setType($src = null)
+	{
+	    if (null !== $src){
+	    	$this->src = $src;
+	    }
+	    $this->type = @image_type_to_mime_type( @exif_imagetype($this->src));	    
+	}
+	
 	/**
 	 * Get image type
 	 *
