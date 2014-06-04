@@ -76,6 +76,12 @@ class Resize
     protected $processImg = null;    
     
     /**
+     * Ignore exception if not resizeble 
+     * @var boolean
+     */
+    protected $ignore = true;
+    
+    /**
      * Construct
      *
      * @param int $target the new images size
@@ -205,6 +211,29 @@ class Resize
 	}
 	
 	/**
+	 * Get ignore true=ignore exception, false throw exception
+	 * if a image not resizeble
+	 * @return the $ignore
+	 */
+	public function getIgnore() 
+	{
+		return $this->ignore;
+	}
+
+	/**
+	 * Set ignore true=ignore exception, false throw exception
+	 * if a image not resizeble
+	 * @param boolean $ignore
+	 * @return Resize
+	 */
+	public function setIgnore($ignore) 
+	{
+		$this->ignore = $ignore;
+		
+		return $this;
+	}
+
+	/**
 	 * Run the resize process
 	 *
 	 */
@@ -217,7 +246,15 @@ class Resize
 		// Get actual images size ...
 		list ($width, $height) = getimagesize($this->orgFile);
 		// ... and check make a resize sence
-		$this->isResizeble($width, $height);
+		try {
+		  $this->isResizeble($width, $height);
+		} catch (ErrorLogicImagesException $e){
+		    if (true === $this->ignore){
+		        return true;
+		    } else {
+		        throw new \Exception($e->getMessage());
+		    }
+		}
 		// Calculate and resize the new images
 		return $this->resizeImages($width, $height, $ext);
 	}
