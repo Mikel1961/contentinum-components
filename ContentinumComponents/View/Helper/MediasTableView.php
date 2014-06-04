@@ -38,17 +38,18 @@ use ContentinumComponents\Html\Table\FactoryTable;
  */
 class MediasTableView extends AbstractHelper
 {
+
     CONST MEDIA_DIR_PATH = '/mcwork/medias/file';
 
-    public function __invoke($entries)
+    public function __invoke($entries, $mediasTable = array())
     {
         if (empty($entries)) {
             $html = '<p>' . $this->view->translate('No documents or images found') . '</p>';
         } else {
-            $url = 'http://labs.contentinum5.net/mcwork/medias/download/';
+            $url = 'http://'.$this->view->host.'/mcwork/medias/download/';
             $cddownload = '';
             if ($this->view->currentFolder) {
-            	$cddownload = str_replace( DS, $this->view->seperator, $this->view->currentFolder );
+                $cddownload = str_replace(DS, $this->view->seperator, $this->view->currentFolder);
             }
             $tableFactory = new HtmlTable(new FactoryTable());
             $tableFactory->setAttributes('class', 'table table-hover table-nomargin table-bordered');
@@ -58,7 +59,7 @@ class MediasTableView extends AbstractHelper
                 '#' => array(),
                 'Filename' => array(
                     'body' => array(
-                    		'class' => 'filename'
+                        'class' => 'filename'
                     )
                 ),
                 'Size' => array(
@@ -79,14 +80,13 @@ class MediasTableView extends AbstractHelper
                 ),
                 '&nbsp;' => array(
                     'head' => array(
-                    		'class' => 'cellToolbar'
+                        'class' => 'cellToolbar'
                     ),
                     'body' => array(
-                    		'class' => 'cellToolbar'
-                    ),
-                ),
+                        'class' => 'cellToolbar'
+                    )
+                )
             );
-
             
             $ihead = count($headlines);
             foreach ($headlines as $column => $attributes) {
@@ -125,7 +125,7 @@ class MediasTableView extends AbstractHelper
                                 $up = '/' . implode($this->view->seperator, $array);
                             }
                         }
-                        $rowContent[] = '<a href="'. self::MEDIA_DIR_PATH .'/' . $up . '" class="small button"><i class="fa fa-arrow-up"></i></a>';
+                        $rowContent[] = '<a href="' . self::MEDIA_DIR_PATH . '/' . $up . '" class="small button"><i class="fa fa-arrow-up"></i></a>';
                         $rowContent[] = '&nbsp;';
                         $rowContent[] = '&nbsp;';
                         $rowContent[] = '&nbsp;';
@@ -136,24 +136,31 @@ class MediasTableView extends AbstractHelper
             }
             
             foreach ($entries as $entry) {
-                if ('.' != $entry->filename && '..' != $entry->filename && 'dir' == $entry->type) {
+                if ('.' != $entry->filename && '..' != $entry->filename && 'alternate' != $entry->filename && 'dir' == $entry->type) {
                     
                     $i ++;
                     $rowContent = array();
-                    $rowContent[] = '<input type="checkbox" value="'.$entry->filename.'" name="cb[]">';
+                    $rowContent[] = '<input type="checkbox" value="' . $entry->filename . '" name="cb[]">';
                     $down = $entry->filename;
                     if ($this->view->currentFolder) {
                         $down = $this->view->currentFolder . DS . $entry->filename;
                     }
+                    $label = '';
+                    $keys = preg_grep('/' . $entry->filename . '/', array_keys($mediasTable));
+                    foreach ($keys as $values) {
+                        if (isset($mediasTable[$values]) && 1 == $mediasTable[$values]) {
+                            $label = '<span class="label round alert">contains files in use</span>';
+                            break;
+                        }
+                    }
                     
-                    $rowContent[] = '<a href="'. self::MEDIA_DIR_PATH .'/' . str_replace(DS, $this->view->seperator, $down) . '"><i class="fa fa-folder"></i> ' . $entry->filename . '</a>'; // . $this->mcworkTableEdit ( $tbl );
+                    $rowContent[] = '<a href="' . self::MEDIA_DIR_PATH . '/' . str_replace(DS, $this->view->seperator, $down) . '"><i class="fa fa-folder"></i> ' . $entry->filename . '</a>' . $label; // . $this->mcworkTableEdit ( $tbl );
                     $rowContent[] = '&nbsp;';
                     $rowContent[] = date("d.m.Y H:i:s", $entry->time);
-                                    
-                    $btn = '<button class="tbl-info tiny" data-time="'.date("d.m.Y H:i:s", $entry->time).'" ';
-                    $btn .= 'data-crypt="'.$entry->filename.'" data-name="'.$entry->filename.'" ';
+                    
+                    $btn = '<button class="tbl-info tiny" data-time="' . date("d.m.Y H:i:s", $entry->time) . '" ';
+                    $btn .= 'data-crypt="' . $entry->filename . '" data-name="' . $entry->filename . '" ';
                     $btn .= 'data-type="dir" type="button"><i class="fa fa-gear"></i></button>';
-                     
                     $rowContent[] = $btn;
                     $tableFactory->setHtmlContent($rowContent);
                 }
@@ -164,37 +171,43 @@ class MediasTableView extends AbstractHelper
                     
                     $i ++;
                     $rowContent = array();
-                    $rowContent[] = '<input type="checkbox" value="'.$entry->filename.'" name="cb[]">';
+                    $rowContent[] = '<input type="checkbox" value="' . $entry->filename . '" name="cb[]">';
                     
-                    switch ($entry->mimetype){
-                    	case 'application/zip':
-                    	    $icon = '<i class="fa fa-archive"></i> ';
-                    	    break;
-                    	case 'image/jpeg':
-                    	    $icon = '<i class="fa fa-picture-o"></i> ';
-                    	    break;                    	    
+                    switch ($entry->mimetype) {
+                        case 'application/zip':
+                            $icon = '<i class="fa fa-archive"></i> ';
+                            break;
+                        case 'image/jpeg':
+                            $icon = '<i class="fa fa-picture-o"></i> ';
+                            break;
                         default:
                             $icon = '<i class="fa fa-file"></i> ';
                     }
                     
-                    switch ($entry->extension){
+                    switch ($entry->extension) {
                         case 'wmv':
                         case 'mp4':
                         case 'ogv':
                         case 'webm':
-                        	$icon = '<i class="fa-film"></i> ';
-                        	break;
-                    	case 'jpeg':
-                    	case 'jpg':
-                	    case 'png':
-                	    case 'JPG': 
-                	    case 'JPEG':                   	    
-                    		$icon = '<i class="fa fa-picture-o"></i> ';
-                    		break;                        	
-                        default:                        
+                            $icon = '<i class="fa-film"></i> ';
+                            break;
+                        case 'jpeg':
+                        case 'jpg':
+                        case 'png':
+                        case 'JPG':
+                        case 'JPEG':
+                            $icon = '<i class="fa fa-picture-o"></i> ';
+                            break;
+                        default:
+                    }
+                    $label = '';
+                    $pathname = \ContentinumComponents\Path\Clean::get($entry->pathname);
+                    $compareItem = str_replace($this->view->docroot, '', $pathname);
+                    if (isset($mediasTable[$compareItem]) && 1 == $mediasTable[$compareItem]) {
+                        $label = '<span class="label round alert">In use</span>';
                     }
                     
-                    $rowContent[] = $icon . $entry->filename;
+                    $rowContent[] = $icon . $entry->filename . $label;
                     $size = '';
                     if ($entry->width && $entry->height) {
                         $size = '(' . $entry->width . ' x ' . $entry->height . ' px) ';
@@ -203,12 +216,12 @@ class MediasTableView extends AbstractHelper
                     $rowContent[] = $size . $filesize;
                     $rowContent[] = date("d.m.Y H:i:s", $entry->time);
                     
-                    $btn = '<button class="tbl-info tiny" data-time="'.date("d.m.Y H:i:s", $entry->time).'" ';
-                    $btn .= 'data-size="'. $filesize .'" ';
-                    $btn .= 'data-crypt="'.$entry->filename.'" data-name="'.$entry->filename.'" ';
-                    $btn .= 'data-link="'.$entry->pathname.'" ';
-                    $btn .= 'data-download="'.$url.$entry->filename . '/' . $cddownload. '" ';
-                    $btn .= 'data-type="'.$entry->mimetype.'" type="button"><i class="fa fa-gear"></i></button>';                    
+                    $btn = '<button class="tbl-info tiny" data-time="' . date("d.m.Y H:i:s", $entry->time) . '" ';
+                    $btn .= 'data-size="' . $filesize . '" ';
+                    $btn .= 'data-crypt="' . $entry->filename . '" data-name="' . $entry->filename . '" ';
+                    $btn .= 'data-link="' . $pathname . '" ';
+                    $btn .= 'data-download="' . $url . $entry->filename . '/' . $cddownload . '" ';
+                    $btn .= 'data-type="' . $entry->mimetype . '" type="button"><i class="fa fa-gear"></i></button>';
                     
                     $rowContent[] = $btn;
                     $tableFactory->setHtmlContent($rowContent);
