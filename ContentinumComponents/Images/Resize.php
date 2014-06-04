@@ -289,7 +289,7 @@ class Resize
 			imagecopyresized($newImage, $this->processImg, 0, 0, 0, 0, $width, $height, $width, $height);
 		}
 		$fileName = Name::get($this->fileName);
-		$fileName = strtolower($fileName) . '_' . $this->target;
+		$fileName = strtolower($fileName) . '-' . $this->target;
 		// save the resize images
 		switch ($ext) {
 			case "JPG":
