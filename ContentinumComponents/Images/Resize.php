@@ -82,6 +82,12 @@ class Resize
     protected $ignore = true;
     
     /**
+     * New dimensions after resize calculation
+     * @var array
+     */
+    protected $newsize;
+    
+    /**
      * Construct
      *
      * @param int $target the new images size
@@ -234,6 +240,22 @@ class Resize
 	}
 
 	/**
+	 * @return the $newsize
+	 */
+	public function getNewsize() 
+	{
+		return $this->newsize;
+	}
+
+	/**
+	 * @param multitype: $newsize
+	 */
+	public function setNewsize($newsize) 
+	{
+		$this->newsize = $newsize;
+	}
+
+	/**
 	 * Run the resize process
 	 *
 	 */
@@ -271,6 +293,7 @@ class Resize
 	{
 		// Get the new images size
 		$newSize = $this->calculate($width, $height);
+		$this->setNewsize($newSize);
 		// Create a images with the new dimensions
 		$newImage = @imagecreatetruecolor($newSize['width'], $newSize['height']);
 		// copy exists images by resampled, is callable ...
