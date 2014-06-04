@@ -88,6 +88,12 @@ class Resize
     protected $newsize;
     
     /**
+     * Resize image source with new filename
+     * @var sting
+     */
+    protected $resizeImageSource;
+    
+    /**
      * Construct
      *
      * @param int $target the new images size
@@ -256,6 +262,24 @@ class Resize
 	}
 
 	/**
+	 * Get resize image source with new filename
+	 * @return the $resizeImageSource
+	 */
+	public function getResizeImageSource() 
+	{
+		return $this->resizeImageSource;
+	}
+
+	/**
+	 * Set resize image source with new filename
+	 * @param string $resizeImageSource
+	 */
+	public function setResizeImageSource($resizeImageSource) 
+	{
+		$this->resizeImageSource = $resizeImageSource;
+	}
+
+	/**
 	 * Run the resize process
 	 *
 	 */
@@ -324,6 +348,7 @@ class Resize
 				throw new ErrorLogicImagesException('Can not save the resized images !');
 				break;
 		} // switch
+		$this->setResizeImageSource($this->dir . $fileName . '.' . $ext);
 		return true;
 	}
 	
