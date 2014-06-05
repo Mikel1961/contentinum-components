@@ -148,7 +148,7 @@ class MediasTableView extends AbstractHelper
                     $label = '';
                     $keys = preg_grep('/' . $entry->filename . '/', array_keys($mediasTable));
                     foreach ($keys as $values) {
-                        if (isset($mediasTable[$values]) && 1 == $mediasTable[$values]) {
+                        if (isset($mediasTable[$values]) && 1 == $mediasTable[$values]['mediaInUse']) {
                             $label = '<span class="label round alert">contains files in use</span>';
                             break;
                         }
@@ -159,6 +159,8 @@ class MediasTableView extends AbstractHelper
                     $rowContent[] = date("d.m.Y H:i:s", $entry->time);
                     
                     $btn = '<button class="tbl-info tiny" data-time="' . date("d.m.Y H:i:s", $entry->time) . '" ';
+                    $btn .= 'data-ident="folder" ';
+                    $btn .= 'data-originalname="' . $entry->filename . '" ';
                     $btn .= 'data-crypt="' . $entry->filename . '" data-name="' . $entry->filename . '" ';
                     $btn .= 'data-type="dir" type="button"><i class="fa fa-gear"></i></button>';
                     $rowContent[] = $btn;
@@ -203,7 +205,7 @@ class MediasTableView extends AbstractHelper
                     $label = '';
                     $pathname = \ContentinumComponents\Path\Clean::get($entry->pathname);
                     $compareItem = str_replace($this->view->docroot, '', $pathname);
-                    if (isset($mediasTable[$compareItem]) && 1 == $mediasTable[$compareItem]) {
+                    if (isset($mediasTable[$compareItem]) && 1 == $mediasTable[$compareItem]['mediaInUse']) {
                         $label = '<span class="label round alert">In use</span>';
                     }
                     
@@ -217,6 +219,12 @@ class MediasTableView extends AbstractHelper
                     $rowContent[] = date("d.m.Y H:i:s", $entry->time);
                     
                     $btn = '<button class="tbl-info tiny" data-time="' . date("d.m.Y H:i:s", $entry->time) . '" ';
+                    if (isset($mediasTable[$compareItem]) && isset($mediasTable[$compareItem]['id']) ){
+                        $btn .= 'data-ident="' . $mediasTable[$compareItem]['id'] . '" ';
+                    }
+                    if (isset($mediasTable[$compareItem]) && isset($mediasTable[$compareItem]['mediaName']) ){
+                    	$btn .= 'data-originalname="' . $mediasTable[$compareItem]['mediaName'] . '" ';
+                    }                    
                     $btn .= 'data-size="' . $filesize . '" ';
                     $btn .= 'data-crypt="' . $entry->filename . '" data-name="' . $entry->filename . '" ';
                     $btn .= 'data-link="' . $pathname . '" ';
