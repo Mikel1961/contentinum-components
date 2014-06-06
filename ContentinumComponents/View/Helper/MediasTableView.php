@@ -140,25 +140,30 @@ class MediasTableView extends AbstractHelper
                     
                     $i ++;
                     $rowContent = array();
-                    $rowContent[] = '<input type="checkbox" value="' . $entry->filename . '" name="cb[]">';
+                    $dataAttribInUse = 'data-inuse="0"';
+                    $label = '';
+                    $keys = preg_grep('/' . $entry->filename . '/', array_keys($mediasTable));
+                    foreach ($keys as $values) {
+                    	if (isset($mediasTable[$values]) && 1 == $mediasTable[$values]['mediaInUse']) {
+                    		$label = '<span class="label round alert">contains files in use</span>';
+                    		$dataAttribInUse = 'data-inuse="1"';
+                    		break;
+                    	}
+                    }                    
+                    
+                    $rowContent[] = '<input type="checkbox" value="' . $entry->filename . '" name="cb[]" '.$dataAttribInUse.'>';
                     $down = $entry->filename;
                     if ($this->view->currentFolder) {
                         $down = $this->view->currentFolder . DS . $entry->filename;
                     }
-                    $label = '';
-                    $keys = preg_grep('/' . $entry->filename . '/', array_keys($mediasTable));
-                    foreach ($keys as $values) {
-                        if (isset($mediasTable[$values]) && 1 == $mediasTable[$values]['mediaInUse']) {
-                            $label = '<span class="label round alert">contains files in use</span>';
-                            break;
-                        }
-                    }
+
                     
                     $rowContent[] = '<a href="' . self::MEDIA_DIR_PATH . '/' . str_replace(DS, $this->view->seperator, $down) . '"><i class="fa fa-folder"></i> ' . $entry->filename . '</a>' . $label; // . $this->mcworkTableEdit ( $tbl );
                     $rowContent[] = '&nbsp;';
                     $rowContent[] = date("d.m.Y H:i:s", $entry->time);
                     
                     $btn = '<button class="tbl-info tiny" data-time="' . date("d.m.Y H:i:s", $entry->time) . '" ';
+                    $btn .= $dataAttribInUse . ' ';
                     $btn .= 'data-ident="folder" ';
                     $btn .= 'data-originalname="' . $entry->filename . '" ';
                     $btn .= 'data-crypt="' . $entry->filename . '" data-name="' . $entry->filename . '" ';
@@ -173,7 +178,16 @@ class MediasTableView extends AbstractHelper
                     
                     $i ++;
                     $rowContent = array();
-                    $rowContent[] = '<input type="checkbox" value="' . $entry->filename . '" name="cb[]">';
+                    $label = '';
+                    $pathname = \ContentinumComponents\Path\Clean::get($entry->pathname);
+                    $compareItem = str_replace($this->view->docroot, '', $pathname);
+                    if (isset($mediasTable[$compareItem]) && 1 == $mediasTable[$compareItem]['mediaInUse']) {
+                    	$label = '<span class="label round alert">In use</span>';
+                    	$dataAttribInUse = 'data-inuse="1"';
+                    } else {
+                        $dataAttribInUse = 'data-inuse="0"';
+                    }                   
+                    $rowContent[] = '<input type="checkbox" value="' . $entry->filename . '" name="cb[]" '.$dataAttribInUse.'>';
                     
                     switch ($entry->mimetype) {
                         case 'application/zip':
@@ -202,12 +216,7 @@ class MediasTableView extends AbstractHelper
                             break;
                         default:
                     }
-                    $label = '';
-                    $pathname = \ContentinumComponents\Path\Clean::get($entry->pathname);
-                    $compareItem = str_replace($this->view->docroot, '', $pathname);
-                    if (isset($mediasTable[$compareItem]) && 1 == $mediasTable[$compareItem]['mediaInUse']) {
-                        $label = '<span class="label round alert">In use</span>';
-                    }
+
                     
                     $rowContent[] = $icon . $entry->filename . $label;
                     $size = '';
@@ -224,7 +233,8 @@ class MediasTableView extends AbstractHelper
                     }
                     if (isset($mediasTable[$compareItem]) && isset($mediasTable[$compareItem]['mediaName']) ){
                     	$btn .= 'data-originalname="' . $mediasTable[$compareItem]['mediaName'] . '" ';
-                    }                    
+                    }  
+                    $btn .= $dataAttribInUse . ' ';                  
                     $btn .= 'data-size="' . $filesize . '" ';
                     $btn .= 'data-crypt="' . $entry->filename . '" data-name="' . $entry->filename . '" ';
                     $btn .= 'data-link="' . $pathname . '" ';
@@ -235,9 +245,7 @@ class MediasTableView extends AbstractHelper
                     $tableFactory->setHtmlContent($rowContent);
                 }
             }
-            
             $html = $tableFactory->display();
-            
             $element = new \Zend\Form\Element\Hidden('current-folder');
             $element->setAttribute('id', 'current-folder');
             if ($this->view->currentFolder) {
