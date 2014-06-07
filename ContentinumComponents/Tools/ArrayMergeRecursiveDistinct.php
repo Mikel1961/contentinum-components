@@ -17,7 +17,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * @category contentinum components
- * @package Entity
+ * @package Tools
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  * @copyright Copyright (c) 2009-2013 jochum-mediaservices, Katja Jochum (http://www.jochum-mediaservices.de)
  * @license http://www.opensource.org/licenses/bsd-license
