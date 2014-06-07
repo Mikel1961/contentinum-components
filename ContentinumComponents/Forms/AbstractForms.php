@@ -89,6 +89,12 @@ abstract class AbstractForms
 	 * @var use Zend\ServiceManager\ServiceLocatorInterface;
 	 */
 	protected $sl;
+	
+	/**
+	 * Data identifier
+	 * @var int
+	 */
+	protected $dataIdent;
 		
 	/**
 	 * Decoration form fields
@@ -217,6 +223,24 @@ abstract class AbstractForms
 	public function setServiceLocator (ServiceLocatorInterface $sl)
 	{
 	    $this->sl = $sl;
+	}
+
+	/**
+	 * Get data identifier
+	 * @return the $dataIdent
+	 */
+	public function getDataIdent() 
+	{
+		return $this->dataIdent;
+	}
+
+	/**
+	 * Set data identifier
+	 * @param number $dataIdent
+	 */
+	public function setDataIdent($dataIdent) 
+	{
+		$this->dataIdent = $dataIdent;
 	}
 
 	/**
