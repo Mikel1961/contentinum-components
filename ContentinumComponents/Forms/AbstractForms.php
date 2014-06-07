@@ -91,7 +91,7 @@ abstract class AbstractForms
 	protected $sl;
 	
 	/**
-	 * Data identifier
+	 * Database row identifier 
 	 * @var int
 	 */
 	protected $dataIdent;
