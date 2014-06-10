@@ -116,12 +116,12 @@ class HandleSerializeDatabase
     /**
      * Unserialize data
      * 
-     * @param array $datas
+     * @param string $value
      * @param string $method
      * @throws InvalidValueToolsException
      * @return array data from database
      */
-    public function execUnserialize(array $datas, $method = null)
+    public function execUnserialize($value, $method = null)
     {
         if (null !== $method) {
             $this->setMethod($method);
