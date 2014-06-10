@@ -55,6 +55,12 @@ abstract class AbstractContentinumController extends AbstractActionController
 	protected $logger;
 	
 	/**
+	 * Customer configuration parameter
+	 * @var Zend\Config\Config
+	 */
+	protected $configuration;
+	
+	/**
 	 * Get mapper worker
 	 * @return \Contentinum\Mapper\Process
 	 */
@@ -113,5 +119,25 @@ abstract class AbstractContentinumController extends AbstractActionController
 		}
 
 	}
+	
+	/**
+	 * @return the $configuration
+	 */
+	public function getConfiguration() 
+	{
+		if (null == $this->configuration){
+		    $this->configuration = $this->getServiceLocator()->get('Contentinum\Customer');
+		}
+	    return $this->configuration;
+	}
+
+	/**
+	 * @param \Zend\Config\Config $configuration
+	 */
+	public function setConfiguration($configuration) 
+	{
+		$this->configuration = $configuration;
+	}
+
 	
 }

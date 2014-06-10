@@ -47,6 +47,12 @@ abstract class AbstractStorage extends AbstractManager
 	protected $logger = false;	
 	
 	/**
+	 * Customer configuration parameter
+	 * @var Zend\Config\Config
+	 */
+	protected $configuration;	
+	
+	/**
 	 * Set a logger
 	 * @param object $logger
 	 */
@@ -63,6 +69,22 @@ abstract class AbstractStorage extends AbstractManager
 	{
 		return $this->logger;
 	}
+	
+	/**
+	 * @return the $configuration
+	 */
+	public function getConfiguration()
+	{
+		return $this->configuration;
+	}
+	
+	/**
+	 * @param \Zend\Config\Config $configuration
+	 */
+	public function setConfiguration($configuration)
+	{
+		$this->configuration = $configuration;
+	}	
 
 	/**
 	 * Check if logger available

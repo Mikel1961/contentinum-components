@@ -106,6 +106,12 @@ class Worker extends AbstractMapper
 	protected $hasEntriesParams = false;
 	
 	/**
+	 * Customer configuration parameter
+	 * @var Zend\Config\Config
+	 */
+	protected $configuration;	
+	
+	/**
 	 * Construct
 	 * @param EntityManager $storage
 	 * @param string $charset
@@ -301,6 +307,23 @@ class Worker extends AbstractMapper
 	{
 		$this->targetEntities = $entity;
 	}
+	
+	
+	/**
+	 * @return the $configuration
+	 */
+	public function getConfiguration()
+	{
+		return $this->configuration;
+	}
+	
+	/**
+	 * @param \Zend\Config\Config $configuration
+	 */
+	public function setConfiguration($configuration)
+	{
+		$this->configuration = $configuration;
+	}	
 
 
 	/**
