@@ -39,6 +39,7 @@ class HandleSerializeDatabase
 {
 
     const METHOD_BASE64ENCODE = 'base64_encode';
+    const METHOD_BASE64DECODE = 'base64_decode';
 
     /**
      * Stored allowed methods to prepare serialize
@@ -47,7 +48,8 @@ class HandleSerializeDatabase
      * @var array
      */
     protected $allowedMethods = array(
-        'base64_encode' => self::METHOD_BASE64ENCODE
+        'base64_encode' => self::METHOD_BASE64ENCODE,
+        'base64_decode' => self::METHOD_BASE64DECODE,
     );
 
     /**
