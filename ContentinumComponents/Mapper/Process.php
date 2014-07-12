@@ -41,13 +41,19 @@ class Process extends Worker
 	/**
 	 * @see \Contentinum\Mapper\Worker::save()
 	 */
-	public function save($datas, $entity = null)
+	public function save($datas, $entity = null, $sequence = true)
 	{
 		
 		$entity = $this->handleEntity($entity);
 		 
 		if (null === ($id = $entity->getPrimaryValue()   )) {
-			$datas[$entity->getPrimaryKey()] = $this->sequence() + 1;
+		    if (true === $sequence){
+			     $datas[$entity->getPrimaryKey()] = $this->sequence() + 1;
+		    }
+			// log if available
+			if (true === $this->hasLogger()) {
+				$this->logger->info(' next insert id for ' . $this->getEntityName () . ' ' . $datas[$entity->getPrimaryKey()] );
+			}			
 			$datas = $this->foreignMapper($datas);
 			parent::save($entity, $datas, self::SAVE_INSERT,$datas[$entity->getPrimaryKey()]);
 		} else {
