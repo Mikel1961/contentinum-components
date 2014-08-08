@@ -122,7 +122,7 @@ class MediasTableView extends AbstractHelper
                         if ($this->view->currentFolder) {
                             $array = explode(DS, $this->view->currentFolder);
                             if (null != array_pop($array)) {
-                                $up = '/' . implode($this->view->seperator, $array);
+                                $up = implode($this->view->seperator, $array);
                             }
                         }
                         $rowContent[] = '<a href="' . self::MEDIA_DIR_PATH . '/' . $up . '" class="small button"><i class="fa fa-arrow-up"></i></a>';
