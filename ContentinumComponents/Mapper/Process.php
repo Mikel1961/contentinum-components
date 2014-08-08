@@ -37,17 +37,19 @@ use ContentinumComponents\Mapper\Exeption\MissEntityMapperException;
  */
 class Process extends Worker
 {
+    
+    private $handleSequence = true;
 
 	/**
 	 * @see \Contentinum\Mapper\Worker::save()
 	 */
-	public function save($datas, $entity = null, $sequence = true)
+	public function save($datas, $entity = null, $stage = '', $id = null)
 	{
 		
 		$entity = $this->handleEntity($entity);
 		 
 		if (null === ($id = $entity->getPrimaryValue()   )) {
-		    if (true === $sequence){
+		    if (true === $this->handleSequence ){ 
 			     $datas[$entity->getPrimaryKey()] = $this->sequence() + 1;
 		    }
 			// log if available

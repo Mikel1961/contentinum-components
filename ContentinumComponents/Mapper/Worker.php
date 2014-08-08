@@ -352,13 +352,12 @@ class Worker extends AbstractMapper
 	/**
 	 * Processed save (INSERT or UPDATE) a data table row
 	 *
-	 * @param AbstractEntity $entity
-	 *        	AbstractEntity
+	 * @param object $entity AbstractEntity
 	 * @param array $data        	
 	 * @param string $stage        	
 	 * @param int $id        	
 	 */
-	public function save(AbstractEntity $entity, array $datas, $stage, $id = null)
+	public function save($data, $entity = null, $stage = '', $id = null)
 	{
 		if (empty ( $datas )) {
 			throw new NoDataMapperException ( 'It was passed an empty array' );
