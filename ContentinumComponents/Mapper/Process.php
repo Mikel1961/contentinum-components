@@ -37,7 +37,10 @@ use ContentinumComponents\Mapper\Exeption\MissEntityMapperException;
  */
 class Process extends Worker
 {
-    
+    /**
+     * Switch get sequence or not
+     * @var boolen
+     */
     private $handleSequence = true;
 
 	/**
@@ -123,4 +126,20 @@ class Process extends Worker
 		}
 		return $datas;
 	}
+	/**
+	 * @return the $handleSequence
+	 */
+	public function getHandleSequence() 
+	{
+		return $this->handleSequence;
+	}
+
+	/**
+	 * @param boolean $handleSequence
+	 */
+	public function setHandleSequence($handleSequence) 
+	{
+		$this->handleSequence = $handleSequence;
+	}
+
 }
