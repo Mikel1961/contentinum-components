@@ -60,10 +60,10 @@ class Process extends Worker
 				$this->logger->info(' next insert id for ' . $this->getEntityName () . ' ' . $datas[$entity->getPrimaryKey()] );
 			}			
 			$datas = $this->foreignMapper($datas);
-			parent::save($entity, $datas, self::SAVE_INSERT,$datas[$entity->getPrimaryKey()]);
+			parent::save($datas, $entity, self::SAVE_INSERT,$datas[$entity->getPrimaryKey()]);
 		} else {
 		    $datas = $this->foreignMapper($datas);
-			parent::save($entity, $datas, self::SAVE_UPDATE);
+			parent::save($datas, $entity, self::SAVE_UPDATE);
 		}
 	}
 	
