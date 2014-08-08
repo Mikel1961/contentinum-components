@@ -357,7 +357,7 @@ class Worker extends AbstractMapper
 	 * @param string $stage        	
 	 * @param int $id        	
 	 */
-	public function save($data, $entity = null, $stage = '', $id = null)
+	public function save($datas, $entity = null, $stage = '', $id = null)
 	{
 		if (empty ( $datas )) {
 			throw new NoDataMapperException ( 'It was passed an empty array' );
@@ -391,6 +391,7 @@ class Worker extends AbstractMapper
 			if (true === $this->hasLogger()) {
 				$this->logger->info($msg . ' to ' . $this->getEntityName () );
 			}
+			unset($datas);
 			return $msg;
 		} catch ( \Exception $e ) {
 			// log if available
