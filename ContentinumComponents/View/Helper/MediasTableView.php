@@ -156,9 +156,15 @@ class MediasTableView extends AbstractHelper
                     if ($this->view->currentFolder) {
                         $down = $this->view->currentFolder . DS . $entry->filename;
                     }
+                    
+                    if (true == $entry->childs){
+                        $icon = '<i class="fa fa-folder-open"></i>';
+                    } else {
+                        $icon = '<i class="fa fa-folder"></i>';
+                    }
 
                     
-                    $rowContent[] = '<a href="' . self::MEDIA_DIR_PATH . '/' . str_replace(DS, $this->view->seperator, $down) . '"><i class="fa fa-folder"></i> ' . $entry->filename . '</a>' . $label; // . $this->mcworkTableEdit ( $tbl );
+                    $rowContent[] = '<a href="' . self::MEDIA_DIR_PATH . '/' . str_replace(DS, $this->view->seperator, $down) . '">'. $icon .' ' . $entry->filename . '</a>' . $label; // . $this->mcworkTableEdit ( $tbl );
                     $rowContent[] = '&nbsp;';
                     $rowContent[] = date("d.m.Y H:i:s", $entry->time);
                     
