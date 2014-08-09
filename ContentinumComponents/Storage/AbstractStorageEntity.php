@@ -68,6 +68,12 @@ abstract class AbstractStorageEntity extends AbstractEntity
 	protected $items;
 	
 	/**
+	 * Has childs
+	 * @var boolen
+	 */
+	protected $childs;
+	
+	/**
 	 * Path of current Iterator item without filename
 	 * @var string
 	 */
@@ -262,6 +268,25 @@ abstract class AbstractStorageEntity extends AbstractEntity
 	public function setItems($items) 
 	{
 		$this->items = $items;
+		return $this;
+	}
+
+	/**
+	 * @return the $childs
+	 */
+	public function getChilds() 
+	{
+		return $this->childs;
+	}
+	
+	/**
+	 * Directory has childrens
+	 * @param boolen $childs
+	 * @return \ContentinumComponents\Storage\AbstractStorageEntity
+	 */
+	public function setChilds($childs) 
+	{
+		$this->childs = $childs;
 		return $this;
 	}
 

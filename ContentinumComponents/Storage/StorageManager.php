@@ -796,6 +796,9 @@ class StorageManager
 				}
 				if ($element->isDir() && '.' != $element->getFilename() && '..' != $element->getFilename()) {
 					$row['items'] = '1';
+					$count = new \RecursiveDirectoryIterator($element->getPathname());
+					$row['childs'] = $count->hasChildren();
+					
 				} else {
 					$row['items'] = '';
 				}

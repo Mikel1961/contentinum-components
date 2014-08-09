@@ -165,6 +165,13 @@ class MediasTableView extends AbstractHelper
                     $btn = '<button class="tbl-info tiny" data-time="' . date("d.m.Y H:i:s", $entry->time) . '" ';
                     $btn .= $dataAttribInUse . ' ';
                     $btn .= 'data-ident="folder" ';
+                    
+                    if (true == $entry->childs){
+                        $btn .= 'data-childs="y" ';
+                    } else {
+                    	$btn .= 'data-childs="n" ';
+                    }
+                    
                     $btn .= 'data-originalname="' . $entry->filename . '" ';
                     $btn .= 'data-crypt="' . $entry->filename . '" data-name="' . $entry->filename . '" ';
                     $btn .= 'data-type="dir" type="button"><i class="fa fa-gear"></i></button>';
@@ -238,6 +245,7 @@ class MediasTableView extends AbstractHelper
                     $btn .= 'data-size="' . $filesize . '" ';
                     $btn .= 'data-crypt="' . $entry->filename . '" data-name="' . $entry->filename . '" ';
                     $btn .= 'data-link="' . $pathname . '" ';
+                    $btn .= 'data-childs="file" ';
                     $btn .= 'data-download="' . $url . $entry->filename . '/' . $cddownload . '" ';
                     $btn .= 'data-type="' . $entry->mimetype . '" type="button"><i class="fa fa-gear"></i></button>';
                     
