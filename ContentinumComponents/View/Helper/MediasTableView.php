@@ -47,6 +47,10 @@ class MediasTableView extends AbstractHelper
             $html = '<p>' . $this->view->translate('No documents or images found') . '</p>';
         } else {
             $url = 'http://'.$this->view->host.'/mcwork/medias/download/';
+            $disablefolder = $this->view->disablefolder;
+            if (! is_array($disablefolder)){
+                $disablefolder = array('_alternate');
+            }
             $cddownload = '';
             if ($this->view->currentFolder) {
                 $cddownload = str_replace(DS, $this->view->seperator, $this->view->currentFolder);
@@ -136,7 +140,7 @@ class MediasTableView extends AbstractHelper
             }
             
             foreach ($entries as $entry) {
-                if ('.' != $entry->filename && '..' != $entry->filename && 'alternate' != $entry->filename && 'dir' == $entry->type) {
+                if ('.' != $entry->filename && '..' != $entry->filename && ! in_array($entry->filename, $disablefolder)  && 'dir' == $entry->type ) {
                     
                     $i ++;
                     $rowContent = array();
