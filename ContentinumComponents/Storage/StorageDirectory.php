@@ -114,7 +114,7 @@ class StorageDirectory extends AbstractStorage
         }
         
         $filter = new Prepare();
-        $directory = $filter($directory);
+        $directory = $filter->filter($directory);
         unset($filter);
         
         $path = $this->getStorage()->getDocumentRoot();
