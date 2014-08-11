@@ -121,6 +121,21 @@ abstract class AbstractContentinumController extends AbstractActionController
 	}
 	
 	/**
+	 * Get a configuration parameter
+	 * @param string $param configuration paramter
+	 * @param string $field configuration field
+	 * @param string $zone configuration zone
+	 * @return boolean|mixed
+	 */
+	public function getMcParameter($param, $field, $zone = 'default')
+	{
+	    if ($this->configuration->$zone->$field->$param){
+	        return $this->configuration->$zone->$field->$param;
+	    }
+	    return false;
+	}
+	
+	/**
 	 * @return the $configuration
 	 */
 	public function getConfiguration() 
