@@ -31,6 +31,7 @@ use ContentinumComponents\Storage\AbstractStorage;
 use ContentinumComponents\Storage\AbstractStorageEntity;
 use ContentinumComponents\Storage\Exeption\ErrorLogicStorageException;
 use ContentinumComponents\Storage\Exeption\InvalidValueStorageException;
+use ContentinumComponents\Filter\Url\Prepare;
 
 /**
  * Directory manager(s)
@@ -111,6 +112,10 @@ class StorageDirectory extends AbstractStorage
 			}			
 			throw new InvalidValueStorageException( self::ERROR_STORAGE_ENTITY );
         }
+        
+        $filter = new Prepare();
+        $directory = $filter($directory);
+        unset($filter);
         
         $path = $this->getStorage()->getDocumentRoot();
         $path .= DS . $entity->getCurrentPath();
