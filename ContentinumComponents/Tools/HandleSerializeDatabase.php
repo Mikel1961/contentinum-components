@@ -37,6 +37,7 @@ use ContentinumComponents\Entity\Exeption\InvalidValueToolsException;
  */
 class HandleSerializeDatabase
 {
+    const STD_METHOD = 'base64';
 
     const METHOD_BASE64ENCODE = 'base64_encode';
     const METHOD_BASE64DECODE = 'base64_decode';
@@ -94,7 +95,7 @@ class HandleSerializeDatabase
         }
         $this->method = $method;
     }
-
+    
     /**
      * Serialize data
      * 
@@ -105,9 +106,10 @@ class HandleSerializeDatabase
      */
     public function execSerialize(array $datas, $method = null)
     {
-        if (null !== $method) {
-            $this->setMethod($method);
+        if (null === $method) {
+            $method = self::METHOD_BASE64ENCODE;
         }
+        $this->setMethod($method);
         if (null == $this->method) {
             throw new InvalidValueToolsException('No method defined to prepare serialize data');
         }
@@ -125,9 +127,10 @@ class HandleSerializeDatabase
      */
     public function execUnserialize($value, $method = null)
     {
-        if (null !== $method) {
-            $this->setMethod($method);
+        if (null === $method) {
+            $method = self::METHOD_BASE64DECODE;
         }
+        $this->setMethod($method);
         if (null == $this->method) {
             throw new InvalidValueToolsException('No method defined to prepare serialize data');
         }
