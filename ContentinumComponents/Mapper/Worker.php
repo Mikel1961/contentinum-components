@@ -561,7 +561,7 @@ class Worker extends AbstractMapper
 	    if (!($result = $query->getResult())){
 	    	return false;
 	    } else {
-	    	return result;
+	    	return $result;
 	    }	    
 	}
 	
