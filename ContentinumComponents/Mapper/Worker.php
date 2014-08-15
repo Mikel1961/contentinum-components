@@ -544,6 +544,28 @@ class Worker extends AbstractMapper
 	}
 	
 	/**
+	 * Fetch entries
+	 * @param string $entityName 
+	 * @param string $column entity referer column name
+	 * @param string|int $value column value
+	 * @return boolean|string
+	 */
+	public function fetchEntries($entityName, $column, $value)
+	{
+	    $em = $this->getStorage(null);
+	    $builder = $em->createQueryBuilder();
+	    $builder->add('select', 'main')->add('from', $entityName . ' AS main');
+	    $builder->add('where', 'main.'.$column.' = ?' . 1);
+	    $builder->setParameter(1, $value);
+	    $query = $builder->getQuery();
+	    if (!($result = $query->getResult())){
+	    	return false;
+	    } else {
+	    	return result;
+	    }	    
+	}
+	
+	/**
 	 * Unset fields before prepare datas to INSERT or UPDATE a table row
 	 *
 	 * @param array $datas
