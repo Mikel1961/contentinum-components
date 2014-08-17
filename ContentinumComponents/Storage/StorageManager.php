@@ -404,7 +404,7 @@ class StorageManager
     {
         if (! file_exists($destination)) {
             if (@rename($source, $destination)) {
-                $this->addLogAction($method, $destination);
+                $this->addLogAction($method, array('source' => $source, 'dest' => $destination));
                 return true;
             } else {
                 throw new ErrorLogicStorageException(self::RENAME_FILE);
@@ -488,7 +488,7 @@ class StorageManager
 		// Simple copy for a file
 		if (is_file($source)) {
 		    if (@copy($source, $dest)){
-		        $this->addLogAction(self::METHOD_COPY, $dest);
+		        $this->addLogAction(self::METHOD_COPY, array('source' => $source, 'dest' => $dest));
 		        return true;
 		    } else {
 		        throw new ErrorLogicStorageException(self::COPY_FILE_ERROR);
@@ -741,7 +741,7 @@ class StorageManager
             $name = $object->getFilename();
             
             // skip unwanted files
-            if ($name == '.' || $name == '..'){
+            if (in_array($name, $this->disabledDirectories)){
                 continue;
             }
             $path = str_replace('\\', '/', $object->getPathname());
