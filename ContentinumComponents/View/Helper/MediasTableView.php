@@ -166,10 +166,8 @@ class MediasTableView extends AbstractHelper
                     } else {
                         $icon = '<i class="fa fa-folder"></i>';
                     }
-                    
-                    $itemsInFolder = '<br /><em class="number-folder-items">' . $this->numbersItems($entry->counts) . '</em>';
-                    
-                    $rowContent[] = '<a href="' . self::MEDIA_DIR_PATH . '/' . str_replace(DS, $this->view->seperator, $down) . '">'. $icon .' ' . $entry->filename . '</a>' . $label; // . $this->mcworkTableEdit ( $tbl );
+                                      
+                    $rowContent[] = '<a href="' . self::MEDIA_DIR_PATH . '/' . str_replace(DS, $this->view->seperator, $down) . '">'. $icon .' ' . $entry->filename . '</a>' . $label . $this->numbersItems($entry->counts);
                     $rowContent[] = '&nbsp;';
                     $rowContent[] = date("d.m.Y H:i:s", $entry->time);
                     
@@ -281,20 +279,22 @@ class MediasTableView extends AbstractHelper
      */
     private function numbersItems($counts)
     {
+        $str = '';
         if (is_array($counts) && ! empty($counts)){
-            $str = $this->view->translate('item_numbers') . ': ';
+            $str = '<br /><em class="number-folder-items">';
             foreach ($counts as $k => $v){
                 switch ($k){
                 	case 'all':
-                	    $str .= ' ' . $this->view->translate('item_numm_total') . ': ' . $v;
+                	    $str .= ' ' . $this->view->translate('item_num_total') . ': ' . $v . ',';
+                	    break;
                 	case 'directorys':
-                	    $str .= ' ' . $this->view->translate('Directorys') . ': ' . $v;
+                	    $str .= ' ' . $this->view->translate('Directorys') . ': ' . $v . ',';
                 	    break;
                 	case 'files':
-                	    $str .= ' ' . $this->view->translate('Files') . ': ' . $v;
+                	    $str .= ' ' . $this->view->translate('Files') . ': ' . $v . ',';
                 	    break;
                 	case 'links':
-                	    $str .= ' ' . $this->view->translate('Symlinks') . ': ' . $v;
+                	    $str .= ' ' . $this->view->translate('Symlinks') . ': ' . $v . ',';
                 	    break;
                 	case 'size':
                 	    $str .= ' ' . $this->view->translate('file_size_total') . ': ' . $this->view->filesize($v);
@@ -303,6 +303,8 @@ class MediasTableView extends AbstractHelper
                 	    break;
                 }
             }
+            $str .= '</em>';
         }
+        return $str;
     }
 }
