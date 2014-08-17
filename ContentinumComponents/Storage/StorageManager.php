@@ -40,6 +40,11 @@ class StorageManager
 	const CONFIG_DIRECTORY_PATH = 'path';
 	const CONFIG_FTP = 'ftp';
 	
+	const METHOD_COPY = 'copy';
+	const METHOD_MOVE = 'move';
+	const METHOD_RENAME = 'rename';
+	const METHOD_DELETE = 'delete';
+	
 	const RENAME_FILE = 'Failed to rename the file or directory';
 	const RENAME_FILE_EXISTS = 'A file or directory with this name already exists';
 	const UNLINK_FILE = 'Delete file failed';
@@ -122,6 +127,18 @@ class StorageManager
 	 * @var string
 	 */
 	protected $repositoryName = '';
+	
+	/**
+	 * Store any copy, move or delete
+	 * @var array
+	 */
+	protected $logAction = array();
+	
+	/**
+	 * Don't list this directories
+	 * @var array
+	 */
+	protected $disabledDirectories = array('.', '..', '_alternate');
 
 	/**
 	 * Construct
@@ -157,6 +174,53 @@ class StorageManager
 					break;
 			}
 		}
+	}
+
+	/**
+	 * @return the $logAction
+	 */
+	public function getLogAction($method = null) 
+	{
+		if (null === $method){
+	       return $this->logAction;
+		}
+		
+		if (isset($this->logAction[$method])){
+		    return $this->logAction[$method];
+		}
+		return null;
+	}
+	
+	/**
+	 * @param multitype: $logAction
+	 */
+	public function addLogAction($method, $logAction)
+	{
+		$this->logAction[$method][] = $logAction;
+	}	
+
+	/**
+	 * @param multitype: $logAction
+	 */
+	public function setLogAction($logAction) 
+	{
+		$this->logAction = $logAction;
+	}
+
+	/**
+	 * @return the $disabledDirectories
+	 */
+	public function getDisabledDirectories() 
+	{
+		return $this->disabledDirectories;
+	}
+
+	/**
+	 * @param multitype: $disabledDirectories
+	 */
+	public function setDisabledDirectories($disabledDirectories) 
+	{
+		$this->disabledDirectories = $disabledDirectories;
 	}
 
 	/**
@@ -322,6 +386,7 @@ class StorageManager
 		// In case of restricted permissions we zap it one way or the other
 		// as long as the owner is either the webserver or the ftp
 		if (@unlink($file)) {
+		    $this->addLogAction(self::METHOD_DELETE, $file);
 			return true;
 		} else {
 			throw new ErrorLogicStorageException(self::UNLINK_FILE);
@@ -335,10 +400,11 @@ class StorageManager
 	 * @throws ErrorLogicStorageException
 	 * @return boolean
 	 */
-    public function rename($source, $destination)
+    public function rename($source, $destination, $method = self::METHOD_RENAME)
     {
         if (! file_exists($destination)) {
             if (@rename($source, $destination)) {
+                $this->addLogAction($method, $destination);
                 return true;
             } else {
                 throw new ErrorLogicStorageException(self::RENAME_FILE);
@@ -365,7 +431,7 @@ class StorageManager
     			if(strpos($destination.DS.$file, $source.DS.$file.DS) !== false){
     				continue;
     			}
-    			$this->rename($source.DS.$file, $destination.DS.$file);
+    			$this->rename($source.DS.$file, $destination.DS.$file, self::METHOD_MOVE);
 
     		}
     	}
@@ -422,6 +488,7 @@ class StorageManager
 		// Simple copy for a file
 		if (is_file($source)) {
 		    if (@copy($source, $dest)){
+		        $this->addLogAction(self::METHOD_COPY, $dest);
 		        return true;
 		    } else {
 		        throw new ErrorLogicStorageException(self::COPY_FILE_ERROR);
@@ -798,6 +865,7 @@ class StorageManager
 					$row['items'] = '1';
 					$count = new \RecursiveDirectoryIterator($element->getPathname());
 					$row['childs'] = $count->hasChildren();
+					$row['counts'] = $this->countItems($count);
 					
 				} else {
 					$row['items'] = '';
@@ -906,5 +974,44 @@ class StorageManager
 		}
 		return $entries;		
 	}
+
+	/**
+	 * RecursiveDirectoryIterator count items
+	 * @param RecursiveDirectoryIterator $recursiveDirectoryIterator
+	 */
+    protected function countItems($recursiveDirectoryIterator)
+    {
+        $counts = array();
+        $counts['all'] = 0;
+        $counts['directorys'] = 0;  
+        $counts['links'] = 0;
+        $counts['files'] = 0;
+        $counts['size'] = 0;
+        
+        foreach ($recursiveDirectoryIterator as $element) 
+        { 
+            /* @var $element SplFileInfo */
+            switch ($element->getType())
+            {
+                case 'file':
+                    $counts['files'] ++;
+                    $counts['size'] += $element->getSize();
+                    break;
+                case 'link':           
+                    $counts['links'] ++;
+                    break;
+                case 'dir':   
+                    if ( ! in_array($element->getFilename() , $this->disabledDirectories) ){
+                        $counts['directorys']++;
+                    }
+                    break;
+            }
+            if ( ! in_array($element->getFilename() , $this->disabledDirectories) ){
+                $counts['all'] ++;
+            }
+        }
+        
+        return $counts;
+    }
 	
 }

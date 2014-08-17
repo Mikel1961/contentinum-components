@@ -166,7 +166,8 @@ class MediasTableView extends AbstractHelper
                     } else {
                         $icon = '<i class="fa fa-folder"></i>';
                     }
-
+                    
+                    $itemsInFolder = '<br /><em class="number-folder-items">' . $this->numbersItems($entry->counts) . '</em>';
                     
                     $rowContent[] = '<a href="' . self::MEDIA_DIR_PATH . '/' . str_replace(DS, $this->view->seperator, $down) . '">'. $icon .' ' . $entry->filename . '</a>' . $label; // . $this->mcworkTableEdit ( $tbl );
                     $rowContent[] = '&nbsp;';
@@ -272,5 +273,36 @@ class MediasTableView extends AbstractHelper
             $html .= $this->view->formhidden($element);
         }
         return $html;
+    }
+    
+    /**
+     * Directory summary
+     * @param array $counts
+     */
+    private function numbersItems($counts)
+    {
+        if (is_array($counts) && ! empty($counts)){
+            $str = $this->view->translate('item_numbers') . ': ';
+            foreach ($counts as $k => $v){
+                switch ($k){
+                	case 'all':
+                	    $str .= ' ' . $this->view->translate('item_numm_total') . ': ' . $v;
+                	case 'directorys':
+                	    $str .= ' ' . $this->view->translate('Directorys') . ': ' . $v;
+                	    break;
+                	case 'files':
+                	    $str .= ' ' . $this->view->translate('Files') . ': ' . $v;
+                	    break;
+                	case 'links':
+                	    $str .= ' ' . $this->view->translate('Symlinks') . ': ' . $v;
+                	    break;
+                	case 'size':
+                	    $str .= ' ' . $this->view->translate('file_size_total') . ': ' . $this->view->filesize($v);
+                	    break;
+                	default:
+                	    break;
+                }
+            }
+        }
     }
 }

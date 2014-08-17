@@ -74,6 +74,12 @@ abstract class AbstractStorageEntity extends AbstractEntity
 	protected $childs;
 	
 	/**
+	 * Number items
+	 * @var array
+	 */
+	protected $counts;	
+	
+	/**
 	 * Path of current Iterator item without filename
 	 * @var string
 	 */
@@ -287,6 +293,23 @@ abstract class AbstractStorageEntity extends AbstractEntity
 	public function setChilds($childs) 
 	{
 		$this->childs = $childs;
+		return $this;
+	}
+
+	/**
+	 * @return the $counts
+	 */
+	public function getCounts() 
+	{
+		return $this->counts;
+	}
+
+	/**
+	 * @param multitype: $counts
+	 */
+	public function setCounts($counts) 
+	{
+		$this->counts = $counts;
 		return $this;
 	}
 
