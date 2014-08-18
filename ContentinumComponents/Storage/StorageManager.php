@@ -741,7 +741,7 @@ class StorageManager
             $name = $object->getFilename();
             
             // skip unwanted files
-            if (in_array($name, $this->disabledDirectories)){
+            if ('.' == $name || '..' == $name){  //in_array($name, $this->disabledDirectories)
                 continue;
             }
             $path = str_replace('\\', '/', $object->getPathname());

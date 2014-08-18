@@ -155,7 +155,7 @@ class MediasTableView extends AbstractHelper
                     	}
                     }                    
                     
-                    $rowContent[] = '<input type="checkbox" value="' . $entry->filename . '" name="cb[]" '.$dataAttribInUse.'>';
+                    $rowContent[] = '<input type="checkbox" value="' . $entry->filename . '" name="cb[]" data-type="dir" '.$dataAttribInUse.'>';
                     $down = $entry->filename;
                     if ($this->view->currentFolder) {
                         $down = $this->view->currentFolder . DS . $entry->filename;
@@ -202,8 +202,14 @@ class MediasTableView extends AbstractHelper
                     	$dataAttribInUse = 'data-inuse="1"';
                     } else {
                         $dataAttribInUse = 'data-inuse="0"';
-                    }                   
-                    $rowContent[] = '<input type="checkbox" value="' . $entry->filename . '" name="cb[]" '.$dataAttribInUse.'>';
+                    }  
+                    $dataIdent = '';
+                    if (isset($mediasTable[$compareItem]) && isset($mediasTable[$compareItem]['id']) ){
+                    	$dataIdent = 'data-ident="' . $mediasTable[$compareItem]['id'] . '" ';
+                    }                    
+                    
+                    
+                    $rowContent[] = '<input type="checkbox" value="' . $entry->filename . '" name="cb[]" data-type="file" '.$dataIdent.$dataAttribInUse.'>';
                     
                     switch ($entry->mimetype) {
                         case 'application/zip':
@@ -244,9 +250,7 @@ class MediasTableView extends AbstractHelper
                     $rowContent[] = date("d.m.Y H:i:s", $entry->time);
                     
                     $btn = '<button class="tbl-info tiny" data-time="' . date("d.m.Y H:i:s", $entry->time) . '" ';
-                    if (isset($mediasTable[$compareItem]) && isset($mediasTable[$compareItem]['id']) ){
-                        $btn .= 'data-ident="' . $mediasTable[$compareItem]['id'] . '" ';
-                    }
+                    $btn .= $dataIdent;
                     if (isset($mediasTable[$compareItem]) && isset($mediasTable[$compareItem]['mediaName']) ){
                     	$btn .= 'data-originalname="' . $mediasTable[$compareItem]['mediaName'] . '" ';
                     }  
