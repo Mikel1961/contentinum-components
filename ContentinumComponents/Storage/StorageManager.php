@@ -704,9 +704,9 @@ class StorageManager
 
     /**
      *
-     * @param unknown $path            
-     * @param string $skip_files            
-     * @param string $link_prefix            
+     * @param unknown $path
+     * @param string $skip_files
+     * @param string $link_prefix
      * @return string
      */
     public function getDirectoryTree($path, $skip_files = false, $link_prefix = '')
@@ -714,124 +714,102 @@ class StorageManager
         $objects = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path), \RecursiveIteratorIterator::SELF_FIRST);
         
         $dom = new \DomDocument("1.0");
+        $list = $dom->createElement("ul");
+        $dom->appendChild($list);
+        $node = $list;
         
-        $li = $dom;
-        $ul = $dom->createElement('ul');
-        $li->appendChild($ul);
-        $el = $dom->createElement('li');
-        $la = $dom->createElement('a', 'home');
-        $href = $dom->createAttribute('href');
-        $href->value = '#';
-        $class = $dom->createAttribute('class');
-        $class->value = 'setlink';
-        $dl = $dom->createAttribute('data-link');
-        $dl->value = $path;
-        $la->appendChild($href);
-        $la->appendChild($class);
-        $la->appendChild($dl);
-        $el->appendChild($la);
-        $ul->appendChild($el);
-        
-        $node = $ul;
-        $depth = - 1;
+        $depth = 0;
+        $homepath = $path;
         $reps = $this->getDocumentRoot();
         
-        foreach ($objects as $object) {
+        foreach ($objects as $name => $object) {
             
             $name = $object->getFilename();
-            
-            // skip unwanted files
-            if ('.' == $name || '..' == $name){  //in_array($name, $this->disabledDirectories)
-                continue;
-            }
-            $path = str_replace('\\', '/', $object->getPathname());
-            $isDir = is_dir($path);
-                        
-            $skip = false;
-            
-            if (($isDir == false && $skip_files == true)) {
-                // skip unwanted files
-                $skip = true;
-            } elseif ($isDir == false) {
-                // this is regural file, no links here
-                $link = '';
-            } else {
-                // this is dir
-                $link = str_replace($reps, '', $path);
-            }
-            
-            if ($objects->getDepth() == $depth) {
-                // the depth hasnt changed so just add another li
-                if (! $skip) {
-                    $el = $dom->createElement('li');
-                    $la = $dom->createElement('a', $name);
-                    $href = $dom->createAttribute('href');
-                    $href->value = '#';
-                    $class = $dom->createAttribute('class');
-                    $class->value = 'setlink';
-                    $dl = $dom->createAttribute('data-link');                    
-                    $dl->value = $link;
-                    $la->appendChild($href);
-                    $la->appendChild($class);
-                    $la->appendChild($dl);
-                    $el->appendChild($la);                    
-                    if (! $isDir){
-                        $el->appendChild($dom->createAttribute('isfile'));
-                    }
-                    $node->appendChild($el);
+            if ( ! in_array($name, $this->disabledDirectories)) {
+                
+                $type = $object->getType();
+                $skip = false;
+                
+                if (false === $skip_files) {
+                    $skip = false;
                 }
-            } elseif ($objects->getDepth() > $depth) {
-                // the depth increased, the last li is a non-empty folder
-                $li = $node->lastChild;
-                $ul = $dom->createElement('ul');
-                $li->appendChild($ul);
-                if (! $skip) {
-                    $el = $dom->createElement('li');
-                    $la = $dom->createElement('a', $name);
-                    $href = $dom->createAttribute('href');
-                    $href->value = '#';
-                    $class = $dom->createAttribute('class');
-                    $class->value = 'setlink';
-                    $dl = $dom->createAttribute('data-link');                    
-                    $dl->value = $link;
-                    $la->appendChild($href);
-                    $la->appendChild($class);
-                    $la->appendChild($dl);
-                    $el->appendChild($la);
-                    if (! $isDir){
-                        $el->appendChild($dom->createAttribute('isfile'));
+                
+                if (true === $skip_files) {
+                    if ('dir' === $type) {
+                        $skip = false;
+                    } else {
+                        $skip = true;
                     }
-                    $ul->appendChild($el);
                 }
-                $node = $ul;
-            } else {
-                // the depth decreased, going up $difference directories
-                $difference = $depth - $objects->getDepth();
-                for ($i = 0; $i < $difference; $difference --) {
-                    $node = $node->parentNode->parentNode;
-                }
-                if (! $skip) {
-                    $el = $dom->createElement('li');
-                    $la = $dom->createElement('a', $name);
-                    $href = $dom->createAttribute('href');
-                    $href->value = '#';
-                    $class = $dom->createAttribute('class');
-                    $class->value = 'setlink';
-                    $dl = $dom->createAttribute('data-link');                    
-                    $dl->value = $link;
-                    $la->appendChild($href);
-                    $la->appendChild($class);
-                    $la->appendChild($dl);
-                    $el->appendChild($la);
-                    if (! $isDir){
-                        $el->appendChild($dom->createAttribute('isfile'));
+                
+                if (false === $skip) {
+                    
+                    $path = str_replace('\\', '/', $object->getPathname());
+                    $isDir = is_dir($path);
+                    $link = str_replace($reps, '', $path);
+                    
+                    if ($objects->getDepth() == $depth) {
+                        // the depth hasnt changed so just add another li
+                        $li = $dom->createElement('li');
+                        $la = $dom->createElement('a', $object->getFilename());
+                        $href = $dom->createAttribute('href');
+                        $href->value = '#';
+                        $class = $dom->createAttribute('class');
+                        $class->value = 'setlink';
+                        $dl = $dom->createAttribute('data-link');
+                        $dl->value = $link;
+                        $la->appendChild($href);
+                        $la->appendChild($class);
+                        $la->appendChild($dl);
+                        $li->appendChild($la);
+                        $node->appendChild($li);
+                    } elseif ($objects->getDepth() > $depth) {
+                        // the depth increased, the last li is a non-empty folder
+                        $li = $node->lastChild;
+                        $ul = $dom->createElement('ul');
+                        $li->appendChild($ul);
+                        $liul = $dom->createElement('li');
+                        $liula = $dom->createElement('a', $object->getFilename());
+                        $href = $dom->createAttribute('href');
+                        $href->value = '#';
+                        $class = $dom->createAttribute('class');
+                        $class->value = 'setlink';
+                        $dl = $dom->createAttribute('data-link');
+                        $dl->value = $link;
+                        $liula->appendChild($href);
+                        $liula->appendChild($class);
+                        $liula->appendChild($dl);
+                        $liul->appendChild($liula);
+                        $ul->appendChild($liul);
+                        $node = $ul;
+                    } else {
+                        // the depth decreased, going up $difference directories
+                        $difference = $depth - $objects->getDepth();
+                        for ($i = 0; $i < $difference; $difference --) {
+                            $node = $node->parentNode->parentNode;
+                        }
+                        $li = $dom->createElement('li');
+                        $la = $dom->createElement('a', $object->getFilename());
+                        $href = $dom->createAttribute('href');
+                        $href->value = '#';
+                        $class = $dom->createAttribute('class');
+                        $class->value = 'setlink';
+                        $dl = $dom->createAttribute('data-link');
+                        $dl->value = $link;
+                        $la->appendChild($href);
+                        $la->appendChild($class);
+                        $la->appendChild($dl);
+                        $li->appendChild($la);
+                        $node->appendChild($li);
                     }
-                    $node->appendChild($el);
+                    $depth = $objects->getDepth();
                 }
             }
-            $depth = $objects->getDepth();
         }
-        return $dom->saveHtml();
+        
+        $html = '<ul><li><a class="setlink" data-link="' . str_replace($reps, '', $homepath) . '" href="#">home</a>';
+        $html .= $dom->saveHtml() . '</li></ul>';
+        return $html;
     }    
 
 	/**
