@@ -386,7 +386,7 @@ class StorageManager
 		// In case of restricted permissions we zap it one way or the other
 		// as long as the owner is either the webserver or the ftp
 		if (@unlink($file)) {
-		    $this->addLogAction(self::METHOD_DELETE, $file);
+		    $this->addLogAction(self::METHOD_DELETE, array('source' =>  $file));
 			return true;
 		} else {
 			throw new ErrorLogicStorageException(self::UNLINK_FILE);
