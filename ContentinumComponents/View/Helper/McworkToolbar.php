@@ -62,7 +62,7 @@ class McworkToolbar extends AbstractHelper
             if (isset($link['attribs']) && is_array($link['attribs'])) {
                 $html .= HtmlAttribute::attributeArray($link['attribs']);
             }
-            $html .= '>' . $link['label'] . '</a></li>';
+            $html .= '>' . $this->view->translate( $link['label'] ) . '</a></li>';
         }
         $html .= '</ul>';
         return $html;
