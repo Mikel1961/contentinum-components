@@ -209,6 +209,9 @@ abstract class AbstractFormController extends AbstractContentinumController
 	protected function buildView (array $variables, $content, $mcworkpages)
 	{
 		$view = new ViewModel($variables);
+		
+		$view->setVariable('formbuttons', $this->getServiceLocator()
+		    ->get('Mcwork\Buttons'));
 	
 		// get html widget, if specified ...
 		$widget = false;
