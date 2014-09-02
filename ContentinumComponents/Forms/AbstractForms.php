@@ -47,6 +47,7 @@ abstract class AbstractForms
 	const DECO_ROW_SELECT = 'deco-row-select';
 	const DECO_ROW = 'deco-row';
 	const DECO_TAB_ROW = 'deco-tab-row';
+	const DECO_ELM_ROW = 'deco-element-row';
 	const DECO_DESC = 'deco-desc';
 	const DECO_ERROR = 'deco-error';
 	const DECO_ABORT_BTN = 'deco-abort-btn';
@@ -56,7 +57,7 @@ abstract class AbstractForms
 	 * Decorator keys storage
 	 * @var array
 	 */
-	protected $decoStorageKeys = array('deco-form' => self::DECO_FORM, 'deco-row-button' => self::DECO_ROW_BUTTON, 'deco-row-radio' => self::DECO_ROW_RADIO, 'deco-row-check' => self::DECO_ROW_CHECK, 'deco-row-select' => self::DECO_ROW_SELECT, 'deco-row' => self::DECO_ROW, 'deco-tab-row' => self::DECO_TAB_ROW, 'deco-desc' => self::DECO_DESC, 'deco-error' => self::DECO_ERROR, 'deco-abort-btn' => self::DECO_ABORT_BTN);
+	protected $decoStorageKeys = array('deco-form' => self::DECO_FORM, 'deco-row-button' => self::DECO_ROW_BUTTON, 'deco-row-radio' => self::DECO_ROW_RADIO, 'deco-row-check' => self::DECO_ROW_CHECK, 'deco-row-select' => self::DECO_ROW_SELECT, 'deco-row' => self::DECO_ROW, 'deco-tab-row' => self::DECO_TAB_ROW, 'deco-element-row' => self::DECO_ELM_ROW , 'deco-desc' => self::DECO_DESC, 'deco-error' => self::DECO_ERROR, 'deco-abort-btn' => self::DECO_ABORT_BTN);
 	
 	/**
 	 * \Zend\Form\Factory

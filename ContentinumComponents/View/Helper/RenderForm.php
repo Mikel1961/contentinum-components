@@ -123,6 +123,7 @@ class RenderForm extends AbstractHelper
     private function renderElement($element)
     {
         $html = '';
+        $error = false;
         $type = $element->getAttribute('type');
         $formLabel = $this->view->plugin('formLabel');
         if ($element->getOption('label')) {
@@ -130,8 +131,8 @@ class RenderForm extends AbstractHelper
             $html .= $element->getOption('label');
             $html .= $formLabel->closeTag();
         }
-        
-        $html .= $this->view->formElement($element);
+        $error = $this->view->formElement($element);
+        $html .= $error;
         if ($type == 'submit') {
             $abortDeco = $element->getOption('deco-abort-btn');
             $label = 'Button';
@@ -145,11 +146,15 @@ class RenderForm extends AbstractHelper
         
         $html .= $this->renderErrors($element);
         $html .= $this->renderDescription($element->getOption('description'));
-        
+        $name = $element->getAttribute('name');
         if (true == ($deco = $element->getOption('deco-row'))) {
             if (isset($deco['tags'])) {
                 $html = $this->buildDecco($deco, $html);
             } else {
+                $deco['attributes']['id'] = 'field' . $name;
+                if (false !== $error){
+                    $deco['attributes']['class'] = 'error';
+                }
                 $attributes = '';
                 if (isset($deco['attributes'])) {
                     $attributes = HtmlAttribute::attributeArray($deco['attributes']);
@@ -202,7 +207,7 @@ class RenderForm extends AbstractHelper
             $html = $err->render($element);
         }
         
-        if (false == $html) {
+        if (false === $html) {
             if (true == ($msg = $element->getOption('deco-error-msg'))) {
                 if (true == ($deco = $element->getOption('deco-error'))) {
                     if (isset($deco['tag'])) {
