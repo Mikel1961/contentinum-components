@@ -40,6 +40,7 @@ class McworkToolbar extends AbstractHelper
 {
     protected $attribute = array();
     protected $standards = array();
+    protected $tag = 'a';
 
     /**
      * Build editing toolbar
@@ -47,9 +48,9 @@ class McworkToolbar extends AbstractHelper
      * @param array $links            
      * @return string
      */
-    public function __invoke(array $links, $std = false, array $toolbarlist = null)
+    public function __invoke(array $links, $std = false, array $list = null)
     {
-        $this->setStandards($toolbarlist);
+        $this->setStandards($list);
         $html = '<ul';
         $html .= HtmlAttribute::attributeArray($this->attribute);
         $html .= '>';
@@ -58,11 +59,15 @@ class McworkToolbar extends AbstractHelper
             if (true === $std && ($standard = $this->getStandards($key))){
                 $link = ArrayMergeRecursiveDistinct::merge($standard, $link);
             }
-            $html .= '<li><a href="' . $link['href'] . '"';
+            $html .= '<li><'. $this->tag;
+            if ('a' == $this->tag && false !==  $link['href']){
+            	$html .= ' href="' . $link['href'] . '"';
+            }
             if (isset($link['attribs']) && is_array($link['attribs'])) {
                 $html .= HtmlAttribute::attributeArray($link['attribs']);
             }
-            $html .= '>' . $this->view->translate( $link['label'] ) . '</a></li>';
+            $html .= '>' . $this->view->translate( $link['label'] ) . '</'.$this->tag.'>';
+            $html .= '</li>';
         }
         $html .= '</ul>';
         return $html;
@@ -80,6 +85,10 @@ class McworkToolbar extends AbstractHelper
         
         if ( isset($standards['standards']) ){
             $this->standards = $standards['standards'];
+        }
+
+        if (isset($standards['tag'])){
+            $this->tag = $standards['tag'];
         }
     }
     
