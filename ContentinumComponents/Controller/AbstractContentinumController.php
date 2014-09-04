@@ -61,6 +61,12 @@ abstract class AbstractContentinumController extends AbstractActionController
 	protected $configuration;
 	
 	/**
+	 * Is a xhr request
+	 * @var boolen
+	 */
+	protected $xmlHttpRequest = false;
+	
+	/**
 	 * Get mapper worker
 	 * @return \Contentinum\Mapper\Process
 	 */
@@ -153,6 +159,20 @@ abstract class AbstractContentinumController extends AbstractActionController
 	{
 		$this->configuration = $configuration;
 	}
+	/**
+     * @return the $xmlHttpRequest
+     */
+    public function getXmlHttpRequest()
+    {
+        return $this->xmlHttpRequest;
+    }
 
-	
+	/**
+     * @param \ContentinumComponents\Controller\boolen $xmlHttpRequest
+     */
+    public function setXmlHttpRequest($xmlHttpRequest)
+    {
+        $this->xmlHttpRequest = $xmlHttpRequest;
+    }
+
 }

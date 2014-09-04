@@ -104,6 +104,7 @@ abstract class AbstractFormController extends AbstractContentinumController
 		}	
 		
 		$uri = $this->getRequest()->getUri();
+		$this->setXmlHttpRequest($this->getRequest()->isXmlHttpRequest());
 		$routeMatch = $e->getRouteMatch ();
 		$ctrl = $routeMatch->getParam ( 'controller' );
 		$page = str_replace ( '\\', '_', $ctrl );
