@@ -82,6 +82,12 @@ abstract class AbstractFormController extends AbstractContentinumController
 	 * @var string
 	 */
 	protected $toUrl;
+	
+	/**
+	 * Contains individual buttons configuration
+	 * @var unknown
+	 */
+	protected $formButtons;
 		
 	/**
 	 * Construct set abstract forms
@@ -160,12 +166,7 @@ abstract class AbstractFormController extends AbstractContentinumController
 	    }
 	    
 	    $this->adminlayout($this->layout(), $mcworkpages, $page, $role, $acl, $this->getServiceLocator()->get('viewHelperManager'));
-	    $model = $this->buildView (array('form' => $this->form,'page' => $page,'pagecontent' => $content), $content, $mcworkpages);
-	    
-		if (null !== $this->toRoute){
-			$model->setVariable('abortation', $this->toRoute);
-		}
-		return $model;
+	    return $this->buildView (array('form' => $this->form,'page' => $page,'pagecontent' => $content), $content, $mcworkpages);
 	}
 	
 	/**
@@ -213,6 +214,12 @@ abstract class AbstractFormController extends AbstractContentinumController
 		
 		$view->setVariable('formbuttons', $this->getServiceLocator()
 		    ->get('Mcwork\Buttons'));
+		
+		$view->setVariable('btnconfiguration', $this->getFormButtons() );
+		
+		if (null !== $this->toRoute){
+		    $view->setVariable('abortation', $this->toRoute);
+		}		
 	
 		// get html widget, if specified ...
 		$widget = false;
@@ -355,4 +362,20 @@ abstract class AbstractFormController extends AbstractContentinumController
 	{
 		$this->toUrl = $toUrl;
 	}
+	/**
+     * @return the $formButtons
+     */
+    public function getFormButtons()
+    {
+        return $this->formButtons;
+    }
+
+	/**
+     * @param \ContentinumComponents\Controller\unknown $formButtons
+     */
+    public function setFormButtons($formButtons)
+    {
+        $this->formButtons = $formButtons;
+    }
+
 }
