@@ -324,7 +324,17 @@ class Worker extends AbstractMapper
 	{
 		$this->configuration = $configuration;
 	}	
-
+	
+    /**
+     * Database connection to execute a native sql query
+     *
+     * @return \Doctrine\DBAL\Connection
+     */
+    public function getConnection()
+    {
+        $em = $this->getStorage();
+        return $em->getConnection();
+    }
 
 	/**
 	 * Get the last primary id value
