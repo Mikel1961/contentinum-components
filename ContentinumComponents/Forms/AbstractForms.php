@@ -303,9 +303,9 @@ abstract class AbstractForms
 		$builder->add ( 'select', 'main.' . implode(', main.', $columns) );
 		$builder->add ( 'from', $entityName . ' AS main' );
 		if ( is_array($where) && !empty($where) ){
-		    foreach ($where as $conditions){
-		        $builder->where($conditions['cond']);
-		        $builder->setParameter($conditions['param'][0],$conditions['param'][1]);
+		    foreach ($where as $conditions => $params){
+		        $builder->where($conditions);
+		        $builder->setParameter($params[0],$params[1]);
 		    }
 		}
 		if (true === $dist){
