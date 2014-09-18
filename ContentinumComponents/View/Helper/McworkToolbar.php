@@ -32,7 +32,8 @@ use ContentinumComponents\Html\HtmlAttribute;
 use ContentinumComponents\Tools\ArrayMergeRecursiveDistinct;
 
 /**
- * build table toolbar
+ * Toolbar
+ * Created a link list with buttons or with a tag
  *
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
@@ -43,10 +44,10 @@ class McworkToolbar extends AbstractHelper
     protected $tag = 'a';
 
     /**
-     * Build editing toolbar
+     * Created a list depending on the given array
      * 
-     * @param array $links            
-     * @return string
+     * @param array $links condition for the list            
+     * @return string list in html
      */
     public function __invoke(array $links, $std = false, array $list = null)
     {
@@ -56,8 +57,10 @@ class McworkToolbar extends AbstractHelper
         $html .= '>';
         foreach ($links as $key => $link) {
             $standard = array();
-            if (true === $std && ($standard = $this->getStandards($key))){
+            if (is_array($link) && true === $std && ($standard = $this->getStandards($key))){
                 $link = ArrayMergeRecursiveDistinct::merge($standard, $link);
+            } else {
+                $link = $this->getStandards($key);
             }
             $html .= '<li><'. $this->tag;
             if ('a' == $this->tag && false !==  $link['href']){
@@ -75,7 +78,7 @@ class McworkToolbar extends AbstractHelper
     
     /**
      * Set standards
-     * @param unknown $standards
+     * @param array $standards
      */
     protected function setStandards($standards)
     {
@@ -94,7 +97,7 @@ class McworkToolbar extends AbstractHelper
     
     /**
      * Get standard toolbar content
-     * @param unknown $key
+     * @param string $key
      * @return multitype:multitype:string multitype:string
      */
     protected function getStandards($key)
