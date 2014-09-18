@@ -30,15 +30,36 @@ namespace ContentinumComponents\Mapper;
 use ContentinumComponents\Mapper\Rang\Calculate;
 
 /**
- * @todo make sequence column as a class property
- * 
  * Calculate and update the new sequence of data records
+ * 
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  *
  */
 class Sequence extends Worker
 {
     /**
+     * Column name sequence numbers
+     * @var string
+     */
+    protected $colSequence = 'itemRang';
+    
+    /**
+     * @return the $colSequence
+     */
+    public function getColSequence()
+    {
+        return $this->colSequence;
+    }
+
+	/**
+     * @param string $colSequence
+     */
+    public function setColSequence($colSequence)
+    {
+        $this->colSequence = $colSequence;
+    }
+
+	/**
      * Prepare and update item rangs 
      * @param Contentinum_Model_Abstract $entity Contentinum_Model_Abstract
      * @param $datas new item rangs
@@ -48,8 +69,8 @@ class Sequence extends Worker
     {
     	// update the rows
     	foreach ($datas as $row) {
-    		$update = array('item_rang' => $row['item_rang']);
-    		parent::save($this->find($row['id']) , $update, self::SAVE_UPDATE, $row['id']);
+    		$update = array($this->colSequence => $row[ $this->colSequence ]);
+    		parent::save( $update, $this->find($row['id']) , self::SAVE_UPDATE, $row['id']);
     	}
     	// sucessfully
     	return true;
@@ -69,13 +90,12 @@ class Sequence extends Worker
          */
     	$db = $this->getStorage();
     	$qb = $db->createQueryBuilder();
-    	$qb->add('select', 'main.id, main.item_rang');
-    	//$qb->add('select', 'main.id');
+    	$qb->add('select', 'main.id, main.' . $this->colSequence);
     	$qb->add('from', $this->getEntityName() . ' AS main');  
     	if ($key && $value) {
     		$qb->add('where', 'main.' . $key . ' = ?1')->setParameter(1, $value);
     	}
-    	$qb->add('orderBy','main.item_rang ASC');
+    	$qb->add('orderBy','main.'. $this->colSequence . ' ASC');
     	$query = $qb->getQuery();
     	return $query->getResult();   	    	  	
     }
@@ -89,16 +109,16 @@ class Sequence extends Worker
     public function sortItemRang ($key = null, $value = null)
     {
   	
-        $moveRang = Calculate::itemsort($this->fetchItemRangs( $key, $value, $this->getEntityName()));
+        $moveRang = Calculate::itemsort($this->fetchItemRangs( $key, $value, $this->getEntityName()),$this->colSequence);
     	// update the rows
     	try {
     		$this->updaterang($this->getEntityName(),$moveRang); 		
-    		if (false !== ($log = $this->getLog())) {
-    			$log->info($this->getEntityName() . ' data records sorted successfully');
+    		if (true === $this->hasLogger()) {
+    			$this->logger->info($this->getEntityName() . ' data records sorted successfully');
     		}
     	} catch (\Exception $e) {
-    		if (false !== ($log = $this->getLog())) {
-    			$log->crit($this->getEntityName()  . ' error data records sorted ' . $e->getMessage());
+    	    if (true === $this->hasLogger()) {
+    			$this->logger->crit($this->getEntityName()  . ' error data records sorted ' . $e->getMessage());
     		}  
     		return false;  		
     	}
@@ -125,16 +145,16 @@ class Sequence extends Worker
     	// calculate and set the move
     	$calc = new Calculate($rowArray, $id);
     	$calc->setTask($task);
-    	$moveRang = $calc->itemrang();
+    	$moveRang = $calc->itemrang($this->colSequence);
     	// update the rows
     	try {
     		$this->updaterang($this->getEntityName(),$moveRang);   		
-    		if (false !== ($log = $this->getLog())) {
-    			$log->info($this->getEntityName() . ' record moved to new realm sequence successfully');
+    		if (true === $this->hasLogger()) {
+    			$this->logger->info($this->getEntityName() . ' record moved to new realm sequence successfully');
     		}    		
     	} catch (\Exception $e) {
-    		if (false !== ($log = $this->getLog())) {
-    			$log->crit($this->getEntityName()  . ' error item move rang ' . $e->getMessage());
+    		if (true === $this->hasLogger()) {
+    			$this->logger->crit($this->getEntityName()  . ' error item move rang ' . $e->getMessage());
     		}    		
     		return false;
     	}
@@ -149,18 +169,16 @@ class Sequence extends Worker
      * @param mixed $value
      * @return boolean
      */
-    public function itemjumprang ($fieldId, $changeRang, $key = null, $value = null)
+    public function itemjumprang ($idToChange, $changeRang, $key = null, $value = null)
     {  	
-        $tmp = explode('-', $fieldId);
-    	$idToChange = $tmp[1];
     	$itemRangs = $this->fetchItemRangs($key, $value);
     	$task = null;
     	foreach ($itemRangs as $row) {
     		if ($row['id'] == $idToChange) {
-    			if ($row['item_rang'] > $changeRang) {
+    			if ($row[$this->colSequence] > $changeRang) {
     				$task = 'moveup';
     			}
-    			if ($row['item_rang'] < $changeRang) {
+    			if ($row[$this->colSequence] < $changeRang) {
     				$task = 'movedown';
     			}
     			break;
@@ -168,22 +186,22 @@ class Sequence extends Worker
     	}
     	switch ($task) {
     		case 'moveup':
-    			$changeRangs = Calculate::moveup($itemRangs, $idToChange, $changeRang);
+    			$changeRangs = Calculate::moveup($itemRangs, $idToChange, $changeRang, $this->colSequence);
     			break;
     		case 'movedown':
-    			$changeRangs = Calculate::movedown($itemRangs, $idToChange, $changeRang);
+    			$changeRangs = Calculate::movedown($itemRangs, $idToChange, $changeRang, $this->colSequence);
     			break;
     		default:
     	}
     	// update the rows
     	try {
     		$this->updaterang($this->getEntityName(), $changeRangs);
-    		if (false !== ($log = $this->getLog())) {
-    			$log->info($this->getEntityName() . ' record jump to a new realm sequence successfully');
+    		if (true === $this->hasLogger()) {
+    			$this->logger->info($this->getEntityName() . ' record jump to a new realm sequence successfully');
     		}    		
     	} catch (\Exception $e) {
-    		if (false !== ($log = $this->getLog())) {
-    			$log->crit($this->getEntityName() . ' error item jump rang ' . $e->getMessage());
+    		if (true === $this->hasLogger()) {
+    			$this->logger->crit($this->getEntityName() . ' error item jump rang ' . $e->getMessage());
     		}    		
     		return false;
     	}
@@ -204,7 +222,7 @@ class Sequence extends Worker
     	$options[0] = '- 0 -';
     	if ($data) {
     		foreach ($data as $row) {
-    			$options[$row['item_rang']] = $row['item_rang'];
+    			$options[$row[$this->colSequence]] = $row[$this->colSequence];
     		}
     	}
     	return $options;

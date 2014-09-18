@@ -41,11 +41,6 @@ class Calculate
     protected $_id = null;
     
     /**
-     * Column name to sort table rows
-     * @var unknown
-     */
-    protected $_sortField = 'item_rang';
-    /**
      * Array of item rang and ids
      * @var array
      */
@@ -116,7 +111,7 @@ class Calculate
      * @param array $rowArray array of data rows with row id and item rang
      * @return array $moveRang return of new sort item rang
      */
-    public function itemrang ()
+    public function itemrang ($colSequence)
     {
     	$i = 1;
     	$rowArray = $this->_rowArrays;
@@ -126,27 +121,27 @@ class Calculate
     	foreach ($rowArray as $row) {
     		if ($row['id'] == $cid) {
     			$itemRang[$i]['id'] = $row['id'];
-    			$itemRang[$i][$this->_sortField] = $row[$this->_sortField];
+    			$itemRang[$i][$colSequence] = $row[$colSequence];
     			$itemRang[$i]['move'] = $this->_task;
     			$moveKey = $i;
     		} else {
     			$itemRang[$i]['id'] = $row['id'];
-    			$itemRang[$i][$this->_sortField] = $row[$this->_sortField];
+    			$itemRang[$i][$colSequence] = $row[$colSequence];
     		}
     		$i ++;
     	}
     	$tmp = $moveKey;
     	// get the direction to move down or up
     	switch ($this->_task) {
-    		case 'itemmovedown':
+    		case 'movedown':
     			$changeKey = $tmp + 1;
-    			$itemRang[$moveKey][$this->_sortField] = $itemRang[$moveKey][$this->_sortField] + 1;
-    			$itemRang[$changeKey][$this->_sortField] = $itemRang[$changeKey][$this->_sortField] - 1;
+    			$itemRang[$moveKey][$colSequence] = $itemRang[$moveKey][$colSequence] + 1;
+    			$itemRang[$changeKey][$colSequence] = $itemRang[$changeKey][$colSequence] - 1;
     			break;
     		default:
     			$changeKey = $tmp - 1;
-    			$itemRang[$moveKey][$this->_sortField] = $itemRang[$moveKey][$this->_sortField] - 1;
-    			$itemRang[$changeKey][$this->_sortField] = $itemRang[$changeKey][$this->_sortField] + 1;
+    			$itemRang[$moveKey][$colSequence] = $itemRang[$moveKey][$colSequence] - 1;
+    			$itemRang[$changeKey][$colSequence] = $itemRang[$changeKey][$colSequence] + 1;
     	}
     	return $itemRang;
     }
@@ -157,15 +152,15 @@ class Calculate
      * @param $changeRang
      * @return unknown_type
      */
-    public static function movedown ($itemRangs, $idToChange, $changeRang)
+    public static function movedown ($itemRangs, $idToChange, $changeRang, $colSequence)
     {
     	$changeRangs = $tmp = array();
     	$i = 1;
     	foreach ($itemRangs as $k => $row) {
     		$render = $i;
     		if ($row['id'] == $idToChange) {
-    			$oldRang = $row[$this->_sortField];
-    			$row[$this->_sortField] = $changeRang;
+    			$oldRang = $row[$colSequence];
+    			$row[$colSequence] = $changeRang;
     			$render = 'tmp';
     		}
     		$tmp[$render] = $row;
@@ -173,10 +168,10 @@ class Calculate
     	}
     	foreach ($tmp as $k => $row) {
     		if ($k != 'tmp') {
-    			if ($row[$this->_sortField] >= $oldRang && $row[$this->_sortField] <= $changeRang) {
-    				$row[$this->_sortField] = $row[$this->_sortField] - 1;
+    			if ($row[$colSequence] >= $oldRang && $row[$colSequence] <= $changeRang) {
+    				$row[$colSequence] = $row[$colSequence] - 1;
     			}
-    			$changeRangs[$row[$this->_sortField]] = $row;
+    			$changeRangs[$row[$colSequence]] = $row;
     		}
     	}
     	$changeRangs[$changeRang] = $tmp['tmp'];
@@ -190,23 +185,23 @@ class Calculate
      * @param $changeRang
      * @return unknown_type
      */
-    public static function moveup ($itemRangs, $idToChange, $changeRang)
+    public static function moveup ($itemRangs, $idToChange, $changeRang, $colSequence)
     {
     	$tmp = array();
     	foreach ($itemRangs as $row) {
-    		if ($row[$this->_sortField] >= $changeRang) {
+    		if ($row[$colSequence] >= $changeRang) {
     			if ($row['id'] == $idToChange) {
-    				$row[$this->_sortField] = $changeRang;
+    				$row[$colSequence] = $changeRang;
     			} else {
-    				$row[$this->_sortField] = $row[$this->_sortField] + 1;
+    				$row[$colSequence] = $row[$colSequence] + 1;
     			}
     		}
-    		$tmp[$row[$this->_sortField]] = $row;
+    		$tmp[$row[$colSequence]] = $row;
     	}
     	ksort($tmp);
     	$i = 1;
     	foreach ($tmp as $row) {
-    		$row[$this->_sortField] = $i;
+    		$row[$colSequence] = $i;
     		$i ++;
     		$changeRangs[] = $row;
     	}
@@ -218,14 +213,14 @@ class Calculate
      * @param array $rowArray array of data rows with row id and item rang
      * @return array $itemRang return of new sort item rang
      */
-    public static function itemsort ($rowArray)
+    public static function itemsort ($rowArray, $colSequence)
     {
     	$i = 1;
     	$itemRang = array();
     	// put in a array
     	foreach ($rowArray as $row) {
     		$itemRang[$i]['id'] = $row['id'];
-    		$itemRang[$i][$this->_sortField] = $i;
+    		$itemRang[$i][$colSequence] = $i;
     		$i ++;
     	}
     	return $itemRang;
