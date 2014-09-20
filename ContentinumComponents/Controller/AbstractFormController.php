@@ -65,6 +65,12 @@ abstract class AbstractFormController extends AbstractContentinumController
 	protected $addPopulate;
 	
 	/**
+	 * Populate values from the route
+	 * @var array
+	 */
+	protected $populateFromRoute;
+	
+	/**
 	 * Form action method
 	 * Default is POST
 	 * @var string
@@ -308,6 +314,24 @@ abstract class AbstractFormController extends AbstractContentinumController
 	{
 		$this->addPopulate = $addPopulate;
 	}
+
+	/**
+	 * Get conditions to get populate values from the route
+     * @return the $populateFromRoute
+     */
+    public function getPopulateFromRoute()
+    {
+        return $this->populateFromRoute;
+    }
+
+	/**
+	 * Set conditions to get populate values from the route
+     * @param multitype: $populateFromRoute
+     */
+    public function setPopulateFromRoute($populateFromRoute)
+    {
+        $this->populateFromRoute = $populateFromRoute;
+    }
 
 	/**
 	 * Get form action method
