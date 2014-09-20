@@ -576,6 +576,40 @@ class Worker extends AbstractMapper
 	}
 	
 	/**
+	 * Publishing data row
+	 * @param int $id data row id
+	 * @param boolen $clear clear db cache
+	 * @throws NoDataMapperExceptio error messages
+	 * @return string success messages
+	 */
+	public function publish($id, $clear = false)
+	{
+	    $status = $this->find($id, $clear);
+	    switch ($status->publish){
+	        case 'no': //$datas, $entity = null, $stage = '', $id = null)
+	            self::save(array('publish' => 'yes'),$status, self::SAVE_UPDATE,$id );
+	            $logmsg = 'Data record published successfully';
+	            $msg = 'Changed publication status of a data record successfully';
+	            break;
+	        case 'yes':
+	            self::save(array('publish' => 'no'),$status, self::SAVE_UPDATE,$id );
+	            $logmsg = 'Data record unpublished successfully';
+	            $msg = 'Changed publication status of a data record successfully';
+	            break;
+	        default:
+	            if (false !== ($log = $this->getLogger())) {
+	                $log->crit('No published status found in ' . $this->getEntityName ());
+	            }
+	            throw new NoDataMapperException('No published status found');
+	    }
+	    // log if available
+	    if (false !== ($log = $this->getLogger())) {
+	        $log->info($logmsg . ' in ' . $this->getEntityName ());
+	    }
+	    return $msg;
+	}	
+	
+	/**
 	 * Unset fields before prepare datas to INSERT or UPDATE a table row
 	 *
 	 * @param array $datas
