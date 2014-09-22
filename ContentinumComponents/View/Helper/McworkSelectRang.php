@@ -41,21 +41,21 @@ class McworkSelectRang extends AbstractHelper
 
     /**
      * Field name
-     * 
+     *
      * @var string
      */
     private $name = 'itemRang';
 
     /**
      * Stylesheet class name
-     * 
+     *
      * @var string
      */
     private $fieldclass = 'changerang';
 
     /**
      * Property names
-     * 
+     *
      * @var array
      */
     private $attribute = array(
@@ -78,7 +78,7 @@ class McworkSelectRang extends AbstractHelper
         $nums = (int) $total;
         $this->setAttribute($attr);
         
-        $html = '<select class="' . $this->filedclass . '" name="' . $this->name . '" data-group="' . $group . '"';
+        $html = '<select class="' . $this->fieldclass . '" name="' . $this->name . '" data-group="' . $group . '"';
         $html .= ' data-category="' . $id . '" data-rang="' . $rang . '"';
         $html .= ' data-categoryname="' . $category . '" data-move="jump">';
         
@@ -95,7 +95,7 @@ class McworkSelectRang extends AbstractHelper
 
     /**
      * Set properties when available
-     * 
+     *
      * @param array $attr
      */
     protected function setAttribute($attr)
