@@ -64,7 +64,7 @@ class McworkPublishItem extends AbstractHelper
     public function __invoke($status, $categoryname, $ident)
     {
         $html = '<a class="' . $this->$status['class'] . '" data-ident="' . $ident . '" data-categoryname="' . $categoryname . '"';
-        $html .= 'href="#" title="' . $this->translate($this->$status['title']) . '">';
+        $html .= 'href="#" title="' . $this->view->translate($this->$status['title']) . '">';
         $html .= $this->$status['label'] . '</a>';
         return $html;
     }
