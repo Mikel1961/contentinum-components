@@ -290,7 +290,7 @@ abstract class AbstractForms
 	 * @throws InvalidValueEntityException
 	 * @return multitype:unknown
 	 */
-	public function getSelectOptions($fieldName,$columns = array('value' => 'id', 'label' => 'name'), array $where = null, $entityName = null, $dist = false, $options = array())
+	public function getSelectOptions($fieldName,$columns = array('value' => 'id', 'label' => 'name'), array $where = null, $entityName = null, $dist = false, $options = array(),$sort = array())
 	{
 		$em = $this->storage->getStorage();
 		if (null === $entityName){
@@ -308,21 +308,29 @@ abstract class AbstractForms
 		        $builder->setParameter($params[0],$params[1]);
 		    }
 		}
+		
+		if (!empty($sort)){
+		    foreach ($sort as $key => $order){
+		        $builder->orderBy($key, $order);
+		    }
+		}
+		
 		if (true === $dist){
 		    $builder->distinct();
 		}
 		$query = $builder->getQuery();
 		$datas = $query->getResult();
 		
-		if (!is_array($options) || !empty($options) ) {
-		    $options = array();
+		$dataOptions = array();
+		if ( !empty($options) ) {
+		    $dataOptions = $options;
 		}
 		if ( is_array($datas) ){	
 			foreach ($datas as $row){
-				$options[$row[$columns['value']]] = $row[$columns['label']];
+				$dataOptions[$row[$columns['value']]] = $row[$columns['label']];
 			}
 		}
-		return $options;
+		return $dataOptions;
 	}	
 	
 	/**
