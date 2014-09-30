@@ -44,6 +44,7 @@ class StorageManager
 	const METHOD_MOVE = 'move';
 	const METHOD_RENAME = 'rename';
 	const METHOD_DELETE = 'delete';
+	const METHOD_UNZIP = 'unzip';
 	
 	const RENAME_FILE = 'Failed to rename the file or directory';
 	const RENAME_FILE_EXISTS = 'A file or directory with this name already exists';
@@ -694,6 +695,7 @@ class StorageManager
             }
             
             $zip->extractTo($path . DS, $entries);
+            $this->addLogAction(self::METHOD_UNZIP  , array('path' => $path, 'entries' => $entries));
             $zip->close();
         } else {
             throw new ErrorLogicStorageException(self::UNZIP_FILE_ERROR);
