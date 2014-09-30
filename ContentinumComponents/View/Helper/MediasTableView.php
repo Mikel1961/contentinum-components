@@ -153,21 +153,25 @@ class MediasTableView extends AbstractHelper
                     		$dataAttribInUse = 'data-inuse="1"';
                     		break;
                     	}
+                    }   
+                    $numberItems = $label . $this->numbersItems($entry->counts);
+                    if (true == $entry->childs && strlen($numberItems) > 0 ){
+                        $dataAttribChilds = ' data-childs="yes"';
+                        $icon = '<i class="fa fa-folder-open"></i>';
+                    } else {
+                        $dataAttribChilds = ' data-childs="no"';
+                        $icon = '<i class="fa fa-folder"></i>';
                     }                    
                     
-                    $rowContent[] = '<input type="checkbox" value="' . $entry->filename . '" name="cb[]" data-type="dir" '.$dataAttribInUse.'>';
+                    $rowContent[] = '<input type="checkbox" value="' . $entry->filename . '" name="cb[]" data-type="dir" '.$dataAttribInUse.$dataAttribChilds.'>';
                     $down = $entry->filename;
                     if ($this->view->currentFolder) {
                         $down = $this->view->currentFolder . DS . $entry->filename;
                     }
                     
-                    if (true == $entry->childs){
-                        $icon = '<i class="fa fa-folder-open"></i>';
-                    } else {
-                        $icon = '<i class="fa fa-folder"></i>';
-                    }
+
                                       
-                    $rowContent[] = '<a href="' . self::MEDIA_DIR_PATH . '/' . str_replace(DS, $this->view->seperator, $down) . '">'. $icon .' ' . $entry->filename . '</a>' . $label . $this->numbersItems($entry->counts);
+                    $rowContent[] = '<a href="' . self::MEDIA_DIR_PATH . '/' . str_replace(DS, $this->view->seperator, $down) . '">'. $icon .' ' . $entry->filename . '</a>' . $numberItems;
                     $rowContent[] = '&nbsp;';
                     $rowContent[] = date("d.m.Y H:i:s", $entry->time);
                     
@@ -175,7 +179,7 @@ class MediasTableView extends AbstractHelper
                     $btn .= $dataAttribInUse . ' ';
                     $btn .= 'data-ident="folder" ';
                     
-                    if (true == $entry->childs){
+                    if (true == $entry->childs && strlen($numberItems) > 0 ){
                         $btn .= 'data-childs="y" ';
                     } else {
                     	$btn .= 'data-childs="n" ';
@@ -284,31 +288,46 @@ class MediasTableView extends AbstractHelper
     private function numbersItems($counts)
     {
         $str = '';
+        $html = false;
         if (is_array($counts) && ! empty($counts)){
-            $str = '<br /><em class="number-folder-items">';
+            
             foreach ($counts as $k => $v){
                 switch ($k){
                 	case 'all':
-                	    $str .= ' ' . $this->view->translate('item_num_total') . ': ' . $v . ',';
+                	    if ($v > 0){
+                	       $str .= ' ' . $this->view->translate('item_num_total') . ': ' . $v . ',';
+                	    }
                 	    break;
                 	case 'directorys':
-                	    $str .= ' ' . $this->view->translate('Directorys') . ': ' . $v . ',';
+                	    if ($v > 0){
+                	       $str .= ' ' . $this->view->translate('Directorys') . ': ' . $v . ',';
+                	    }
                 	    break;
                 	case 'files':
-                	    $str .= ' ' . $this->view->translate('Files') . ': ' . $v . ',';
+                	    if ($v > 0){
+                	       $str .= ' ' . $this->view->translate('Files') . ': ' . $v . ',';
+                	    }
                 	    break;
                 	case 'links':
-                	    $str .= ' ' . $this->view->translate('Symlinks') . ': ' . $v . ',';
+                	    if ($v > 0){
+                	       $str .= ' ' . $this->view->translate('Symlinks') . ': ' . $v . ',';
+                	    }
                 	    break;
                 	case 'size':
-                	    $str .= ' ' . $this->view->translate('file_size_total') . ': ' . $this->view->filesize($v);
+                	    if ($v > 0){
+                	       $str .= ' ' . $this->view->translate('file_size_total') . ': ' . $this->view->filesize($v);
+                	    }
                 	    break;
                 	default:
                 	    break;
                 }
             }
-            $str .= '</em>';
+            if ( strlen($str) > 0 ){
+                $html = '<br /><em class="number-folder-items">';
+                $html .= $str;
+                $html .= '</em>';
+            }
         }
-        return $str;
+        return $html;
     }
 }
