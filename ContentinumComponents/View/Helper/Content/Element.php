@@ -28,13 +28,22 @@
 namespace ContentinumComponents\View\Helper\Content;
 
 use Zend\View\Helper\AbstractHelper;
+use ContentinumComponents\Html\HtmlElements;
+use ContentinumComponents\Html\Element\FactoryElement;
 
 
 class Element extends AbstractHelper
 {
     public function __invoke($element,$content, array $attr = null)
     {
-        return $content;
-        
+        $factory = new HtmlElements(new FactoryElement());
+        $factory->setContentTag($element);
+        $factory->setHtmlContent($content);
+        if (null !== $attr){
+            foreach ($attr as $name => $value){
+                $factory->setTagAttributtes($name, $value, 0);
+            }
+        }
+        return $factory->display();
     }
 }
