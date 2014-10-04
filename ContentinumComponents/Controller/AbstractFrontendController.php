@@ -29,6 +29,7 @@
 namespace ContentinumComponents\Controller;
 
 use ContentinumComponents\Controller\AbstractContentinumController;
+use Zend\Mvc\MvcEvent;
 
 /**
  * Contentinum Frontend Abstract Controller
@@ -45,21 +46,264 @@ abstract class AbstractFrontendController extends AbstractContentinumController
     protected $host;
     
     /**
-     * Get global website preferences
-     * Can be overridden by individual sites
-     * @return array
+     * Default host configurations
+     * @var array
+     */
+    protected $preferences;
+    
+    /**
+     * Default page configurations
+     * @var unknown
+     */
+    protected $defaults;
+        
+    /**
+     * Current page
+     * @var array
+     */
+    protected $page;
+    
+    /**
+     * Layout script key
+     * @var string
+     */
+    protected $layout;
+    
+    /**
+     * Template script key
+     * @var string
+     */
+    protected $template;
+    
+    /**
+     * AbstractForms
+     * @var AbstractForms
+     */
+    protected $formFactory;
+    
+    /**
+     *
+     * @var Zend\Form
+     */
+    protected $form;
+    
+    /**
+     * Form action
+     * @var string
+     */
+    protected $formAction;
+    
+    /**
+     * Form action method
+     * Default is POST
+     * @var string
+     */
+    protected $formMethod = 'post';
+    
+    /**
+     * Redirect route
+     * @var string
+     */
+    protected $toRoute;
+    
+    /**
+     * Redirect to url
+     * @var string
+     */
+    protected $toUrl;    
+    
+    /**
+     * @return the $host
+     */
+    public function getHost()
+    {
+        return $this->host;
+    }
+    
+    /**
+     * @param string $host
+     */
+    public function setHost($host)
+    {
+        $this->host = $host;
+    }
+    
+    /**
+     * @return the $defaults
+     */
+    public function getDefaults()
+    {
+        return $this->defaults;
+    }
+    
+    /**
+     * @param array $defaults
+     */
+    public function setDefaults($defaults)
+    {
+        $this->defaults = $defaults;
+    }
+    
+    /**
+     * @return the $page
+     */
+    public function getPage()
+    {
+        return $this->page;
+    }
+    
+    /**
+     * @param multitype: $page
+     */
+    public function setPage($page)
+    {
+        $this->page = $page;
+    }
+    
+    /**
+     * @return the $preferences
      */
     public function getPreferences()
     {
-        $preferences = $this->getServiceLocator()->get('Contentinum\Preference');
-    	$spezified['_default'] = $preferences['_default'];
-    	$this->setHost($this->getRequest()->getUri()->getHost());
-    	if (isset($preferences[$this->host])){
-    		$spezified[$this->host] = $preferences[$this->host];
-    	}
-    	return $spezified;
+        return $this->preferences;
+    }    
+    
+    /**
+     * @param multitype: $preferences
+     */
+    public function setPreferences($preferences)
+    {
+        $this->preferences = $preferences;
+    }   
+    
+    /**
+     * @return the $layout
+     */
+    public function getLayout()
+    {
+        return $this->layout;
+    }
+
+	/**
+     * @param string $layout
+     */
+    public function setLayout($layout)
+    {
+        $this->layout = $layout;
+    }
+
+	/**
+     * @return the $template
+     */
+    public function getTemplate()
+    {
+        return $this->template;
+    }
+
+	/**
+     * @param string $template
+     */
+    public function setTemplate($template)
+    {
+        $this->template = $template;
     }
     
+	/**
+     * @return the $formFactory
+     */
+    public function getFormFactory()
+    {
+        return $this->formFactory;
+    }
+    
+    /**
+     * @param \ContentinumComponents\Controller\AbstractForms $formFactory
+     */
+    public function setFormFactory($formFactory)
+    {
+        $this->formFactory = $formFactory;
+    }
+    
+    /**
+     * @return the $form
+     */
+    public function getForm()
+    {
+        return $this->form;
+    }
+    
+    /**
+     * @param \ContentinumComponents\Controller\Zend\Form $form
+     */
+    public function setForm($form)
+    {
+        $this->form = $form;
+    }
+    
+    /**
+     * @return the $formAction
+     */
+    public function getFormAction()
+    {
+        return $this->formAction;
+    }
+    
+    /**
+     * @param string $formAction
+     */
+    public function setFormAction($formAction)
+    {
+        $this->formAction = $formAction;
+    }
+    
+    /**
+     * @return the $formMethod
+     */
+    public function getFormMethod()
+    {
+        return $this->formMethod;
+    }
+    
+    /**
+     * @param string $formMethod
+     */
+    public function setFormMethod($formMethod)
+    {
+        $this->formMethod = $formMethod;
+    }
+    
+    /**
+     * @return the $toRoute
+     */
+    public function getToRoute()
+    {
+        return $this->toRoute;
+    }
+    
+    /**
+     * @param string $toRoute
+     */
+    public function setToRoute($toRoute)
+    {
+        $this->toRoute = $toRoute;
+    }
+    
+    /**
+     * @return the $toUrl
+     */
+    public function getToUrl()
+    {
+        return $this->toUrl;
+    }
+    
+    /**
+     * @param string $toUrl
+     */
+    public function setToUrl($toUrl)
+    {
+        $this->toUrl = $toUrl;
+    }    
+        
     /**
      * Get html structur xml file
      * @param string $key
@@ -80,26 +324,51 @@ abstract class AbstractFrontendController extends AbstractContentinumController
      */
     public function getHtmlwidgets($key = null)
     {
-    	if (null == $key){
-    		$key = 'Contentinum\Htmlwidgets';
-    	}
-    	return $this->getServiceLocator()->get($key);
-    }    
+        if (null == $key){
+            $key = 'Contentinum\Htmlwidgets';
+        }
+        return $this->getServiceLocator()->get($key);
+    } 
+
     
-	/**
-	 * @return the $host
-	 */
-	public function getHost() 
-	{
-		return $this->host;
-	}
+    /**
+     * Default user role
+     *
+     * @return Ambigous <object, multitype:, \Contentinum\Acl\DefaultRole>
+     */
+    public function getDefaultRole()
+    {
+        return $this->getServiceLocator()->get('Contentinum\Acl\DefaultRole');
+    }
 
-	/**
-	 * @param string $host
-	 */
-	public function setHost($host) 
-	{
-		$this->host = $host;
-	}
-
+    /**
+     * Acl configuration
+     *
+     * @return Ambigous <object, multitype:, \Contentinum\Acl\Acl>
+     */
+    public function getAclService()
+    {
+        return $this->getServiceLocator()->get('Contentinum\Acl\Acl');
+    }
+    
+    
+    
+    /**
+     * Steps running form display, validation and output status message
+     * @param MvcEvent $e
+     * @return \Zend\View\Model\ViewModel
+     */
+    public function onDispatch(MvcEvent $e)
+    {
+        $this->setXmlHttpRequest($this->getRequest()->isXmlHttpRequest());
+        $routeMatch = $e->getRouteMatch ();
+        if ($this->getRequest ()->isPost ()) {
+            
+        } else {
+            $e->getRouteMatch ()->setParam ( 'action', 'application' );
+            $app = $this->application($this->getPreferences(), $this->getDefaults(), $this->getPage());
+        }
+		$e->setResult ( $app );
+		return $app;
+    }    
 }
