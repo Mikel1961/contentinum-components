@@ -44,7 +44,7 @@ class McworkPublishItem extends AbstractHelper
      *
      * @var string
      */
-    private $publish = array(
+    private $yes = array(
         'label' => '<i class="fa fa-toggle-on fa-2x emerald-color"></i>',
         'class' => 'unpublish',
         'title' => 'Publish'
@@ -55,17 +55,17 @@ class McworkPublishItem extends AbstractHelper
      *
      * @var string
      */
-    private $unpublish = array(
+    private $no = array(
         'label' => '<i class="fa fa-toggle-off fa-2x alizarin-color"></i></a>',
         'class' => 'publish',
         'title' => 'Unpublish'
     );
 
-    public function __invoke($status, $categoryname, $ident)
+    public function __invoke($status, $ident, $categoryname)
     {
-        $html = '<a class="' . $this->$status['class'] . '" data-ident="' . $ident . '" data-categoryname="' . $categoryname . '"';
-        $html .= 'href="#" title="' . $this->view->translate($this->$status['title']) . '">';
-        $html .= $this->$status['label'] . '</a>';
+        $html = '<a class="' . $this->{$status}['class'] . '" data-ident="' . $ident . '" data-categoryname="' . $categoryname . '"';
+        $html .= 'href="#" title="' . $this->view->translate($this->{$status}['title']) . '">';
+        $html .= $this->{$status}['label'] . '</a>';
         return $html;
     }
 }
