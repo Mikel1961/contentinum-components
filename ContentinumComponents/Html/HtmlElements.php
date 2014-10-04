@@ -137,7 +137,11 @@ class HtmlElements
      */
     public function setAttributes ($name, $value)
     {
-        $this->_attributes[$name] = $value;
+        if (false === $name){
+            $this->_attributes = $value;
+        } else {
+            $this->_attributes[$name] = $value;
+        }
     }
 
     /**
@@ -149,7 +153,12 @@ class HtmlElements
      */
     public function setTagAttributtes ($name, $value, $key)
     {
-        $this->_tagAttributes[$key][$name] = $value;
+        if (false === $name){
+            $this->_tagAttributes[$key] = $value;
+        } else {
+            $this->_tagAttributes[$key][$name] = $value;
+        }
+        
     }
 
     /**
