@@ -33,94 +33,103 @@ use ContentinumComponents\Html\Element\FactoryElement;
 
 class Grid extends AbstractHelper
 {
+
     private $grids;
-    
+
+    private $auto;
+
     private $row;
-    
+
     private $attribute;
-    
+
     private $grid;
-    
+
     private $gridAttribute;
-    
+
     private $content;
-    
-    
-    
-    
-    public function __invoke(array $content, array $template, array $specified = null)
+
+    private $properties = array(
+        'grids',
+        'auto',
+        'row',
+        'attribute',
+        'grid',
+        'gridAttribute',
+        'content'
+    );
+
+    public function __invoke(array $content, array $template, $medias, array $specified = null)
     {
-        
         $this->setTemplate($template);
-        if (null !== $specified){
+        if (null !== $specified) {
             $this->setSpecified($specified);
         }
-        $number = ( $this->grids / count($content['entries']));
+        $number = ($this->grids / count($content['entries']));
         $i = 0;
+        
         $factory = new HtmlElements(new FactoryElement());
         $factory->setEncloseTag($this->row);
         $factory->setAttributes(false, $this->attribute);
-        foreach ($content['entries'] as $row){
-            if (isset($row['element']) && strlen($row['element']) > 0){
+        foreach ($content['entries'] as $row) {
+            if (isset($row['element']) && strlen($row['element']) > 0) {
                 $element = $row['element'];
-                if (isset($row['elementAttribute']) && strlen($row['elementAttribute']) > 0){
+                if (isset($row['elementAttribute']) && !empty($row['elementAttribute'])) {
+                    $this->auto = true;
                     $attribute = $row['elementAttribute'];
                 } else {
                     $attribute = $this->getReplaceStdAttribute($i, $number);
                 }
             } else {
-                if (isset( $this->grid[i] )){
-                    $element = $this->grid[i];
+                if (isset($this->grid[$i])) {
+                    $element = $this->grid[$i];
                 } else {
                     $element = $this->grid[0];
                 }
                 $attribute = $this->getReplaceStdAttribute($i, $number);
             }
+            
             $factory->setContentTag($element);
             $factory->setTagAttributtes(false, $attribute, $i);
             $factory->setHtmlContent($row['content']);
-            $i++;            
+            $i ++;
         }
         return $factory->display();
     }
-    
-    
-    protected function getReplaceStdAttribute($i,$number)
+
+    protected function getReplaceStdAttribute($i, $number)
     {
-        if (isset($this->gridAttribute[$i])){
+        if (isset($this->gridAttribute[$i])) {
             $attribute = $this->gridAttribute[$i];
         } else {
             $attribute = $this->gridAttribute[0];
+        }
+        
+        if (true === $this->auto) {
             $attribute['class'] = str_replace($this->grids, $number, $attribute['class']);
         }
+        
         return $attribute;
     }
-    
+
     protected function setSpecified($specified)
     {
-        $keys = get_object_vars($this);
-        foreach ($specified as $key => $values){
-            if (in_array($key, $keys)){
-                if (is_array($this->{$key})){
-                    $this->{$key} = array_merge($this->{$key},$values);
+        foreach ($specified as $key => $values) {
+            if (in_array($key, $this->properties)) {
+                if (is_array($this->{$key})) {
+                    $this->{$key} = array_merge($this->{$key}, $values);
                 } else {
                     $this->{$key} = $values;
                 }
             }
         }
-        
     }
-    
+
     protected function setTemplate($template)
     {
-        $keys = get_object_vars($this);
-        foreach ($template as $key => $values){
-            if (in_array($key, $keys)){
+        foreach ($template as $key => $values) {
+            if (in_array($key, $this->properties)) {
                 $this->{$key} = $values;
             }
         }
     }
-    
-    
-    
 }
