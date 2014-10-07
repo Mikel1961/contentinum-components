@@ -67,6 +67,12 @@ abstract class AbstractContentinumController extends AbstractActionController
 	protected $xmlHttpRequest = false;
 	
 	/**
+	 * User agent
+	 * @var string
+	 */
+	protected $userAgent = 'desktop';
+	
+	/**
 	 * Get mapper worker
 	 * @return \Contentinum\Mapper\Process
 	 */
@@ -174,5 +180,21 @@ abstract class AbstractContentinumController extends AbstractActionController
     {
         $this->xmlHttpRequest = $xmlHttpRequest;
     }
+	/**
+     * @return the $userAgent
+     */
+    public function getUserAgent()
+    {
+        return $this->userAgent;
+    }
+
+	/**
+     * @param string $userAgent
+     */
+    public function setUserAgent($userAgent)
+    {
+        $this->userAgent = $userAgent;
+    }
+
 
 }
