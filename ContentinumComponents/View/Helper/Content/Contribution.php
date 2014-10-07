@@ -31,29 +31,141 @@ use Zend\View\Helper\AbstractHelper;
 use ContentinumComponents\Html\HtmlElements;
 use ContentinumComponents\Html\Element\FactoryElement;
 
-
 class Contribution extends AbstractHelper
 {
-    public function __invoke(array $content, $medias ,array $template = null)
+
+    /**
+     *
+     * @var unknown
+     */
+    private $row;
+
+    /**
+     *
+     * @var unknown
+     */
+    private $grid;
+
+    /**
+     *
+     * @var unknown
+     */
+    private $media;
+
+    /**
+     *
+     * @var unknown
+     */
+    private $content;
+
+    /**
+     *
+     * @var unknown
+     */
+    private $properties = array(
+        'row',
+        'grid',
+        'media',
+        'content'
+    );
+
+    /**
+     *
+     * @param array $content
+     * @param unknown $medias
+     * @param array $template
+     * @return Ambigous <string, multitype:>
+     */
+    public function __invoke(array $content, $medias, array $template = null)
     {
+        $this->setTemplate($template);
+        $html = '';
         $factory = false;
-        foreach ($content['entries'] as $row){
-            if (isset($row['element']) && strlen($row['element']) > 0) {
+        foreach ($content['entries'] as $entry) {
+            $row = $this->getTemplateProperty('row', 'element');
+            $grid = $this->getTemplateProperty('grid', 'element');
+            if (is_array($entry) && isset($entry['element']) && strlen($entry['element']) > 0) {
+                $grid = $entry['element'];
+            }
+            if ($row || $grid) {
                 $factory = new HtmlElements(new FactoryElement());
-                $factory->setContentTag($row['element']);
-                if (isset($row['elementAttribute']) && !empty($row['elementAttribute'])) {
-                    $factory->setTagAttributtes(false, $row['elementAttribute'], 0);
-                }
-            }            
+            }
             
-            if (false === $factory){
-                $content = $row['content'];
+            if ($row) {
+                $factory->setEncloseTag($row);
+                $attr = $this->getTemplateProperty('row', 'attr');
+                if (false !== $attr) {
+                    $factory->setAttributes(false, $attr);
+                    $attr = false;
+                }
+            }
+            
+            if ($grid) {
+                $factory->setContentTag($grid);
+                $usrAttr = false;
+                if (is_array($entry) && isset($entry['elementAttribute']) && ! empty($entry['elementAttribute'])) {
+                    $usrAttr = $entry['elementAttribute'];
+                }
+                $attr = $this->getTemplateProperty('grid', 'attr');
+                if (false !== $usrAttr && false !== $attr) {
+                    
+                    $attr = array_merge($attr, $usrAttr);
+                }
+                $factory->setTagAttributtes(false, $attr, 0);
+            }
+            
+            $media = '';
+            if (isset($entry['medias']) && $entry['medias'] > 1) {
+                $media = $this->view->images($entry['medias'], $medias, $media);
+            }
+            
+            if (false === $factory) {
+                $html = $media . $entry['content'];
             } else {
-                $factory->setHtmlContent($row['content']);
-                $content = $factory->display();
+                $factory->setHtmlContent($media . $entry['content']);
+                $html = $factory->display();
             }
             break;
-        }  
-        return $content;      
+        }
+        $this->unsetProperties();
+        return $html;
+    }
+
+    /**
+     *
+     * @param unknown $prop
+     * @param unknown $key
+     * @return boolean
+     */
+    protected function getTemplateProperty($prop, $key)
+    {
+        if (isset($this->{$prop}[$key])) {
+            return $this->{$prop}[$key];
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     *
+     * @param unknown $template
+     */
+    protected function setTemplate($template)
+    {
+        if (null !== $template) {
+            
+            foreach ($template as $key => $values) {
+                if (in_array($key, $this->properties)) {
+                    $this->{$key} = $values;
+                }
+            }
+        }
+    }
+    
+    protected function unsetProperties()
+    {
+        foreach ($this->properties as $prop){
+            $this->{$prop} = null;
+        }
     }
 }
