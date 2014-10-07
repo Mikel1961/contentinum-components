@@ -28,6 +28,7 @@
 namespace ContentinumComponents\Html\Layout;
 
 use ContentinumComponents\Html\Exeption\InvalidValueHtmlException;
+
 /**
  * Create, build array with the layout elements
  * define from squence tag in xml config file
@@ -60,7 +61,7 @@ class HtmlLayoutSequence
      *
      * @param array $datas
      */
-    public function conf (array $datas = array())
+    public function conf(array $datas = array())
     {
         if (empty($datas)) {
             throw new InvalidValueHtmlException('The array must have a content');
@@ -84,7 +85,7 @@ class HtmlLayoutSequence
      * @param mixed $default
      * @return mixed
      */
-    public function get ($name, $default = null)
+    public function get($name, $default = null)
     {
         $result = $default;
         if (array_key_exists($name, $this->data)) {
@@ -99,7 +100,7 @@ class HtmlLayoutSequence
      * @param string $name
      * @return mixed
      */
-    public function __get ($name)
+    public function __get($name)
     {
         return $this->get($name);
     }
@@ -110,7 +111,7 @@ class HtmlLayoutSequence
      * @param array $datas
      * @return Contentinum_Interface
      */
-    public function set (array $datas = array())
+    public function set(array $datas = array())
     {
         $this->data = $datas;
         return $this;
@@ -121,7 +122,7 @@ class HtmlLayoutSequence
      *
      * @param array $params some parameters
      */
-    public function prepare ($params = array())
+    public function prepare($params = array())
     {
         return $this;
     }
@@ -132,12 +133,13 @@ class HtmlLayoutSequence
      * @param array $params some parameters
      *       
      */
-    public function execute ($params = array())
+    public function execute($params = array())
     {
-        
-        // Zend_Debug::dump($this->_data);exit;
-        foreach ($this->data['action'] as $row) { // ['action']
-                $layout[] = $this->make($row);
+        foreach ($this->data['action'] as $row) {
+            if (is_string($row)) {
+                continue;
+            }
+            $layout[] = $this->make($row);
         }
         return $layout;
     }
@@ -147,18 +149,24 @@ class HtmlLayoutSequence
      *
      * @param unknown_type $row
      */
-    protected function make ($row)
+    protected function make($row)
     {
         $str = null;
         switch ($row['set']) {
             case 'assign':
-                $str = array('assign' => $row['param']['value']);
+                $str = array(
+                    'assign' => $row['param']['value']
+                );
                 break;
             case 'content':
-                $str = array('content' => $row['param']['value']);
+                $str = array(
+                    'content' => $row['param']['value']
+                );
                 break;
             case 'load':
-                $str = array('load' => $row['param']['value']);
+                $str = array(
+                    'load' => $row['param']['value']
+                );
                 break;
             case 'boxend':
                 $str = '</' . $row['param']['value'] . '>';
