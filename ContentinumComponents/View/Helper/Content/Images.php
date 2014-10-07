@@ -28,12 +28,102 @@
 namespace ContentinumComponents\View\Helper\Content;
 
 use Zend\View\Helper\AbstractHelper;
-
+use ContentinumComponents\Tools\HandleSerializeDatabase;
+use ContentinumComponents\Html\HtmlElements;
+use ContentinumComponents\Html\Element\FactoryElement;
 
 class Images extends AbstractHelper
 {
-    public function __invoke($id, $medias)
+
+    private $sizes = array(
+        'max',
+        'thumbnail',
+        'mobile',
+        's',
+        'l',
+        'xl'
+    );
+
+    private $desktop = array(
+        's',
+        'l',
+        'xl'
+    );
+
+    private $mobil = array(
+        'mobile',
+        's'
+    );
+
+    public function __invoke($id, $medias, $template = null)
     {
-    
-    }    
+        //var_dump($id);
+        //print '<pre>';
+        // var_dump($medias[$id]);//->{$id});
+        $factory = false;
+        if (isset($medias[$id]) && ! empty($medias[$id])) {
+            $medias = $medias[$id];
+            $src = $medias['mediaLink'];
+            
+            $unserialize = new HandleSerializeDatabase();
+            $mediaAlternate = $unserialize->execUnserialize($medias['mediaAlternate']);
+            $mediaMetas = $unserialize->execUnserialize($medias['mediaMetas']);
+            
+            switch ($this->view->useragent) {
+                case 'desktop':
+                default:
+                    foreach ($this->desktop as $size) {
+                        if (isset($mediaAlternate[$size])) {
+                            $src = $mediaAlternate[$size]['mediaLink'];
+                        }
+                    }
+                    break;
+            }
+            
+            $img = '<img src="' . $src . '"';
+            if ( isset($mediaMetas['alt']) && strlen($mediaMetas['alt']) > 1 ){
+                $img .= ' alt="' . $mediaMetas['alt'] . '"';
+            }
+            if ( isset($mediaMetas['title']) && strlen($mediaMetas['title']) > 1 ){
+                $img .= ' title="' . $mediaMetas['title'] . '"';
+            }    
+
+            $img .= ' />';
+            
+            if (null !== $template && isset($template['image'])){
+                $template = $template['image'];
+
+                if ( isset($template['element']) ){
+         
+                    
+                    $factory = new HtmlElements(new FactoryElement());
+                    $factory->setContentTag($template['element']);
+                    if ( isset($template['attr']) ){
+                        $factory->setTagAttributtes(false, $template['attr'], 0);
+                    }
+                    $caption = '';
+                    if ( isset($mediaMetas['caption']) && strlen($mediaMetas['caption']) > 1 && $template['caption'] ){
+                        $caption .= '<' . $template['caption'];
+                        $caption .= '>' . $mediaMetas['caption'];
+                        $caption .= '</' . $template['caption'] . '>';
+                    }
+                    
+                    
+                    $factory->setHtmlContent($img.$caption);
+                    $content = $factory->display();
+                }
+            } else {
+                $content = $img;
+            }
+            
+            
+            
+            //var_dump($mediaAlternate);
+            //var_dump($mediaMetas);
+        }
+        
+
+            return $content;
+     
+    }
 }
