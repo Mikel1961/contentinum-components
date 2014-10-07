@@ -58,7 +58,7 @@ class Grid extends AbstractHelper
         'content'
     );
 
-    public function __invoke(array $content, array $template, $medias, array $specified = null)
+    public function __invoke(array $content, array $template, $medias, $widgets, array $specified = null)
     {
         $this->setTemplate($template);
         if (null !== $specified) {
@@ -71,11 +71,11 @@ class Grid extends AbstractHelper
         $factory->setEncloseTag($this->row);
         $factory->setAttributes(false, $this->attribute);
         foreach ($content['entries'] as $row) {
-            if (isset($row['element']) && strlen($row['element']) > 0) {
-                $element = $row['element'];
-                if (isset($row['elementAttribute']) && !empty($row['elementAttribute'])) {
+            if (isset($row['groupElement']) && strlen($row['groupElement']) > 0) {
+                $element = $row['groupElement'];
+                if (isset($row['groupElementAttribute']) && !empty($row['groupElementAttribute'])) {
                     $this->auto = true;
-                    $attribute = $row['elementAttribute'];
+                    $attribute = $row['groupElementAttribute'];
                 } else {
                     $attribute = $this->getReplaceStdAttribute($i, $number);
                 }
@@ -90,7 +90,11 @@ class Grid extends AbstractHelper
             
             $factory->setContentTag($element);
             $factory->setTagAttributtes(false, $attribute, $i);
-            $factory->setHtmlContent($row['content']);
+            $contribTemplate = null;
+            if ('content' != $row['contribStyle']){
+                $contribTemplate = $widgets[$row['contribStyle']]->toArray();
+            }
+            $factory->setHtmlContent($this->view->contribution(array('entries' => array($row)),$medias,$contribTemplate));
             $i ++;
         }
         return $factory->display();
