@@ -33,6 +33,7 @@ use ContentinumComponents\Controller\AbstractFrontendController;
 use ContentinumComponents\Forms\AbstractForms;
 use Zend\Mvc\MvcEvent;
 use Zend\View\Helper\ViewModel;
+use Zend\View\View;
 
 
 
@@ -196,6 +197,10 @@ abstract class AbstractFormFrontendController extends AbstractFrontendController
         $uri = $this->getRequest()->getUri();
         $this->setXmlHttpRequest($this->getRequest()->isXmlHttpRequest());
         $routeMatch = $e->getRouteMatch ();
+        
+        var_dump($uri);exit;
+        
+        
         $page = '';
     
         if ($this->getRequest ()->isPost ()) {
@@ -238,17 +243,25 @@ abstract class AbstractFormFrontendController extends AbstractFrontendController
      */
     protected function show($page, $role = null, $acl = null)
     {
-
-         
         $this->frontendlayout($this->layout(), $page, $role, $acl, $this->getServiceLocator()->get('viewHelperManager'));
         return $this->buildView (array('form' => $this->form));
-    }   
+    }
 
-    protected function buildView (array $variables)
+    /**
+     * Set more customer form tag attributtes
+     */
+    protected function formTagAttributes()
     {
-        $view = new ViewModel($variables);
-    
-        return $view;
-    }    
+        $formFactory = $this->formFactory;
+        if (true == ($deco = $formFactory->getDecorators($formFactory::DECO_FORM)) ){
+            if ( isset($deco['form-attributtes']) && is_array($deco['form-attributtes']) ){
+                foreach ($deco['form-attributtes'] as $attribute => $value){
+                    $this->form->setAttribute($attribute,$value);
+                }
+            }
+        }
+        unset($formFactory);
+    }
+        
        
 }

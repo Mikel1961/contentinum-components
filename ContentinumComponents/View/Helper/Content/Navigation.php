@@ -30,7 +30,7 @@ namespace ContentinumComponents\View\Helper\Content;
 use Zend\View\Helper\AbstractHelper;
 use ContentinumComponents\Html\HtmlElements;
 use ContentinumComponents\Html\Element\FactoryElement;
-use ContentinumComponents\Html\Lists\View\ListElements;
+use ContentinumComponents\Html\HtmlList;
 use ContentinumComponents\Html\Lists\FactoryList;
 
 class Navigation extends AbstractHelper
@@ -87,7 +87,7 @@ class Navigation extends AbstractHelper
      * @param array $template
      * @return Ambigous <string, multitype:>
      */
-    public function __invoke(array $nav, $content, $medias, array $template = null)
+    public function __invoke(array $nav, $content, $medias, array $template)
     {
         $this->setTemplate($template);
         $html = '';
@@ -98,22 +98,32 @@ class Navigation extends AbstractHelper
         $list = $this->getTemplateProperty('list', 'element');
         
         if ($list){
-            $factory = new ListElements(new FactoryList());
-            $factory->setTagElement($list);
+            $factory = new HtmlList(new FactoryList());
+            $factory->setListTag($list);
             $attr = $this->getTemplateProperty('list', 'attr');
             if ($attr){
                 $factory->setAttributes(false, $attr);
                 
             }
-            $attr = $this->getTemplateProperty('listelements', 'attr');
-            $factory->setHtmlContent($content['content']);
-            if (isset($attr['0'])){
-                $factory->setTagAttributtes(false, $attr['0'], 0);
+            $i = 0;
+            if (isset($content['brand'])){
+                $brand = $this->getTemplateProperty('listelements', '0');
+                $factory->setContentTag($brand['element']);
+                $label = $content['brand'];
+                if (isset($content['brandlink'])){
+                    $label = '<a href="'.$content['brandlink'].'">' . $label . '</a>';
+                }
+                $factory->setHtmlContent($label);
+                $factory->setTagAttributtes(false, $brand['attr'], $i);
+                $i++;
             }
-            $factory->setHtmlContent('<a href="#"><span>Menu</span></a>');
-            if (isset($attr['1'])){
-                $factory->setTagAttributtes(false, $attr['1'], 1);
-            }            
+            
+            if (isset($content['menuelabel'])){
+                $mLabel = $this->getTemplateProperty('listelements', '1');
+                $factory->setContentTag($mLabel['element']);
+                $factory->setHtmlContent('<a href="#"><span>'.$content['menuelabel'].'</span></a>');
+                $factory->setTagAttributtes(false, $mLabel['attr'], $i);
+            }
             
             $html = $factory->display();
         }
