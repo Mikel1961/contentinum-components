@@ -25,7 +25,7 @@
  * @link      https://github.com/Mikel1961/contentinum-components
  * @version   1.0.0
  */
-namespace ContentinumComponents\View\Helper\Mcwork;
+namespace ContentinumComponents\View\Helper;
 
 use Zend\View\Helper\AbstractHelper;
 use ContentinumComponents\Html\HtmlTable;
