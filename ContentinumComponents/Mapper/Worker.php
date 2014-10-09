@@ -45,6 +45,13 @@ class Worker extends AbstractMapper
 	const SAVE_UPDATE = 'update';
 	
 	/**
+	 * Service Manager
+	 *
+	 * @var use Zend\ServiceManager\ServiceLocatorInterface;
+	 */
+	protected $sl;	
+	
+	/**
 	 * Fields that are processed before insert
 	 *
 	 * @var array
@@ -121,6 +128,22 @@ class Worker extends AbstractMapper
 		$this->setStorage($storage,$charset);
 	}	
 		
+	/**
+     * @return \Zend\ServiceManager\ServiceLocatorInterface $sl
+     */
+    public function getSl()
+    {
+        return $this->sl;
+    }
+
+	/**
+     * @param \Zend\ServiceManager\ServiceLocatorInterface $sl
+     */
+    public function setSl($sl)
+    {
+        $this->sl = $sl;
+    }
+
 	/**
 	 * @return the $hasEntriesParams
 	 */
