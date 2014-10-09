@@ -43,7 +43,7 @@ class NoRecordExists extends AbstractDoctrine
         $result = $this->query($value);
         if ($result) {
             $valid = false;
-            $this->error(self::ERROR_RECORD_FOUND);
+            $this->error(self::ERROR_RECORD_FOUND, 'Record exists');
         }
         
         return $valid;
