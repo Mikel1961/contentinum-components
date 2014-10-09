@@ -41,7 +41,7 @@ class MediasTableView extends AbstractHelper
 
     CONST MEDIA_DIR_PATH = '/mcwork/medias/file';
 
-    public function __invoke($entries, $mediasTable = array())
+    public function __invoke($entries, $mediasTable = array(), $mediaInUse = array())
     {
         if (empty($entries)) {
             $html = '<p>' . $this->view->translate('No documents or images found') . '</p>';
@@ -148,11 +148,11 @@ class MediasTableView extends AbstractHelper
                     $label = '';
                     $keys = preg_grep('/' . $entry->filename . '/', array_keys($mediasTable));
                     foreach ($keys as $values) {
-                    	if (isset($mediasTable[$values]) && 1 == $mediasTable[$values]['mediaInUse']) {
-                    		$label = '<span class="label round alert">contains files in use</span>';
-                    		$dataAttribInUse = 'data-inuse="1"';
-                    		break;
-                    	}
+                        if ( ! empty($mediaInUse) && isset($mediaInUse[$mediasTable[$values]['id']])  ){
+                            $label = '<span class="label round alert">contains files in use</span>';
+                            $dataAttribInUse = 'data-inuse="1"';
+                            break;                            
+                        }
                     }   
                     $numberItems = $label . $this->numbersItems($entry->counts);
                     if (true == $entry->childs && strlen($numberItems) > 0 ){
@@ -200,8 +200,8 @@ class MediasTableView extends AbstractHelper
                     $rowContent = array();
                     $label = '';
                     $pathname = \ContentinumComponents\Path\Clean::get($entry->pathname);
-                    $compareItem = str_replace($this->view->docroot, '', $pathname);
-                    if (isset($mediasTable[$compareItem]) && 1 == $mediasTable[$compareItem]['mediaInUse']) {
+                    $compareItem = str_replace($this->view->docroot, '', $pathname);              
+                    if ( isset($mediasTable[$compareItem]['id']) &&  isset( $mediaInUse[$mediasTable[$compareItem]['id']])  ){
                     	$label = '<span class="label round alert">In use</span>';
                     	$dataAttribInUse = 'data-inuse="1"';
                     } else {
