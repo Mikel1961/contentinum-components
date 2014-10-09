@@ -27,14 +27,48 @@
  */
 namespace ContentinumComponents\Validator;
 
-
-
 use Zend\Validator\AbstractValidator;
 
+/**
+ * Warpper for Zend\Validator\AbstractValidator to overwrite createMessage and translateMessage
+ * in refer there will no display the validation messages
+ *
+ * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
+ *        
+ */
 abstract class AbstractMcworkValidator extends AbstractValidator
 {
+
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Zend\Validator\AbstractValidator::createMessage()
+     */
     protected function createMessage($messageKey, $value)
     {
-        return $value;
+        $messages = $this->messageTemplates;
+        if (isset($messages[$messageKey])) {
+            $message = $messages[$messageKey];
+        } else {
+            $message = 'Unknown Messages';
+        }
+        $message = $this->translateMessage($messageKey, $message);
+        
+        return $message;
+    }
+
+    /**
+     * (non-PHPdoc)
+     * 
+     * @see \Zend\Validator\AbstractValidator::translateMessage()
+     */
+    protected function translateMessage($messageKey, $message)
+    {
+        $translator = $this->getTranslator();
+        if (! $translator) {
+            return $message;
+        }
+        
+        return $translator->translate($message, $this->getTranslatorTextDomain());
     }
 }
