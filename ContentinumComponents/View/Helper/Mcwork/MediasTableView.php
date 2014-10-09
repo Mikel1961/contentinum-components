@@ -149,7 +149,7 @@ class MediasTableView extends AbstractHelper
                     $keys = preg_grep('/' . $entry->filename . '/', array_keys($mediasTable));
                     foreach ($keys as $values) {
                         if ( ! empty($mediaInUse) && isset($mediaInUse[$mediasTable[$values]['id']])  ){
-                            $label = '<span class="label round alert">contains files in use</span>';
+                            $label = '<span class="label round alert">'. $this->view->translate('contains files in use') .'</span>';
                             $dataAttribInUse = 'data-inuse="1"';
                             break;                            
                         }
@@ -202,7 +202,7 @@ class MediasTableView extends AbstractHelper
                     $pathname = \ContentinumComponents\Path\Clean::get($entry->pathname);
                     $compareItem = str_replace($this->view->docroot, '', $pathname);              
                     if ( isset($mediasTable[$compareItem]['id']) &&  isset( $mediaInUse[$mediasTable[$compareItem]['id']])  ){
-                    	$label = '<span class="label round alert">In use</span>';
+                    	$label = '<span class="label round alert">'. $this->view->translate('In use') .'</span>';
                     	$dataAttribInUse = 'data-inuse="1"';
                     } else {
                         $dataAttribInUse = 'data-inuse="0"';
