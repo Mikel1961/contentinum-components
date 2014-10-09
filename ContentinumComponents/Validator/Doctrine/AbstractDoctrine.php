@@ -27,8 +27,9 @@
  */
 namespace ContentinumComponents\Validator\Doctrine;
 
-use Zend\Validator\AbstractValidator;
+
 use ContentinumComponents\Validator\Exeption\InvalidValueException;
+use ContentinumComponents\Validator\AbstractMcworkValidator;
 
 /**
  * Abstract class for databse validation with Doctrine ORM
@@ -39,7 +40,7 @@ use ContentinumComponents\Validator\Exeption\InvalidValueException;
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  *
  */
-abstract class AbstractDoctrine extends AbstractValidator
+abstract class AbstractDoctrine extends AbstractMcworkValidator
 {
 	/**
 	 * Error constants
