@@ -31,6 +31,7 @@ use ContentinumComponents\Controller\AbstractContentinumController;
 use ContentinumComponents\Forms\AbstractForms;
 use Zend\Mvc\MvcEvent;
 use Zend\View\Model\ViewModel;
+use Zend\Json\Json;
 
 /**
  * Contentinum Abstract Backend Form Controller
@@ -185,7 +186,10 @@ abstract class AbstractFormController extends AbstractContentinumController
 	    if ($mcworkpages->$page) {
 	    	$content = $mcworkpages->$page;
 	    }	    
-	    
+	    if ( false !== $this->getXmlHttpRequest()){
+	        print Json::encode($this->form->getMessages());
+	        exit();
+	    }
 	    $this->adminlayout($this->layout(), $mcworkpages, $page, $role, $acl, $this->getServiceLocator()->get('viewHelperManager'));
 	    return $this->buildView (array('form' => $this->form,'page' => $page,'pagecontent' => $content), $content, $mcworkpages);	    
 	}
