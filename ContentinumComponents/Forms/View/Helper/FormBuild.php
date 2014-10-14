@@ -101,7 +101,7 @@ class FormBuild extends AbstractHelper
                     }
                     $html .= '<fieldset' . $attributes . '>';
                     if (isset($fieldset['legend'])) {
-                        $html .= '<legend>' . $fieldset['legend'] . '</legend>';
+                        $html .= '<legend>' . $this->view->translate($fieldset['legend']) . '</legend>';
                     }
                     foreach ($tmp as $element) {
                         $html .= $element;
@@ -128,7 +128,7 @@ class FormBuild extends AbstractHelper
         $formLabel = $this->view->plugin('formLabel');
         if ($element->getOption('label')) {
             $html .= $formLabel->openTag();
-            $html .= $element->getOption('label');
+            $html .= $this->view->translate($element->getOption('label'));
             $html .= $formLabel->closeTag();
         }
         $html .= $this->view->formElement($element);
