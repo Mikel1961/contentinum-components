@@ -61,11 +61,18 @@ class Tabs extends AbstractHelper
         foreach ($content['entries'] as $entry) {
             $attr = $this->getTemplateProperty('body', 'grid', 'attr');
             $panelId = $filter->filter($entry['title']);
-            $this->headercontent[] = '<a href="#' . $panelId . '">' . $entry['title'] . '</a>';
+            if (0 === $i) {
+                $this->headercontent[] = '<a href="#' . $panelId . '" role="tab" tabindex="0" aria-selected="true" controls="' . $panelId . '">' . $entry['title'] . '</a>';
+            } else {
+                $this->headercontent[] = '<a href="#' . $panelId . '" role="tab" tabindex="0" aria-selected="false" controls="' . $panelId . '">' . $entry['title'] . '</a>';
+            }
             
             $str .= '<' . $grid;
             if (0 === $i) {
                 $attr['class'] = $attr['class'] . ' active';
+                $attr['aria-hidden'] = 'false';
+            } else {
+                $attr['aria-hidden'] = 'true';
             }
             
             $attr['id'] = $panelId;
