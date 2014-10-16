@@ -65,7 +65,19 @@ class Topbar extends AbstractHelper
      *
      * @var unknown
      */
-    private $content;
+    private $brand;
+    
+    /**
+     *
+     * @var unknown
+     */
+    private $mobilemenue;
+    
+    /**
+     *
+     * @var unknown
+     */
+    private $direction;    
 
     /**
      *
@@ -77,7 +89,9 @@ class Topbar extends AbstractHelper
         'list',
         'listelements',
         'media',
-        'content'
+        'brand',
+        'mobilemenue',
+        'direction'
     );
 
     /**
@@ -87,7 +101,7 @@ class Topbar extends AbstractHelper
      * @param array $template
      * @return Ambigous <string, multitype:>
      */
-    public function __invoke($entry, $medias, $template)
+    public function __invoke($entry, $template)
     {
         $this->assignTemplate($entry, $template);
         $html = '';
@@ -107,12 +121,19 @@ class Topbar extends AbstractHelper
                 
             }
             $i = 0;
-            if (isset($content['modulDisplay'])){
+            if (isset($entry['modulDisplay'])){
                 $brand = $this->getTemplateProperty('listelements', '0');
                 $factory->setContentTag($brand['element']);
                 $label = $entry['modulDisplay'];
-                if (isset($content['modulLink'])){
-                    $label = '<a href="'.$entry['modulLink'].'">' . $label . '</a>';
+                if ($this->brand){
+                    $label = str_replace('%s1', $label, $this->brand);
+                }
+                
+                
+                if (isset($entry['modulLink'])){
+                    if ($this->brand){
+                        $label = str_replace('#', $entry['modulLink'], $this->brand);
+                    }
                 }
                 $factory->setHtmlContent($label);
                 $factory->setTagAttributtes(false, $brand['attr'], $i);
@@ -122,7 +143,12 @@ class Topbar extends AbstractHelper
             if (isset($entry['modulConfig'])){
                 $mLabel = $this->getTemplateProperty('listelements', '1');
                 $factory->setContentTag($mLabel['element']);
-                $factory->setHtmlContent('<a href="#"><span>'.$entry['modulConfig'].'</span></a>');
+                if ($this->mobilemenue){
+                    $mobilemenue = str_replace('%s1', $entry['modulConfig'], $this->mobilemenue);
+                } else {
+                    $mobilemenue = $entry['modulConfig'];
+                }
+                $factory->setHtmlContent($mobilemenue);
                 $factory->setTagAttributtes(false, $mLabel['attr'], $i);
             }
             
@@ -131,7 +157,7 @@ class Topbar extends AbstractHelper
         }
         
         $container = new \Zend\Navigation\Navigation($this->view->topbar);
-        $topbar = $this->view->navigationcontentinum($container)->setAcl($this->view->acl)->setRole($this->view->role)->setUlClass('right');
+        $topbar = $this->view->navigationcontentinum($container)->setAcl($this->view->acl)->setRole($this->view->role)->setUlClass($this->direction);
         
         if ($grid){
             $factory = new HtmlElements(new FactoryElement());

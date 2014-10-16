@@ -128,7 +128,7 @@ class Contribution extends AbstractHelper
             }
             switch ($entry['modul']){
                 case 'topbar' :
-                    $html .= $this->view->navigationtopbar($entry, $medias, $template);
+                    $html .= $this->view->navigationtopbar($entry, $template);
                     break;
                 default:
                     break;
