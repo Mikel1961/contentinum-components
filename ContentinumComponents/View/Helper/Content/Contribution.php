@@ -78,10 +78,10 @@ class Contribution extends AbstractHelper
      */
     public function __invoke(array $content, $medias, array $template = null)
     {
-        $this->setTemplate($template);
         $html = '';
         $factory = false;
         foreach ($content['entries'] as $entry) {
+            $this->assignTemplate($entry, $template);
             $row = $this->getTemplateProperty('row', 'element');
             $grid = $this->getTemplateProperty('grid', 'element');
             if (is_array($entry) && isset($entry['element']) && strlen($entry['element']) > 0) {
@@ -120,15 +120,27 @@ class Contribution extends AbstractHelper
             }
             
             if (false === $factory) {
-                $html = $media . $entry['content'];
+                $html .= $media . $entry['content'];
             } else {
                 $factory->setHtmlContent($media . $entry['content']);
-                $html = $factory->display();
+                $html .= $factory->display();
+                $factory = false;
             }
-            break;
         }
         $this->unsetProperties();
         return $html;
+    }
+    
+    protected function assignTemplate($row, $template)
+    {
+        if (isset($row['htmlwidgets']) && 'content' != $row['htmlwidgets'] ){
+            if ( isset($template[$row['htmlwidgets']]) ){
+                $this->setTemplate($template[$row['htmlwidgets']]->toArray());
+            } else {
+                $this->unsetProperties();
+                
+            }
+        }
     }
 
     /**

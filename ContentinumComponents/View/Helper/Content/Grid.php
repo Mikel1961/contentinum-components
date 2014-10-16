@@ -90,11 +90,7 @@ class Grid extends AbstractHelper
             
             $factory->setContentTag($element);
             $factory->setTagAttributtes(false, $attribute, $i);
-            $contribTemplate = null;
-            if ('content' != $row['contribStyle']){
-                $contribTemplate = $widgets[$row['contribStyle']]->toArray();
-            }
-            $factory->setHtmlContent($this->view->contribution(array('entries' => array($row)),$medias,$contribTemplate));
+            $factory->setHtmlContent($this->view->contribution(array('entries' => array($row)),$medias,$widgets));
             $i ++;
         }
         return $factory->display();
