@@ -132,7 +132,7 @@ class Topbar extends AbstractHelper
                 
                 if (isset($entry['modulLink'])){
                     if ($this->brand){
-                        $label = str_replace('#', $entry['modulLink'], $this->brand);
+                        $label = str_replace('#', $entry['modulLink'], $label);
                     }
                 }
                 $factory->setHtmlContent($label);
