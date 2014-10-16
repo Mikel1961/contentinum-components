@@ -126,6 +126,13 @@ class Contribution extends AbstractHelper
                 $html .= $factory->display();
                 $factory = false;
             }
+            switch ($entry['modul']){
+                case 'topbar' :
+                    $html .= $this->view->navigationtopbar($entry, $medias, $template);
+                    break;
+                default:
+                    break;
+            }
         }
         $this->unsetProperties();
         return $html;

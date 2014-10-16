@@ -87,10 +87,11 @@ class Topbar extends AbstractHelper
      * @param array $template
      * @return Ambigous <string, multitype:>
      */
-    public function __invoke(array $nav, $content, $medias, array $template)
+    public function __invoke($entry, $medias, $template)
     {
-        $this->setTemplate($template);
+        $this->assignTemplate($entry, $template);
         $html = '';
+        $brand = '';
         $factory = false;
         
         $row = $this->getTemplateProperty('row', 'element');
@@ -106,34 +107,66 @@ class Topbar extends AbstractHelper
                 
             }
             $i = 0;
-            if (isset($content['brand'])){
+            if (isset($content['modulDisplay'])){
                 $brand = $this->getTemplateProperty('listelements', '0');
                 $factory->setContentTag($brand['element']);
-                $label = $content['brand'];
-                if (isset($content['brandlink'])){
-                    $label = '<a href="'.$content['brandlink'].'">' . $label . '</a>';
+                $label = $entry['modulDisplay'];
+                if (isset($content['modulLink'])){
+                    $label = '<a href="'.$entry['modulLink'].'">' . $label . '</a>';
                 }
                 $factory->setHtmlContent($label);
                 $factory->setTagAttributtes(false, $brand['attr'], $i);
                 $i++;
             }
             
-            if (isset($content['menuelabel'])){
+            if (isset($entry['modulConfig'])){
                 $mLabel = $this->getTemplateProperty('listelements', '1');
                 $factory->setContentTag($mLabel['element']);
-                $factory->setHtmlContent('<a href="#"><span>'.$content['menuelabel'].'</span></a>');
+                $factory->setHtmlContent('<a href="#"><span>'.$entry['modulConfig'].'</span></a>');
                 $factory->setTagAttributtes(false, $mLabel['attr'], $i);
             }
             
-            $html = $factory->display();
+            $brand = $factory->display();
+            $factory = false;
         }
         
+        $container = new \Zend\Navigation\Navigation($this->view->topbar);
+        $topbar = $this->view->navigationcontentinum($container)->setAcl($this->view->acl)->setRole($this->view->role)->setUlClass('right');
         
+        if ($grid){
+            $factory = new HtmlElements(new FactoryElement());
+            $factory->setContentTag($grid);
+            $attr = $this->getTemplateProperty('grid', 'attr');
+            $factory->setTagAttributtes(false, $attr, 0); 
+            $factory->setHtmlContent($topbar);
+            $topbar = $factory->display();  
+            $factory = false;
+        }
+        
+        if ($row){
+            $factory = new HtmlElements(new FactoryElement());
+            $factory->setContentTag($row);
+            $attr = $this->getTemplateProperty('row', 'attr');
+            $factory->setTagAttributtes(false, $attr, 0);
+            $factory->setHtmlContent( $brand . $topbar);
+            $html = $factory->display();
+            $factory = false;
+        }        
 
- 
         $this->unsetProperties();
         return $html;
     }
+    
+    protected function assignTemplate($row, $template)
+    {
+        if (isset($row['modulFormat'])) {
+            if (isset($template[$row['modulFormat']])) {
+                $this->setTemplate($template[$row['modulFormat']]->toArray());
+            } else {
+                $this->unsetProperties();
+            }
+        }
+    }    
 
     /**
      *
