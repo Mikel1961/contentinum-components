@@ -76,66 +76,52 @@ class Row extends AbstractHelper
      * @param array $template
      * @return Ambigous <string, multitype:>
      */
-    public function __invoke($content, $template = null)
+    public function __invoke($entry, $content, $template = null)
     {
         $html = '';
         $factory = false;
-        foreach ($content['entries'] as $entry) {
-            $this->assignTemplate($entry, $template);
-            $row = $this->getTemplateProperty('row', 'element');
-            $grid = $this->getTemplateProperty('grid', 'element');
-            if (is_array($entry) && isset($entry['element']) && strlen($entry['element']) > 0) {
-                $grid = $entry['element'];
-            }
-            if ($row || $grid) {
-                $factory = new HtmlElements(new FactoryElement());
-            }
-            
-            if ($row) {
-                $factory->setEncloseTag($row);
-                $attr = $this->getTemplateProperty('row', 'attr');
-                if (false !== $attr) {
-                    $factory->setAttributes(false, $attr);
-                    $attr = false;
-                }
-            }
-            
-            if ($grid) {
-                $factory->setContentTag($grid);
-                $usrAttr = false;
-                if (is_array($entry) && isset($entry['elementAttribute']) && ! empty($entry['elementAttribute'])) {
-                    $usrAttr = $entry['elementAttribute'];
-                }
-                $attr = $this->getTemplateProperty('grid', 'attr');
-                if (false !== $usrAttr && false !== $attr) {
-                    
-                    $attr = array_merge($attr, $usrAttr);
-                }
-                $factory->setTagAttributtes(false, $attr, 0);
-            }
-            
-
-            
-            if (false === $factory) {
-                $html .= $content;
-            } else {
-                $factory->setHtmlContent($content);
-                $html .= $factory->display();
-                $factory = false;
+        
+        $this->assignTemplate($entry, $template);
+        $row = $this->getTemplateProperty('row', 'element');
+        $grid = $this->getTemplateProperty('grid', 'element');
+        
+        if ($row || $grid) {
+            $factory = new HtmlElements(new FactoryElement());
+        }
+        
+        if ($row) {
+            $factory->setEncloseTag($row);
+            $attr = $this->getTemplateProperty('row', 'attr');
+            if (false !== $attr) {
+                $factory->setAttributes(false, $attr);
+                $attr = false;
             }
         }
+        
+        if ($grid) {
+            $factory->setContentTag($grid);
+            $attr = $this->getTemplateProperty('grid', 'attr');
+            $factory->setTagAttributtes(false, $attr, 0);
+        }
+        
+        if (false === $factory) {
+            $html .= $content;
+        } else {
+            $factory->setHtmlContent($content);
+            $html .= $factory->display();
+        }
+        
         $this->unsetProperties();
         return $html;
     }
-    
+
     protected function assignTemplate($row, $template)
     {
-        if (isset($row['htmlwidgets']) ){
-            if ( isset($template[$row['htmlwidgets']]) ){
+        if (isset($row['htmlwidgets'])) {
+            if (isset($template[$row['htmlwidgets']])) {
                 $this->setTemplate($template[$row['htmlwidgets']]->toArray());
             } else {
                 $this->unsetProperties();
-                
             }
         }
     }
@@ -170,10 +156,10 @@ class Row extends AbstractHelper
             }
         }
     }
-    
+
     protected function unsetProperties()
     {
-        foreach ($this->properties as $prop){
+        foreach ($this->properties as $prop) {
             $this->{$prop} = null;
         }
     }
