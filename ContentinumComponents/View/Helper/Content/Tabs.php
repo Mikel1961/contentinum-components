@@ -30,85 +30,101 @@ namespace ContentinumComponents\View\Helper\Content;
 use Zend\View\Helper\AbstractHelper;
 use ContentinumComponents\Html\HtmlElements;
 use ContentinumComponents\Html\Element\FactoryElement;
+use ContentinumComponents\Filter\Url\Prepare;
+use ContentinumComponents\Html\HtmlAttribute;
 
 class Tabs extends AbstractHelper
 {
 
-    private $grids;
+    private $header;
 
-    private $auto;
+    private $body;
 
-    private $row;
-
-    private $attribute;
-
-    private $grid;
-
-    private $gridAttribute;
-
-    private $content;
+    private $headercontent;
 
     private $properties = array(
-        'grids',
-        'auto',
-        'row',
-        'attribute',
-        'grid',
-        'gridAttribute',
-        'content'
+        'header',
+        'body',
+        'headercontent'
     );
 
-    public function __invoke(array $content, array $template, $medias, array $specified = null)
+    public function __invoke(array $content, array $template, $medias, $widgets, array $specified = null)
     {
         $this->setTemplate($template);
         if (null !== $specified) {
             $this->setSpecified($specified);
         }
-        $number = ($this->grids / count($content['entries']));
+        $str = '';
         $i = 0;
-        
-        $factory = new HtmlElements(new FactoryElement());
-        $factory->setEncloseTag($this->row);
-        $factory->setAttributes(false, $this->attribute);
-        foreach ($content['entries'] as $row) {
-            if (isset($row['element']) && strlen($row['element']) > 0) {
-                $element = $row['element'];
-                if (isset($row['elementAttribute']) && !empty($row['elementAttribute'])) {
-                    $this->auto = true;
-                    $attribute = $row['elementAttribute'];
-                } else {
-                    $attribute = $this->getReplaceStdAttribute($i, $number);
-                }
-            } else {
-                if (isset($this->grid[$i])) {
-                    $element = $this->grid[$i];
-                } else {
-                    $element = $this->grid[0];
-                }
-                $attribute = $this->getReplaceStdAttribute($i, $number);
+        $filter = new Prepare();
+        $grid = $this->getTemplateProperty('body', 'grid', 'element');
+        $attr = $this->getTemplateProperty('body', 'grid', 'attr');
+        foreach ($content['entries'] as $entry) {
+            $panelId = $filter->filter($entry['title']);
+            $this->headercontent[] = '<a href="#' . $panelId . '">' . $entry['title'] . '</a>';
+            
+            $str .= '<' . $grid;
+            if (0 === $i) {
+                $attr['class'] = $attr['class'] . ' active';
             }
             
-            $factory->setContentTag($element);
-            $factory->setTagAttributtes(false, $attribute, $i);
-            $factory->setHtmlContent($row['content']);
+            $attr['id'] = $panelId;
+            $str .= HtmlAttribute::attributeArray($attr) . '>';
+            $str .= $this->view->contribution(array(
+                'entries' => array(
+                    $entry
+                )
+            ), $medias, $widgets);
+            $str .= '</' . $grid . '>';
             $i ++;
         }
+        $attr = false;
+        
+        $factory = new HtmlElements(new FactoryElement());
+        $row = $this->getTemplateProperty('body', 'row', 'element');
+        
+        if ($row) {
+            $factory->setContentTag($row);
+            $attr = $this->getTemplateProperty('body', 'row', 'attr');
+            if (false !== $attr) {
+                $factory->setTagAttributtes(false, $attr);
+                $attr = false;
+            }
+        }
+        
+        $factory->setHtmlContent($str);
+        $str = '';
+        $tabBody = $factory->display();
+        $factory = new HtmlElements(new FactoryElement());
+        $row = $this->getTemplateProperty('header', 'row', 'element');
+        
+        if ($row) {
+            $factory->setContentTag($row);
+            $attr = $this->getTemplateProperty('header', 'row', 'attr');
+            if (false !== $attr) {
+                $factory->setTagAttributtes(false, $attr);
+                $attr = false;
+            }
+        }
+        
+        $grid = $this->getTemplateProperty('header', 'grid', 'element');
+        $attr = $this->getTemplateProperty('header', 'grid', 'attr');
+        $i = 0;
+        foreach ($this->headercontent as $headerentry) {
+            $str .= '<' . $grid;
+            if (0 === $i) {
+                $attr['class'] = 'active';
+            }
+            
+            $str .= HtmlAttribute::attributeArray($attr);
+            $str .= '>';
+            $str .= $headerentry;
+            $str .= '</' . $grid . '>';
+            $i ++;
+        }
+        $factory->setHtmlContent($str);
+        
         return $factory->display();
-    }
-
-    protected function getReplaceStdAttribute($i, $number)
-    {
-        if (isset($this->gridAttribute[$i])) {
-            $attribute = $this->gridAttribute[$i];
-        } else {
-            $attribute = $this->gridAttribute[0];
-        }
-        
-        if (true === $this->auto) {
-            $attribute['class'] = str_replace($this->grids, $number, $attribute['class']);
-        }
-        
-        return $attribute;
     }
 
     protected function setSpecified($specified)
@@ -121,6 +137,24 @@ class Tabs extends AbstractHelper
                     $this->{$key} = $values;
                 }
             }
+        }
+    }
+
+    /**
+     *
+     * @param unknown $prop
+     * @param unknown $key
+     * @return boolean
+     */
+    protected function getTemplateProperty($prop, $key, $element)
+    {
+        if (isset($this->{$prop}[$key])) {
+            $part = $this->{$prop}[$key];
+            if (isset($part[$element])) {
+                return $part[$element];
+            }
+        } else {
+            return false;
         }
     }
 
