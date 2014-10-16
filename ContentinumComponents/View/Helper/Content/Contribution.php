@@ -76,7 +76,7 @@ class Contribution extends AbstractHelper
      * @param array $template
      * @return Ambigous <string, multitype:>
      */
-    public function __invoke(array $content, $medias, array $template = null)
+    public function __invoke(array $content, $medias, $template = null)
     {
         $html = '';
         $factory = false;
