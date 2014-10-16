@@ -58,8 +58,8 @@ class Tabs extends AbstractHelper
         $i = 0;
         $filter = new Prepare();
         $grid = $this->getTemplateProperty('body', 'grid', 'element');
-        $attr = $this->getTemplateProperty('body', 'grid', 'attr');
         foreach ($content['entries'] as $entry) {
+            $attr = $this->getTemplateProperty('body', 'grid', 'attr');
             $panelId = $filter->filter($entry['title']);
             $this->headercontent[] = '<a href="#' . $panelId . '">' . $entry['title'] . '</a>';
             
@@ -87,7 +87,7 @@ class Tabs extends AbstractHelper
             $factory->setContentTag($row);
             $attr = $this->getTemplateProperty('body', 'row', 'attr');
             if (false !== $attr) {
-                $factory->setTagAttributtes(false, $attr);
+                $factory->setTagAttributtes(false, $attr, 0);
                 $attr = false;
             }
         }
@@ -102,15 +102,15 @@ class Tabs extends AbstractHelper
             $factory->setContentTag($row);
             $attr = $this->getTemplateProperty('header', 'row', 'attr');
             if (false !== $attr) {
-                $factory->setTagAttributtes(false, $attr);
+                $factory->setTagAttributtes(false, $attr, 0);
                 $attr = false;
             }
         }
         
         $grid = $this->getTemplateProperty('header', 'grid', 'element');
-        $attr = $this->getTemplateProperty('header', 'grid', 'attr');
         $i = 0;
         foreach ($this->headercontent as $headerentry) {
+            $attr = $this->getTemplateProperty('header', 'grid', 'attr');
             $str .= '<' . $grid;
             if (0 === $i) {
                 $attr['class'] = 'active';
@@ -123,8 +123,8 @@ class Tabs extends AbstractHelper
             $i ++;
         }
         $factory->setHtmlContent($str);
-        
-        return $factory->display();
+        $tabHeader = $factory->display();
+        return $tabHeader . $tabBody;
     }
 
     protected function setSpecified($specified)
