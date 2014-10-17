@@ -364,6 +364,25 @@ abstract class AbstractFrontendController extends AbstractContentinumController
         $routeMatch = $e->getRouteMatch ();
         if ($this->getRequest ()->isPost ()) {
             
+            if ($this->form){
+                $this->form->setInputFilter ( $this->form->getInputFilter () );
+                $this->form->setData ( $this->getRequest ()->getPost () );
+            
+            
+            
+                if (false === $this->formFactory->getValidation()){
+                    $formprocess = $this->process ();
+                } elseif ($this->form->isValid ()) {
+                    $formprocess = $this->process ();
+                } else {
+                    //$routeMatch->setParam ( 'action', 'error' );
+                    //$return = $this->error ($ctrl, $page, $mcworkpages, $this->getServiceLocator ()->get ( 'Contentinum\Acl\DefaultRole' ), $this->getServiceLocator ()->get ( 'Contentinum\Acl\Acl' ));
+                } 
+
+                $e->getRouteMatch ()->setParam ( 'action', 'application' );
+                $app = $this->application($this->getPreferences(), $this->getDefaults(), $this->getPage());                
+            }
+            
         } else {
             $e->getRouteMatch ()->setParam ( 'action', 'application' );
             $app = $this->application($this->getPreferences(), $this->getDefaults(), $this->getPage());
