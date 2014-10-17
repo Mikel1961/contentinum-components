@@ -29,6 +29,7 @@
 namespace ContentinumComponents\Controller;
 
 use ContentinumComponents\Controller\AbstractContentinumController;
+use ContentinumComponents\Forms\AbstractForms;
 use Zend\Mvc\MvcEvent;
 
 /**
@@ -350,8 +351,7 @@ abstract class AbstractFrontendController extends AbstractContentinumController
     {
         return $this->getServiceLocator()->get('Contentinum\Acl\Acl');
     }
-    
-    
+     
     
     /**
      * Steps running form display, validation and output status message
@@ -360,6 +360,11 @@ abstract class AbstractFrontendController extends AbstractContentinumController
      */
     public function onDispatch(MvcEvent $e)
     {
+        
+        if (method_exists ( $this, 'prepare' )) {
+            $this->prepare ();
+        }        
+        
         $this->setXmlHttpRequest($this->getRequest()->isXmlHttpRequest());
         $routeMatch = $e->getRouteMatch ();
         if ($this->getRequest ()->isPost ()) {
