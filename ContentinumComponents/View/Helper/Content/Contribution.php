@@ -116,7 +116,7 @@ class Contribution extends AbstractHelper
             
             $media = '';
             if (isset($entry['medias']) && $entry['medias'] > 1) {
-                $media = $this->view->images($entry['medias'], $medias, $media);
+                $media = $this->view->images($entry, $medias, $this->media);
             }
             
             if (false === $factory) {

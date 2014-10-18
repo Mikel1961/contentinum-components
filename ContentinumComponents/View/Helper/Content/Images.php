@@ -29,37 +29,60 @@ namespace ContentinumComponents\View\Helper\Content;
 
 use Zend\View\Helper\AbstractHelper;
 use ContentinumComponents\Tools\HandleSerializeDatabase;
-use ContentinumComponents\Html\HtmlElements;
-use ContentinumComponents\Html\Element\FactoryElement;
+use ContentinumComponents\Html\HtmlAttribute;
 
 class Images extends AbstractHelper
 {
 
-    private $sizes = array(
-        'max',
-        'thumbnail',
-        'mobile',
-        's',
-        'l',
-        'xl'
+    private $stdTemplate = array(
+        'row' => array(
+            'element' => 'figure',
+            'attr' => array(
+                'class' => 'imageitem'
+            )
+        ),
+        'grid' => array(
+            'element' => 'figcaption',
+            'attr' => array(
+                'class' => 'imagecaption'
+            )
+        )
     );
 
-    private $desktop = array(
-        's',
-        'l',
-        'xl'
+    /**
+     *
+     * @var unknown
+     */
+    private $row;
+
+    /**
+     *
+     * @var unknown
+     */
+    private $grid;
+
+    /**
+     *
+     * @var unknown
+     */
+    private $content;
+
+    /**
+     *
+     * @var unknown
+     */
+    private $properties = array(
+        'row',
+        'grid',
+        'media',
+        'content'
     );
 
-    private $mobil = array(
-        'mobile',
-        's'
-    );
-
-    public function __invoke($id, $medias, $template = null)
+    public function __invoke($article, $medias, $template = null)
     {
-        //var_dump($id);
-        //print '<pre>';
-        // var_dump($medias[$id]);//->{$id});
+        $this->setTemplate($template);
+        $size = $article['mediaStyle'];
+        $id = $article['medias'];
         $factory = false;
         if (isset($medias[$id]) && ! empty($medias[$id])) {
             $medias = $medias[$id];
@@ -69,61 +92,108 @@ class Images extends AbstractHelper
             $mediaAlternate = $unserialize->execUnserialize($medias['mediaAlternate']);
             $mediaMetas = $unserialize->execUnserialize($medias['mediaMetas']);
             
-            switch ($this->view->useragent) {
-                case 'desktop':
-                default:
-                    foreach ($this->desktop as $size) {
-                        if (isset($mediaAlternate[$size])) {
-                            $src = $mediaAlternate[$size]['mediaLink'];
-                        }
-                    }
-                    break;
+            if (isset($mediaAlternate[$size])) {
+                $src = $mediaAlternate[$size]['mediaLink'];
             }
             
             $img = '<img src="' . $src . '"';
-            if ( isset($mediaMetas['alt']) && strlen($mediaMetas['alt']) > 1 ){
+            if (isset($mediaMetas['alt']) && strlen($mediaMetas['alt']) > 1) {
                 $img .= ' alt="' . $mediaMetas['alt'] . '"';
             }
-            if ( isset($mediaMetas['title']) && strlen($mediaMetas['title']) > 1 ){
+            if (isset($mediaMetas['title']) && strlen($mediaMetas['title']) > 1) {
                 $img .= ' title="' . $mediaMetas['title'] . '"';
-            }    
-
-            $img .= ' />';
-            
-            if (null !== $template && isset($template['image'])){
-                $template = $template['image'];
-
-                if ( isset($template['element']) ){
-         
-                    
-                    $factory = new HtmlElements(new FactoryElement());
-                    $factory->setContentTag($template['element']);
-                    if ( isset($template['attr']) ){
-                        $factory->setTagAttributtes(false, $template['attr'], 0);
-                    }
-                    $caption = '';
-                    if ( isset($mediaMetas['caption']) && strlen($mediaMetas['caption']) > 1 && $template['caption'] ){
-                        $caption .= '<' . $template['caption'];
-                        $caption .= '>' . $mediaMetas['caption'];
-                        $caption .= '</' . $template['caption'] . '>';
-                    }
-                    
-                    
-                    $factory->setHtmlContent($img.$caption);
-                    $content = $factory->display();
-                }
-            } else {
-                $content = $img;
             }
             
+            $img .= ' />';
             
+            $caption = $this->caption($mediaMetas);
+            $row = $this->getTemplateProperty('row', 'element');
+            $grid = $this->getTemplateProperty('grid', 'element');
             
-            //var_dump($mediaAlternate);
-            //var_dump($mediaMetas);
+            if ($row && $grid) {
+                $content = $this->format($row, $grid, $img, $caption);
+            } else {
+                if (false !== $caption){
+                    $this->setTemplate($this->stdTemplate);
+                    $content = $this->format($this->getTemplateProperty('row', 'element'), $this->getTemplateProperty('grid', 'element'), $img, $caption);
+                } else {
+                    $content = $img;
+                }
+            }
         }
-        
+        return $content;
+    }
 
-            return $content;
-     
+    protected function caption($mediaMetas)
+    {
+        if (isset($mediaMetas['caption']) && strlen($mediaMetas['caption']) > 1) {
+            $caption = $mediaMetas['caption'];
+        } else {
+            return false;
+        }
+    }
+    
+    protected function format($row, $grid, $img,$caption)
+    {
+        $html = '<' . $row;
+        $attr = $this->getTemplateProperty('row', 'attr');
+        if ($attr) {
+            $html .= HtmlAttribute::attributeArray($attr);
+        }
+        $attr = null;
+        $html .= '>' . $img;
+        
+        if (false !== $caption) {
+            if ($grid) {
+                $html .= '<' . $grid;
+                $attr = $this->getTemplateProperty('grid', 'attr');
+                if ($attr) {
+                    $html .= HtmlAttribute::attributeArray($attr);
+                }
+                $html .= '>';
+                $html .= $caption;
+                $html .= '</' . $grid . '>';
+            }
+        }
+        $html .= '</' . $row . '>';  
+        return $html;      
+    }
+
+    /**
+     *
+     * @param unknown $prop
+     * @param unknown $key
+     * @return boolean
+     */
+    protected function getTemplateProperty($prop, $key)
+    {
+        if (isset($this->{$prop}[$key])) {
+            return $this->{$prop}[$key];
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     *
+     * @param unknown $template
+     */
+    protected function setTemplate($template)
+    {
+        if (null !== $template) {
+            
+            foreach ($template as $key => $values) {
+                if (in_array($key, $this->properties)) {
+                    $this->{$key} = $values;
+                }
+            }
+        }
+    }
+
+    protected function unsetProperties()
+    {
+        foreach ($this->properties as $prop) {
+            $this->{$prop} = null;
+        }
     }
 }
