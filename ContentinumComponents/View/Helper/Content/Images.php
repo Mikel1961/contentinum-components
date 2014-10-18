@@ -127,7 +127,7 @@ class Images extends AbstractHelper
     protected function caption($mediaMetas)
     {
         if (isset($mediaMetas['caption']) && strlen($mediaMetas['caption']) > 1) {
-            $caption = $mediaMetas['caption'];
+            return $mediaMetas['caption'];
         } else {
             return false;
         }
