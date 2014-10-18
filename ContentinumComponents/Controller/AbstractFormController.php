@@ -241,6 +241,11 @@ abstract class AbstractFormController extends AbstractContentinumController
 			$widget = $mcworkpages->_defaults->template_widget;
 		}
 	
+		// set template file different from the default, if specified
+		if (isset($content->template) && strlen($content->template) > 3) {
+		    $view->setTemplate($content->template);
+		}		
+		
 		if (false !== $widget) { // ... and set this if not false
 			$view->setVariable('widget', $widget);
 		}
