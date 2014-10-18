@@ -56,7 +56,7 @@ class MediasTableView extends AbstractHelper
                 $cddownload = str_replace(DS, $this->view->seperator, $this->view->currentFolder);
             }
             $tableFactory = new HtmlTable(new FactoryTable());
-            $tableFactory->setAttributes('class', 'table table-hover table-nomargin table-bordered');
+            $tableFactory->setAttributes('class', 'mcworkBackendTable table display');
             $i = 0;
             $iClass = 0;
             $headlines = array(
