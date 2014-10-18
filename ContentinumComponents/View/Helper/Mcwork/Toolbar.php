@@ -49,7 +49,7 @@ class Toolbar extends AbstractHelper
      * @param array $links condition for the list            
      * @return string list in html
      */
-    public function __invoke(array $links, $std = false, array $list = null)
+    public function __invoke(array $links, $std = false, array $list = null, $translate = true)
     {
         $this->setStandards($list);
         $html = '<ul';
@@ -69,7 +69,9 @@ class Toolbar extends AbstractHelper
             if (isset($link['attribs']) && is_array($link['attribs'])) {
                 $html .= HtmlAttribute::attributeArray($link['attribs']);
             }
-            $html .= '>' . $this->view->translate( $link['label'] ) . '</'.$this->tag.'>';
+            $html .= '>';
+            $html .= (true === $translate) ? $this->view->translate( $link['label'] ) :  $link['label'];
+            $html .= '</'.$this->tag.'>';
             $html .= '</li>';
         }
         $html .= '</ul>';
