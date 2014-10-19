@@ -40,15 +40,42 @@ class Password implements CryptInterface
 {
     const SALTCHARS = './0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     
+    /**
+     * Salt
+     * @var string
+     */
+    private $salt;
+    
+    
     
     /**
+     * @return the $salt
+     */
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+
+	/**
+     * @param string $salt
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+    }
+
+	/**
      * Encode text string
      * @param string $var
      * @return string
      */
-    public function encode($var)
+    public function encode($var, $salt = null)
     {
-        return crypt($var, '$6$'. $this->salt(16) .'$'); 
+        if (null === $salt){
+            $salt = '$6$'. $this->salt(16) .'$';
+        }
+        $this->setSalt($salt);
+        return sha1($var); // crypt($var, $this->getSalt()); 
     }
     
     /**

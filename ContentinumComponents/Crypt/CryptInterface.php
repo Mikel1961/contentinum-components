@@ -35,5 +35,5 @@ interface CryptInterface
      * @param string $var
      * @return string
      */
-    public function encode($var);
+    public function encode($var, $salt = null);
 }
