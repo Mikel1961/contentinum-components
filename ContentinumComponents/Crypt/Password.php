@@ -36,7 +36,7 @@ namespace ContentinumComponents\Crypt;
  *            (http://www.jochum-mediaservices.de)
  * @license http://www.contentinum-library.de/licenses BSD License
  */
-class Password
+class Password implements CryptInterface
 {
     const SALTCHARS = './0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     
