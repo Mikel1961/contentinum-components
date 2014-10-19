@@ -112,7 +112,15 @@ abstract class AbstractFormController extends AbstractContentinumController
 	 */
 	public function onDispatch(MvcEvent $e) 
 	{
-		if (method_exists ( $this, 'prepare' )) {
+		
+	    $authService = $this->getServiceLocator()->get('Contentinum\AuthService');
+	    if (! $authService->hasIdentity()) {
+	        return $this->redirect()->toUrl('/login');
+	    }	    
+	    
+	    
+	    
+	    if (method_exists ( $this, 'prepare' )) {
 			$this->prepare ();
 		}	
 		

@@ -49,6 +49,13 @@ abstract class AbstractBackendController extends AbstractContentinumController
 	 */
 	public function onDispatch(MvcEvent $e) 
 	{
+	    
+	    $authService = $this->getServiceLocator()->get('Contentinum\AuthService');
+	    if (! $authService->hasIdentity()) {
+	        return $this->redirect()->toUrl('/login');
+	    }
+	    
+	    
 	    $uri = $this->getRequest()->getUri();
 	    $this->setXmlHttpRequest($this->getRequest()->isXmlHttpRequest());
 	    $ctrl = $e->getRouteMatch ()->getParam ( 'controller' );
