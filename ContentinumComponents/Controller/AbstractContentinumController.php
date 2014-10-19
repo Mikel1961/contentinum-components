@@ -73,6 +73,12 @@ abstract class AbstractContentinumController extends AbstractActionController
 	protected $userAgent = 'desktop';
 	
 	/**
+	 * User identity
+	 * @var unknown
+	 */
+	protected $identity;
+	
+	/**
 	 * Get mapper worker
 	 * @return \Contentinum\Mapper\Process
 	 */
@@ -195,6 +201,22 @@ abstract class AbstractContentinumController extends AbstractActionController
     {
         $this->userAgent = $userAgent;
     }
+	/**
+     * @return the $identity
+     */
+    public function getIdentity()
+    {
+        return $this->identity;
+    }
+
+	/**
+     * @param \ContentinumComponents\Controller\unknown $identity
+     */
+    public function setIdentity($identity)
+    {
+        $this->identity = $identity;
+    }
+
 
 
 }

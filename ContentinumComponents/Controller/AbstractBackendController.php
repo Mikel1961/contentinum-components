@@ -53,6 +53,8 @@ abstract class AbstractBackendController extends AbstractContentinumController
 	    $authService = $this->getServiceLocator()->get('Contentinum\AuthService');
 	    if (! $authService->hasIdentity()) {
 	        return $this->redirect()->toUrl('/login');
+	    } else {
+	        $this->setIdentity($authService->Identity());
 	    }
 	    
 	    
