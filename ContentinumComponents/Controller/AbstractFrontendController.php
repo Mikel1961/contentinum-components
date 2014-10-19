@@ -394,5 +394,21 @@ abstract class AbstractFrontendController extends AbstractContentinumController
         }
 		$e->setResult ( $app );
 		return $app;
+    }   
+
+    /**
+     * Set more customer form tag attributtes
+     */
+    protected function formTagAttributes()
+    {
+        $formFactory = $this->formFactory;
+        if (true == ($deco = $formFactory->getDecorators($formFactory::DECO_FORM)) ){
+            if ( isset($deco['form-attributtes']) && is_array($deco['form-attributtes']) ){
+                foreach ($deco['form-attributtes'] as $attribute => $value){
+                    $this->form->setAttribute($attribute,$value);
+                }
+            }
+        }
+        unset($formFactory);
     }    
 }
