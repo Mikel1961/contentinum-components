@@ -182,7 +182,7 @@ abstract class AbstractFormController extends AbstractContentinumController
 	    	$content = $mcworkpages->$page;
 	    }
 	    
-	    $this->adminlayout($this->layout(), $mcworkpages, $page, $role, $acl, $this->getServiceLocator()->get('viewHelperManager'));
+	    $this->adminlayout($this->layout(), $mcworkpages, $page, $role, $acl, $this->getServiceLocator()->get('viewHelperManager'),$this->getIdentity());
 	    return $this->buildView (array('form' => $this->form,'page' => $page,'pagecontent' => $content), $content, $mcworkpages);
 	}
 	
@@ -200,7 +200,7 @@ abstract class AbstractFormController extends AbstractContentinumController
 	        print Json::encode($this->form->getMessages());
 	        exit();
 	    }
-	    $this->adminlayout($this->layout(), $mcworkpages, $page, $role, $acl, $this->getServiceLocator()->get('viewHelperManager'));
+	    $this->adminlayout($this->layout(), $mcworkpages, $page, $role, $acl, $this->getServiceLocator()->get('viewHelperManager'),$this->getIdentity());
 	    return $this->buildView (array('form' => $this->form,'page' => $page,'pagecontent' => $content), $content, $mcworkpages);	    
 	}
 	
