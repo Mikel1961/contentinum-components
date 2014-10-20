@@ -37,19 +37,28 @@ class IsAllowed extends AbstractHelper
 {
     public function __invoke( $entry, $identity, $isArray = false)
     {
-        if (1 === $entry->createdBy){
+        if (1 === $this->propertyValue($entry, 'createdBy', $isArray)){
             return true;
         }
         
         if ('admin' === $this->view->role){
             return true;
         } else {
-            if ($identity->userid === $entry->createdBy){
+            if ($identity->userid === $this->propertyValue($entry, 'createdBy', $isArray)){
                 return true;
             } else {
                 return false;
             }
         }
         
+    }
+    
+    protected function propertyValue($entry, $key, $isArray)
+    {
+        if (true === $isArray){
+            return $entry[$key];
+        } else {
+            return $entry->{$key};
+        }
     }
 }
