@@ -31,34 +31,57 @@ use Zend\Form\View\Helper\AbstractHelper;
 
 /**
  * Handle content
+ * 
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
 class IsAllowed extends AbstractHelper
 {
-    public function __invoke( $entry, $identity, $isArray = false)
+
+    protected $createdBy = 'created_by';
+
+    protected $updateBy = 'update_by';
+
+    public function __invoke($entry, $identity, $isArray = false)
     {
-        if (1 === $this->propertyValue($entry, 'createdBy', $isArray)){
+        if (false === $isArray){
+            return $this->validate($entry, $identity);
+        } else {
+            return $this->validateArray($entry, $identity);
+        }
+        
+    }
+
+    protected function validate($entry, $identity)
+    {
+        if (1 === $entry->createdBy) {
             return true;
         }
         
-        if ('admin' === $this->view->role){
+        if ('admin' === $this->view->role) {
             return true;
         } else {
-            if ($identity->userid === $this->propertyValue($entry, 'createdBy', $isArray)){
+            if ($identity->userid == $entry->createdBy) {
+                return true;
+            } else {
+                return false;
+            }
+        }        
+    }
+    
+    protected function validateArray($entry, $identity)
+    {
+        if (1 == $entry['created_by']) {
+            return true;
+        }
+    
+        if ('admin' == $this->view->role) {
+            return true;
+        } else {
+            if ($identity->userid == $entry['created_by']) {
                 return true;
             } else {
                 return false;
             }
         }
-        
-    }
-    
-    protected function propertyValue($entry, $key, $isArray)
-    {
-        if (true === $isArray){
-            return $entry[$key];
-        } else {
-            return $entry->{$key};
-        }
-    }
+    }    
 }

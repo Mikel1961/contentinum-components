@@ -690,17 +690,19 @@ class Worker extends AbstractMapper
 	
 		foreach ( $fields as $field => $value ) {
 			switch ($value){
-			    case 'updateBy' :
-			    case 'createdBy' :
-			        if ($this->identity){
-			            (array_key_exists ( $field, $props )) ? $datas [$field] = $this->identity->userid : 1;
-			        }
-			        break;
 				case 'datenow' :
 					(array_key_exists ( $field, $props )) ? $datas [$field] = new \DateTime () : null;
 					break;
 				default :
-					(array_key_exists ( $field, $props )) ? $datas [$field] = $value : null;
+					if ( 'updateBy' == $field || 'createdBy' == $field ){
+					    if ($this->identity){
+					        (array_key_exists ( $field, $props )) ? $datas [$field] = $this->identity->userid : 1;
+					    } else {
+					        (array_key_exists ( $field, $props )) ? $datas [$field] = $value : null;
+					    }					    
+					} else {
+					    (array_key_exists ( $field, $props )) ? $datas [$field] = $value : null;
+					}
 			}
 		}
 		return $datas;
