@@ -44,7 +44,11 @@ class IsAllowed extends AbstractHelper
         if ('admin' === $this->view->role){
             return true;
         } else {
-            return false;
+            if ($identity->userid === $entry->createdBy){
+                return true;
+            } else {
+                return false;
+            }
         }
         
     }

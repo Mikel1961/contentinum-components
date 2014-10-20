@@ -119,6 +119,12 @@ class Worker extends AbstractMapper
 	protected $configuration;	
 	
 	/**
+	 * User identity
+	 * @var object
+	 */
+	protected $identity;
+	
+	/**
 	 * Construct
 	 * @param EntityManager $storage
 	 * @param string $charset
@@ -683,7 +689,13 @@ class Worker extends AbstractMapper
 		}
 	
 		foreach ( $fields as $field => $value ) {
-			switch ($value) {
+			switch ($value){
+			    case 'updateBy' :
+			    case 'createdBy' :
+			        if ($this->identity){
+			            (array_key_exists ( $field, $props )) ? $datas [$field] = $this->identity->userid : 1;
+			        }
+			        break;
 				case 'datenow' :
 					(array_key_exists ( $field, $props )) ? $datas [$field] = new \DateTime () : null;
 					break;
@@ -725,5 +737,21 @@ class Worker extends AbstractMapper
 	{
 		$entity->setOptions ( $datas );
 		return $entity;
-	}	
+	}
+	/**
+     * @return the $identity
+     */
+    public function getIdentity()
+    {
+        return $this->identity;
+    }
+
+	/**
+     * @param object $identity
+     */
+    public function setIdentity($identity)
+    {
+        $this->identity = $identity;
+    }
+	
 }
