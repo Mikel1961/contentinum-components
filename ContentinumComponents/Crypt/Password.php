@@ -75,7 +75,7 @@ class Password implements CryptInterface
             $salt = $this->saltstring(16);
         }
         $this->setSalt($salt);
-        return crypt($var,'$6$'. $this->getSaltstring() .'$');
+        return crypt($var,'$6$'. $this->getSalt() .'$');
     }
     
     /**
