@@ -72,10 +72,10 @@ class Password implements CryptInterface
     public function encode($var, $salt = null)
     {
         if (null === $salt){
-            $salt = '$6$'. $this->salt(16) .'$';
+            $salt = $this->saltstring(16);
         }
         $this->setSalt($salt);
-        return sha1($var); // crypt($var, $this->getSalt()); 
+        return crypt($var,'$6$'. $this->getSaltstring() .'$');
     }
     
     /**
@@ -83,7 +83,7 @@ class Password implements CryptInterface
      * @param int $length lenght salt
      * @return string
      */
-    public function salt($length = 10)
+    public function saltstring($length = 10)
     {
         return substr(str_shuffle(self::SALTCHARS), 0, min($length, strlen(self::SALTCHARS))); 
     }
