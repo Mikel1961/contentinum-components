@@ -29,90 +29,77 @@
 namespace ContentinumComponents\Controller;
 
 use ContentinumComponents\Controller\AbstractContentinumController;
-use ContentinumComponents\Forms\AbstractForms;
 use Zend\Mvc\MvcEvent;
 
 /**
  * Contentinum Frontend Abstract Controller
- * 
+ *
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  *        
  */
-abstract class AbstractFrontendController extends AbstractContentinumController 
+abstract class AbstractFrontendController extends AbstractContentinumController
 {
     /**
      * Hostname
      * @var string
      */
-    protected $host;
+    protected $host;    
     
     /**
+     * 
+     * @var string
+     */
+    protected $defaultService;
+
+    /**
+     * PageOptions
+     * 
+     * @var Contentinum\Options\PageOptions
+     */
+    protected $pageOptions;
+
+    /**
      * Default host configurations
+     * 
      * @var array
      */
     protected $preferences;
-    
+
     /**
      * Default page configurations
+     * 
      * @var unknown
      */
     protected $defaults;
-        
+
     /**
-     * Current page
+     * Pages
+     * 
      * @var array
      */
-    protected $page;
+    protected $pages;
     
     /**
-     * Layout script key
-     * @var string
+     * Page attribute
+     * @var array
      */
-    protected $layout;
-    
-    /**
-     * Template script key
-     * @var string
-     */
-    protected $template;
-    
-    /**
-     * AbstractForms
-     * @var AbstractForms
-     */
-    protected $formFactory;
-    
+    protected $attribute;
+
     /**
      *
-     * @var Zend\Form
+     * @param unknown $pageOptions
+     * @param unknown $preferences
+     * @param unknown $defaults
      */
-    protected $form;
-    
-    /**
-     * Form action
-     * @var string
-     */
-    protected $formAction;
-    
-    /**
-     * Form action method
-     * Default is POST
-     * @var string
-     */
-    protected $formMethod = 'post';
-    
-    /**
-     * Redirect route
-     * @var string
-     */
-    protected $toRoute;
-    
-    /**
-     * Redirect to url
-     * @var string
-     */
-    protected $toUrl;    
-    
+    public function __construct($pageOptions, $preferences, $defaults, $pages, $attribute)
+    {
+        $this->pageOptions = $pageOptions;
+        $this->preferences = $preferences;
+        $this->defaults = $defaults;
+        $this->pages = $pages;
+        $this->attribute = $attribute;
+    }
+
     /**
      * @return the $host
      */
@@ -120,295 +107,119 @@ abstract class AbstractFrontendController extends AbstractContentinumController
     {
         return $this->host;
     }
-    
-    /**
+
+	/**
      * @param string $host
      */
     public function setHost($host)
     {
         $this->host = $host;
     }
-    
-    /**
-     * @return the $defaults
+
+	/**
+     * @return the $defaultService
      */
-    public function getDefaults()
+    public function getDefaultService()
     {
-        return $this->defaults;
-    }
-    
-    /**
-     * @param array $defaults
-     */
-    public function setDefaults($defaults)
-    {
-        $this->defaults = $defaults;
-    }
-    
-    /**
-     * @return the $page
-     */
-    public function getPage()
-    {
-        return $this->page;
-    }
-    
-    /**
-     * @param multitype: $page
-     */
-    public function setPage($page)
-    {
-        $this->page = $page;
-    }
-    
-    /**
-     * @return the $preferences
-     */
-    public function getPreferences()
-    {
-        return $this->preferences;
-    }    
-    
-    /**
-     * @param multitype: $preferences
-     */
-    public function setPreferences($preferences)
-    {
-        $this->preferences = $preferences;
-    }   
-    
-    /**
-     * @return the $layout
-     */
-    public function getLayout()
-    {
-        return $this->layout;
+        return $this->defaultService;
     }
 
 	/**
-     * @param string $layout
+     * @param string $defaultService
      */
-    public function setLayout($layout)
+    public function setDefaultService($defaultService)
     {
-        $this->layout = $layout;
+        $this->defaultService = $defaultService;
     }
 
 	/**
-     * @return the $template
+     * @return the $pageOptions
      */
-    public function getTemplate()
+    public function getPageOptions()
     {
-        return $this->template;
+        return $this->pageOptions;
     }
 
 	/**
-     * @param string $template
+     * @param \ContentinumComponents\Controller\Contentinum\Options\PageOptions $pageOptions
      */
-    public function setTemplate($template)
+    public function setPageOptions($pageOptions)
     {
-        $this->template = $template;
+        $this->pageOptions = $pageOptions;
     }
-    
+
 	/**
-     * @return the $formFactory
-     */
-    public function getFormFactory()
-    {
-        return $this->formFactory;
-    }
-    
-    /**
-     * @param \ContentinumComponents\Controller\AbstractForms $formFactory
-     */
-    public function setFormFactory($formFactory)
-    {
-        $this->formFactory = $formFactory;
-    }
-    
-    /**
-     * @return the $form
-     */
-    public function getForm()
-    {
-        return $this->form;
-    }
-    
-    /**
-     * @param \ContentinumComponents\Controller\Zend\Form $form
-     */
-    public function setForm($form)
-    {
-        $this->form = $form;
-    }
-    
-    /**
-     * @return the $formAction
-     */
-    public function getFormAction()
-    {
-        return $this->formAction;
-    }
-    
-    /**
-     * @param string $formAction
-     */
-    public function setFormAction($formAction)
-    {
-        $this->formAction = $formAction;
-    }
-    
-    /**
-     * @return the $formMethod
-     */
-    public function getFormMethod()
-    {
-        return $this->formMethod;
-    }
-    
-    /**
-     * @param string $formMethod
-     */
-    public function setFormMethod($formMethod)
-    {
-        $this->formMethod = $formMethod;
-    }
-    
-    /**
-     * @return the $toRoute
-     */
-    public function getToRoute()
-    {
-        return $this->toRoute;
-    }
-    
-    /**
-     * @param string $toRoute
-     */
-    public function setToRoute($toRoute)
-    {
-        $this->toRoute = $toRoute;
-    }
-    
-    /**
-     * @return the $toUrl
-     */
-    public function getToUrl()
-    {
-        return $this->toUrl;
-    }
-    
-    /**
-     * @param string $toUrl
-     */
-    public function setToUrl($toUrl)
-    {
-        $this->toUrl = $toUrl;
-    }    
-        
-    /**
-     * Get html structur xml file
-     * @param string $key
-     * @return Zend\Config
-     */
-    public function getHtmllayouts($key = null)
-    {
-        if (null == $key){
-            $key = 'Contentinum\Htmllayouts';
-        }
-        return $this->getServiceLocator()->get($key);
-    }
-    
-    /**
-     * Get html widgets xml file
-     * @param string $key
-     * @return Zend\Config
-     */
-    public function getHtmlwidgets($key = null)
-    {
-        if (null == $key){
-            $key = 'Contentinum\Htmlwidgets';
-        }
-        return $this->getServiceLocator()->get($key);
-    } 
-
-    
-    /**
-     * Default user role
-     *
-     * @return Ambigous <object, multitype:, \Contentinum\Acl\DefaultRole>
-     */
-    public function getDefaultRole()
-    {
-        return $this->getServiceLocator()->get('Contentinum\Acl\DefaultRole');
-    }
-
-    /**
-     * Acl configuration
-     *
-     * @return Ambigous <object, multitype:, \Contentinum\Acl\Acl>
-     */
-    public function getAclService()
-    {
-        return $this->getServiceLocator()->get('Contentinum\Acl\Acl');
-    }
-     
-    
-    /**
      * Steps running form display, validation and output status message
+     * 
      * @param MvcEvent $e
      * @return \Zend\View\Model\ViewModel
      */
     public function onDispatch(MvcEvent $e)
     {
+        $uri = $this->getRequest()->getUri();
+        $this->setHost($uri->getHost());
+        $this->pageOptions->addPageOptions($this->preferences);
+        $this->pageOptions->addPageOptions($this->preferences, $this->getHost());
+        $pages = (is_array($this->pages)) ? $this->pages : $this->pages->toArray();
+        $pages = (isset($pages[$this->pageOptions->getStdParams()])) ? $pages[$this->pageOptions->getStdParams()] : array();
+        $attribute = (is_array($this->attribute)) ? $this->attribute : $this->attribute->toArray();
         
-        if (method_exists ( $this, 'prepare' )) {
-            $this->prepare ();
-        }        
-        
-        $this->setXmlHttpRequest($this->getRequest()->isXmlHttpRequest());
-        $routeMatch = $e->getRouteMatch ();
-        if ($this->getRequest ()->isPost ()) {
-            
-            if ($this->form){
-                $this->form->setInputFilter ( $this->form->getInputFilter () );
-                $this->form->setData ( $this->getRequest ()->getPost () );
-            
-            
-            
-                if (false === $this->formFactory->getValidation()){
-                    $formprocess = $this->process ();
-                } elseif ($this->form->isValid ()) {
-                    $formprocess = $this->process ();
-                } else {
-                    //$routeMatch->setParam ( 'action', 'error' );
-                    //$return = $this->error ($ctrl, $page, $mcworkpages, $this->getServiceLocator ()->get ( 'Contentinum\Acl\DefaultRole' ), $this->getServiceLocator ()->get ( 'Contentinum\Acl\Acl' ));
-                } 
+        $splitUrl = $this->getServiceLocator()->get('Contentinum\SplitUrl');
+        $url = $splitUrl->split($uri->getPath());
+        if (strlen($url) == 0){
+            $url = 'index';
+        }
 
-                $e->getRouteMatch ()->setParam ( 'action', 'application' );
-                $app = $this->application($this->getPreferences(), $this->getDefaults(), $this->getPage());                
+        if (isset($pages[$url])){
+            $this->pageOptions->addPageOptions($pages, $url);
+            $page = $pages[$url];
+        } else {
+            $defaultPages = array();
+            if ($this->defaultService){
+                $defaultPages = $this->getServiceLocator()->get($this->defaultService);
+                $defaultPages = (is_array($defaultPages)) ? $defaultPages : $defaultPages->toArray();
             }
+      
+            
+            
+            if ( isset($defaultPages[$url]) ){
+                $this->pageOptions->addPageOptions($defaultPages, $url);
+                $page = $defaultPages[$url];   
+                $page['parentPage'] = 0;
+                $page['id'] = 0;            
+            } else {
+                $this->getResponse()->setStatusCode(404);
+                return; 
+            }
+
+        }
+
+        ( isset( $attribute[$page['parentPage']] ) ) ? $this->pageOptions->addPageOptions($attribute, $page['parentPage']) : false;
+        ( isset( $attribute[$page['id']] ) ) ? $this->pageOptions->addPageOptions($attribute, $page['id']) : false;
+        
+        $defaultRole = $this->getServiceLocator()->get('Contentinum\Acl\DefaultRole');
+        $acl = $this->getServiceLocator()->get('Contentinum\Acl\Acl');
+        
+        
+        if (method_exists($this, 'prepare')) {
+            $this->prepare();
+        }
+        
+        $this->setXmlHttpRequest($this->getRequest()
+            ->isXmlHttpRequest());
+        $routeMatch = $e->getRouteMatch();
+        if ($this->getRequest()->isPost()) {
+            
+            $formprocess = $this->process();
+                        
+            $e->getRouteMatch()->setParam('action', 'application');
+            $app = $this->application($this->getPageOptions(), $page, $defaultRole, $acl);            
             
         } else {
-            $e->getRouteMatch ()->setParam ( 'action', 'application' );
-            $app = $this->application($this->getPreferences(), $this->getDefaults(), $this->getPage());
+            $e->getRouteMatch()->setParam('action', 'application');
+            $app = $this->application($this->getPageOptions(), $page, $defaultRole, $acl);
         }
-		$e->setResult ( $app );
-		return $app;
-    }   
-
-    /**
-     * Set more customer form tag attributtes
-     */
-    protected function formTagAttributes()
-    {
-        $formFactory = $this->formFactory;
-        if (true == ($deco = $formFactory->getDecorators($formFactory::DECO_FORM)) ){
-            if ( isset($deco['form-attributtes']) && is_array($deco['form-attributtes']) ){
-                foreach ($deco['form-attributtes'] as $attribute => $value){
-                    $this->form->setAttribute($attribute,$value);
-                }
-            }
-        }
-        unset($formFactory);
-    }    
+        $e->setResult($app);
+        return $app;
+    }
 }
