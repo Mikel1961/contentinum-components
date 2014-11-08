@@ -60,9 +60,17 @@ class IsAllowed extends AbstractHelper
         if ('admin' === $this->view->role) {
             return true;
         } else {
-            if ($identity->userid == $entry->createdBy) {
+            if ($identity->userid === $entry->createdBy) {
                 return true;
             } else {
+                if ($identity->usergroups && ! empty($identity->usergroups)  ){
+                    $groups = $this->view->usergroups->toArray();
+                    foreach ($identity->usergroups as $usrgrp){
+                        if (isset($groups[$usrgrp]) && in_array($identity->userid, $groups[$usrgrp])){
+                            return true;
+                        }
+                    }
+                }
                 return false;
             }
         }        
@@ -80,6 +88,14 @@ class IsAllowed extends AbstractHelper
             if ($identity->userid == $entry['created_by']) {
                 return true;
             } else {
+                if ($identity->usergroups && ! empty($identity->usergroups)  ){
+                    $groups = $this->view->usergroups->toArray();
+                    foreach ($identity->usergroups as $usrgrp){
+                        if (isset($groups[$usrgrp]) && in_array($identity->userid, $groups[$usrgrp])){
+                            return true;
+                        }
+                    }
+                }
                 return false;
             }
         }
