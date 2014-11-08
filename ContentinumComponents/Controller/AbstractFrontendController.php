@@ -169,7 +169,7 @@ abstract class AbstractFrontendController extends AbstractContentinumController
         if (strlen($url) == 0){
             $url = 'index';
         }
-
+        
         if (isset($pages[$url])){
             $this->pageOptions->addPageOptions($pages, $url);
             $page = $pages[$url];
