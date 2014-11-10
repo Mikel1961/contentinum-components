@@ -39,48 +39,37 @@ use Zend\Mvc\MvcEvent;
  */
 abstract class AbstractMcworkController extends AbstractContentinumController
 {
+
     /**
      * Hostname
+     * 
      * @var string
      */
-    protected $host;    
-    
+    protected $host;
+
     /**
-     * 
+     *
      * @var string
      */
     protected $defaultService;
 
     /**
      * PageOptions
-     * 
+     *
      * @var Contentinum\Options\PageOptions
      */
     protected $pageOptions;
 
     /**
      * Default host configurations
-     * 
+     *
      * @var array
      */
-    protected $preferences;
+    protected $uri;
 
-    /**
-     * Default page configurations
-     * 
-     * @var unknown
-     */
-    protected $defaults;
-
-    /**
-     * Pages
-     * 
-     * @var array
-     */
-    protected $pages;
-    
     /**
      * Page attribute
+     * 
      * @var array
      */
     protected $attribute;
@@ -91,16 +80,15 @@ abstract class AbstractMcworkController extends AbstractContentinumController
      * @param unknown $preferences
      * @param unknown $defaults
      */
-    public function __construct($pageOptions, $preferences, $defaults, $pages, $attribute)
+    public function __construct($pageOptions, $uri, $attribute = array())
     {
         $this->pageOptions = $pageOptions;
-        $this->preferences = $preferences;
-        $this->defaults = $defaults;
-        $this->pages = $pages;
+        $this->uri = $uri;
         $this->attribute = $attribute;
     }
 
     /**
+     *
      * @return the $host
      */
     public function getHost()
@@ -108,7 +96,8 @@ abstract class AbstractMcworkController extends AbstractContentinumController
         return $this->host;
     }
 
-	/**
+    /**
+     *
      * @param string $host
      */
     public function setHost($host)
@@ -116,7 +105,8 @@ abstract class AbstractMcworkController extends AbstractContentinumController
         $this->host = $host;
     }
 
-	/**
+    /**
+     *
      * @return the $defaultService
      */
     public function getDefaultService()
@@ -124,7 +114,8 @@ abstract class AbstractMcworkController extends AbstractContentinumController
         return $this->defaultService;
     }
 
-	/**
+    /**
+     *
      * @param string $defaultService
      */
     public function setDefaultService($defaultService)
@@ -132,7 +123,8 @@ abstract class AbstractMcworkController extends AbstractContentinumController
         $this->defaultService = $defaultService;
     }
 
-	/**
+    /**
+     *
      * @return the $pageOptions
      */
     public function getPageOptions()
@@ -140,7 +132,8 @@ abstract class AbstractMcworkController extends AbstractContentinumController
         return $this->pageOptions;
     }
 
-	/**
+    /**
+     *
      * @param \ContentinumComponents\Controller\Contentinum\Options\PageOptions $pageOptions
      */
     public function setPageOptions($pageOptions)
@@ -148,9 +141,9 @@ abstract class AbstractMcworkController extends AbstractContentinumController
         $this->pageOptions = $pageOptions;
     }
 
-	/**
+    /**
      * Steps running form display, validation and output status message
-     * 
+     *
      * @param MvcEvent $e
      * @return \Zend\View\Model\ViewModel
      */
@@ -158,77 +151,39 @@ abstract class AbstractMcworkController extends AbstractContentinumController
     {
         $uri = $this->getRequest()->getUri();
         $this->setHost($uri->getHost());
-        $this->pageOptions->addPageOptions($this->preferences);
-        $this->pageOptions->addPageOptions($this->preferences, $this->getHost());
-        $pages = (is_array($this->pages)) ? $this->pages : $this->pages->toArray();
-        $pages = (isset($pages[$this->pageOptions->getStdParams()])) ? $pages[$this->pageOptions->getStdParams()] : array();
-        $attribute = (is_array($this->attribute)) ? $this->attribute : $this->attribute->toArray();
         
-        $splitUrl = $this->getServiceLocator()->get('Contentinum\SplitUrl');
-        $url = $splitUrl->split($uri->getPath());
-        if (strlen($url) == 0){
-            $url = 'index';
-        }
-        
-        if (isset($pages[$url])){
-            $this->pageOptions->addPageOptions($pages, $url);
-            $page = $pages[$url];
-        } else {
-            $defaultPages = array();
-            if ($this->defaultService){
-                $defaultPages = $this->getServiceLocator()->get($this->defaultService);
-                $defaultPages = (is_array($defaultPages)) ? $defaultPages : $defaultPages->toArray();
-            }
-      
-            
-            
-            if ( isset($defaultPages[$url]) ){
-                $this->pageOptions->addPageOptions($defaultPages, $url);
-                $page = $defaultPages[$url];   
-                $page['parentPage'] = 0;
-                $page['id'] = 0;            
+        if ('index' !== $this->pageOptions->resource) {
+            $authService = $this->getServiceLocator()->get('User\Authentication');
+            if (! $authService->hasIdentity()) {
+                return $this->redirect()->toUrl('/login');
             } else {
-                $this->getResponse()->setStatusCode(404);
-                return; 
+                $this->setIdentity($authService->getIdentity());
             }
-
         }
-
-        ( isset( $attribute[$page['parentPage']] ) ) ? $this->pageOptions->addPageOptions($attribute, $page['parentPage']) : false;
-        ( isset( $attribute[$page['id']] ) ) ? $this->pageOptions->addPageOptions($attribute, $page['id']) : false;
         
         $defaultRole = $this->getServiceLocator()->get('Contentinum\Acl\DefaultRole');
         $acl = $this->getServiceLocator()->get('Contentinum\Acl\Acl');
-        
-        
-        if (method_exists($this, 'prepare')) {
-            $this->prepare();
-        }
         
         $this->setXmlHttpRequest($this->getRequest()
             ->isXmlHttpRequest());
         $routeMatch = $e->getRouteMatch();
         if ($this->getRequest()->isPost()) {
             
-            $formprocess = $this->process();
-                        
-            $e->getRouteMatch()->setParam('action', 'application');
-            $app = $this->application($this->getPageOptions(), $page, $defaultRole, $acl);            
-            
+            return $this->process($this->getPageOptions(), $defaultRole, $acl);
         } else {
             $e->getRouteMatch()->setParam('action', 'application');
-            $app = $this->application($this->getPageOptions(), $page, $defaultRole, $acl);
+            $app = $this->application($this->getPageOptions(), $defaultRole, $acl);
         }
         $e->setResult($app);
         return $app;
     }
-    
+
     /**
      * Application method
      *
-     * @param string $page controller/page name
+     * @param array $pageOptions array
      * @param string $role current user role
      * @param Zend\Acl\Acl $acl
      */
-    abstract protected function application($ctrl, $page, $mcworkpages, $role = null, $acl = null);    
+    abstract protected function application($pageOptions, $role = null, $acl = null);
 }
