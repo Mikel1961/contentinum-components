@@ -354,6 +354,22 @@ class Worker extends AbstractMapper
 		$this->configuration = $configuration;
 	}	
 	
+	/**
+	 * @return the $identity
+	 */
+	public function getIdentity()
+	{
+	    return $this->identity;
+	}
+	
+	/**
+	 * @param Zend\Auth $identity
+	 */
+	public function setIdentity($identity)
+	{
+	    $this->identity = $identity;
+	}	
+	
     /**
      * Database connection to execute a native sql query
      *
@@ -605,6 +621,53 @@ class Worker extends AbstractMapper
 	}
 	
 	/**
+	 * Native sql query - fetch all
+	 * @param string $sql
+	 * @return multitype: array|null
+	 */
+	public function fetchAll($sql)
+	{
+	    $conn = $this->getConnection();
+	    return $conn->query($sql)->fetchAll();	    
+	}
+	
+	/**
+	 * Native sql query - fetch a row
+	 * @param string $sql sql query string
+	 * @return multitype: array|null
+	 */
+	public function fetchRow($sql)
+	{
+	    $conn = $this->getConnection();
+	    return $conn->query($sql)->fetch();
+	}
+	
+	/**
+	 * Native sql query - insert a row
+	 * @param string $tableName database tablename
+	 * @param array $inserts
+	 * @return number affected rows
+	 */
+	public function insertQuery($tableName, array $inserts)
+	{
+	    $conn = $this->getConnection();
+	    return $conn->insert($tableName, $inserts);
+	}	
+	
+	/**
+	 * Native sql query - execute query
+	 * UPDATE, DELETE etc.
+	 * @param string $sql sql query string
+	 * @param array $parameter sql query parameters
+	 * @return boolean|number affected rows
+	 */
+	public function executeQuery($sql, array $parameter = null)
+	{
+	    $conn = $this->getConnection();
+	    return $conn->prepare($sql)->execute($parameter);
+	}
+	
+	/**
 	 * Publishing data row
 	 * @param int $id data row id
 	 * @param boolen $clear clear db cache
@@ -740,20 +803,5 @@ class Worker extends AbstractMapper
 		$entity->setOptions ( $datas );
 		return $entity;
 	}
-	/**
-     * @return the $identity
-     */
-    public function getIdentity()
-    {
-        return $this->identity;
-    }
-
-	/**
-     * @param object $identity
-     */
-    public function setIdentity($identity)
-    {
-        $this->identity = $identity;
-    }
 	
 }
