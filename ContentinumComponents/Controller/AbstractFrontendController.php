@@ -43,13 +43,7 @@ abstract class AbstractFrontendController extends AbstractContentinumController
      * Hostname
      * @var string
      */
-    protected $host;    
-    
-    /**
-     * 
-     * @var string
-     */
-    protected $defaultService;
+    protected $host;
 
     /**
      * PageOptions
@@ -57,13 +51,6 @@ abstract class AbstractFrontendController extends AbstractContentinumController
      * @var Contentinum\Options\PageOptions
      */
     protected $pageOptions;
-
-    /**
-     * Default host configurations
-     * 
-     * @var array
-     */
-    protected $preferences;
 
     /**
      * Default page configurations
@@ -77,13 +64,7 @@ abstract class AbstractFrontendController extends AbstractContentinumController
      * 
      * @var array
      */
-    protected $pages;
-    
-    /**
-     * Page attribute
-     * @var array
-     */
-    protected $attribute;
+    protected $page;
 
     /**
      *
@@ -91,13 +72,11 @@ abstract class AbstractFrontendController extends AbstractContentinumController
      * @param unknown $preferences
      * @param unknown $defaults
      */
-    public function __construct($pageOptions, $preferences, $defaults, $pages, $attribute)
+    public function __construct($pageOptions, $page)
     {
         $this->pageOptions = $pageOptions;
-        $this->preferences = $preferences;
-        $this->defaults = $defaults;
-        $this->pages = $pages;
-        $this->attribute = $attribute;
+        $this->page = $page;
+
     }
 
     /**
@@ -114,22 +93,6 @@ abstract class AbstractFrontendController extends AbstractContentinumController
     public function setHost($host)
     {
         $this->host = $host;
-    }
-
-	/**
-     * @return the $defaultService
-     */
-    public function getDefaultService()
-    {
-        return $this->defaultService;
-    }
-
-	/**
-     * @param string $defaultService
-     */
-    public function setDefaultService($defaultService)
-    {
-        $this->defaultService = $defaultService;
     }
 
 	/**
@@ -158,44 +121,6 @@ abstract class AbstractFrontendController extends AbstractContentinumController
     {
         $uri = $this->getRequest()->getUri();
         $this->setHost($uri->getHost());
-        $this->pageOptions->addPageOptions($this->preferences);
-        $this->pageOptions->addPageOptions($this->preferences, $this->getHost());
-        $pages = (is_array($this->pages)) ? $this->pages : $this->pages->toArray();
-        $pages = (isset($pages[$this->pageOptions->getStdParams()])) ? $pages[$this->pageOptions->getStdParams()] : array();
-        $attribute = (is_array($this->attribute)) ? $this->attribute : $this->attribute->toArray();
-        
-        $splitUrl = $this->getServiceLocator()->get('Contentinum\SplitUrl');
-        $url = $splitUrl->split($uri->getPath());
-        if (strlen($url) == 0){
-            $url = 'index';
-        }
-        
-        if (isset($pages[$url])){
-            $this->pageOptions->addPageOptions($pages, $url);
-            $page = $pages[$url];
-        } else {
-            $defaultPages = array();
-            if ($this->defaultService){
-                $defaultPages = $this->getServiceLocator()->get($this->defaultService);
-                $defaultPages = (is_array($defaultPages)) ? $defaultPages : $defaultPages->toArray();
-            }
-      
-            
-            
-            if ( isset($defaultPages[$url]) ){
-                $this->pageOptions->addPageOptions($defaultPages, $url);
-                $page = $defaultPages[$url];   
-                $page['parentPage'] = 0;
-                $page['id'] = 0;            
-            } else {
-                $this->getResponse()->setStatusCode(404);
-                return; 
-            }
-
-        }
-
-        ( isset( $attribute[$page['parentPage']] ) ) ? $this->pageOptions->addPageOptions($attribute, $page['parentPage']) : false;
-        ( isset( $attribute[$page['id']] ) ) ? $this->pageOptions->addPageOptions($attribute, $page['id']) : false;
         
         $defaultRole = $this->getServiceLocator()->get('Contentinum\Acl\DefaultRole');
         $acl = $this->getServiceLocator()->get('Contentinum\Acl\Acl');
@@ -205,19 +130,18 @@ abstract class AbstractFrontendController extends AbstractContentinumController
             $this->prepare();
         }
         
-        $this->setXmlHttpRequest($this->getRequest()
-            ->isXmlHttpRequest());
+        $this->setXmlHttpRequest($this->getRequest()->isXmlHttpRequest());
         $routeMatch = $e->getRouteMatch();
         if ($this->getRequest()->isPost()) {
             
             $formprocess = $this->process();
                         
             $e->getRouteMatch()->setParam('action', 'application');
-            $app = $this->application($this->getPageOptions(), $page, $defaultRole, $acl);            
+            $app = $this->application($this->getPageOptions(), $this->page, $defaultRole, $acl);            
             
         } else {
             $e->getRouteMatch()->setParam('action', 'application');
-            $app = $this->application($this->getPageOptions(), $page, $defaultRole, $acl);
+            $app = $this->application($this->getPageOptions(), $this->page, $defaultRole, $acl);
         }
         $e->setResult($app);
         return $app;
