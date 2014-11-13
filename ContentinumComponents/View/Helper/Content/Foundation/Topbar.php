@@ -156,7 +156,7 @@ class Topbar extends AbstractHelper
             $factory = false;
         }
         
-        $container = new \Zend\Navigation\Navigation($this->view->topbar);
+        $container = new \Zend\Navigation\Navigation($entry['modulContent']);
         $topbar = $this->view->navigationcontentinum($container)->setAcl($this->view->acl)->setRole($this->view->role)->setUlClass($this->direction);
         
         if ($grid){

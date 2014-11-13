@@ -128,7 +128,10 @@ class Contribution extends AbstractHelper
             }
             switch ($entry['modul']){
                 case 'topbar' :
-                    $html .= $this->view->navigationtopbar($entry, $template);
+                    if (isset($this->view->plugins['topbar'])){
+                        $plugin = array_merge($entry,$this->view->plugins['topbar']);
+                        $html .= $this->view->navigationtopbar($plugin, $template);
+                    }
                     break;
                 default:
                     break;
