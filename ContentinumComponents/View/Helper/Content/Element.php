@@ -34,12 +34,12 @@ use ContentinumComponents\Html\Element\FactoryElement;
 
 class Element extends AbstractHelper
 {
-    public function __invoke($element,$content, array $attr = null)
+    public function __invoke($element,$content, $attr = null)
     {
         $factory = new HtmlElements(new FactoryElement());
         $factory->setContentTag($element);
         $factory->setHtmlContent($content);
-        if (null !== $attr){
+        if (is_array($attr) && !empty($attr)) {
             foreach ($attr as $name => $value){
                 $factory->setTagAttributtes($name, $value, 0);
             }
