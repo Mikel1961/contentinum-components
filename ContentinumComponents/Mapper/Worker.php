@@ -368,7 +368,16 @@ class Worker extends AbstractMapper
 	public function setIdentity($identity)
 	{
 	    $this->identity = $identity;
-	}	
+	}
+
+	/**
+	 * Get current user ident
+	 * @return number
+	 */
+	public function getUserIdent()
+	{
+	    return ($this->identity) ? $this->identity->userid : 1 ;
+	}
 	
     /**
      * Database connection to execute a native sql query
