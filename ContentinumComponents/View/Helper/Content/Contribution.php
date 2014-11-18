@@ -126,11 +126,23 @@ class Contribution extends AbstractHelper
                 $html .= $factory->display();
                 $factory = false;
             }
-            switch ($entry['modul']){
-                case 'topbar' :
-                    if (isset($this->view->plugins['topbar'])){
-                        $plugin = array_merge($entry,$this->view->plugins['topbar']);
+            switch ($entry['modul']) {
+                case 'topbar':
+                    if (isset($this->view->plugins['topbar'])) {
+                        $plugin = array_merge($entry, $this->view->plugins['topbar']);
                         $html .= $this->view->navigationtopbar($plugin, $template);
+                    }
+                    break;
+                case 'newsarchive':
+                    if (isset($this->view->plugins['newsarchive'])) {
+                        $plugin = array_merge($entry, $this->view->plugins['topbar']);
+                        $html .= $this->view->newsarchivelist($plugin, $template);
+                    }
+                    break;
+                case 'news':
+                    if (isset($this->view->plugins['newsarchive'])) {
+                        // $plugin = array_merge($entry,$this->view->plugins['topbar']);
+                        $html .= '<p>news</p>';
                     }
                     break;
                 default:
@@ -140,15 +152,14 @@ class Contribution extends AbstractHelper
         $this->unsetProperties();
         return $html;
     }
-    
+
     protected function assignTemplate($row, $template)
     {
-        if (isset($row['htmlwidgets']) && 'content' != $row['htmlwidgets'] ){
-            if ( isset($template[$row['htmlwidgets']]) ){
+        if (isset($row['htmlwidgets']) && 'content' != $row['htmlwidgets']) {
+            if (isset($template[$row['htmlwidgets']])) {
                 $this->setTemplate($template[$row['htmlwidgets']]->toArray());
             } else {
                 $this->unsetProperties();
-                
             }
         }
     }
@@ -183,10 +194,10 @@ class Contribution extends AbstractHelper
             }
         }
     }
-    
+
     protected function unsetProperties()
     {
-        foreach ($this->properties as $prop){
+        foreach ($this->properties as $prop) {
             $this->{$prop} = null;
         }
     }
