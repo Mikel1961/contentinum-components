@@ -121,6 +121,8 @@ abstract class AbstractFrontendController extends AbstractContentinumController
     {
         $uri = $this->getRequest()->getUri();
         $this->setHost($uri->getHost());
+        $this->getPageOptions()->setArticle($this->params()->fromRoute('article', false));
+        $this->getPageOptions()->setCategory($this->params()->fromRoute('category', false));
         
         $defaultRole = $this->getServiceLocator()->get('Contentinum\Acl\DefaultRole');
         $acl = $this->getServiceLocator()->get('Contentinum\Acl\Acl');
