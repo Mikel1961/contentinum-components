@@ -530,6 +530,33 @@ class Worker extends AbstractMapper
 	}
 	
 	/**
+	 * Populate further form datas to update a data row
+	 * @param string $entityName name entity
+	 * @param string $column name column query parameter
+	 * @param int $id value for query parameter
+	 * @param array $columns columns to merge in data array
+	 * @param array $datas base form datas
+	 * @return Ambigous <multitype:, boolean, string, unknown>
+	 */
+	public function populateFurtherEntities($entityName, $column, $id, $columns, $datas)
+	{
+	    $datas = $this->fetchEntries($entityName, $column, $id);
+	    if (isset($datas[0])){
+	        $datas = $datas[0]->toArray();
+	    }
+	    $result = array();
+	    foreach ($columns as $colName){
+	        if (isset($datas[$colName])){
+	            $result[$colName] = $datas[$colName];
+	        }
+	    }
+	    if (!empty($result)){
+	        $datas = array_merge($datas,$result);
+	    }
+	    return $datas;
+	}	
+	
+	/**
 	 * Delete a data record
 	 * @param AbstractEntity $entity
 	 * @param int $id primary key value
