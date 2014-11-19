@@ -34,6 +34,12 @@ use ContentinumComponents\Html\HtmlAttribute;
 class Archivelist extends AbstractHelper
 {
     /**
+     * 
+     * @var array
+     */
+    private $list = array('element' => 'ul', 'attr' => array('class' => 'news-archive-list'));
+    
+    /**
      *
      * @var unknown
      */
@@ -62,14 +68,30 @@ class Archivelist extends AbstractHelper
      * @var unknown
      */
     private $properties = array(
+        'list',
         'row',
         'grid',
         'media',
         'content'
     );
 
+    private $monthsname = array(
+        '01' => 'Januar',
+        '02' => 'Februar',
+        '03' => 'März',
+        '04' => 'April',
+        '05' => 'Mai',
+        '06' => 'Juni',
+        '07' => 'Juli',
+        '08' => 'August',
+        '09' => 'September',
+        '10' => 'Oktober',
+        '11' => 'November',
+        '12' => 'Dezember'
+    );
+
     /**
-     *
+     * Build archive list
      * @param array $content
      * @param unknown $medias
      * @param array $template
@@ -77,20 +99,25 @@ class Archivelist extends AbstractHelper
      */
     public function __invoke($entries, $template = null)
     {
-        $row = $this->getTemplateProperty('row', 'element');
+        $row = $this->getTemplateProperty('list', 'element');
         $html = '';
         $html .= '<' . $row;
-        if (false !== ($attr = $this->getTemplateProperty('row', 'attr')) ){
+        if (false !== ($attr = $this->getTemplateProperty('list', 'attr')) ){
             $html .= HtmlAttribute::attributeArray($attr);
             $attr = false;
         }
         $html .= '>';
-        $html .= $this->listitems($entries);
+	 $html .= $this->listitems($entries['modulContent']);
         $html .= '</' . $row . '>';
-        
+        return $html;
         
     }
     
+    /**
+     * List years
+     * @param array $entries
+     * @return string html
+     */
     protected function listitems($entries)
     {
         $grid = $this->getTemplateProperty('grid', 'element');
@@ -103,13 +130,50 @@ class Archivelist extends AbstractHelper
             $html .= '><a';
             $attr = array();
             $html .= HtmlAttribute::attributeArray($attr);
-            $html .= '>' . $year . '</a>';
-            
+            $html .= '>' . $this->view->translate('Year') . ' ' . $year . '</a>'; //
+            $html .= $this->months($year, $month);
             $html .= '</' . $grid . '>'; 
         }
         return $html;
     }
     
+    /**
+     * List mounth 
+     * @param interger $year
+     * @param array $month
+     * @return string html
+     */
+    protected function months($year, $month)
+    {
+        $grid = $this->getTemplateProperty('grid', 'element');
+        $row = $this->getTemplateProperty('row', 'element');
+        $html = '';
+        $html .= '<' . $row;
+        if (false !== ($attr = $this->getTemplateProperty('row', 'attr')) ){
+            $html .= HtmlAttribute::attributeArray($attr);
+            $attr = false;
+        }
+        $html .= '>';        
+        foreach ($month as $num => $url){
+            $html .= '<' . $grid;
+            $attr = array();
+            $html .= HtmlAttribute::attributeArray($attr);
+            $html .= '><a';
+            $attr = array();
+            $attr['href'] = '/' . $url . '/archive/' . $year . '-' . $num; 
+            $html .= HtmlAttribute::attributeArray($attr);
+            $html .= '>' . $this->monthsname[$num] . '</a>';
+            $html .= '</' . $grid . '>';
+        }        
+        $html .= '</' . $row . '>';
+        return $html;
+    }
+    
+    /**
+     * Assign a template
+     * @param unknown $row
+     * @param unknown $template
+     */
     protected function assignTemplate($row, $template)
     {
         if (isset($row['htmlwidgets'])) {
@@ -122,10 +186,10 @@ class Archivelist extends AbstractHelper
     }
     
     /**
-     *
-     * @param unknown $prop
-     * @param unknown $key
-     * @return boolean
+     * Get a template property
+     * @param string $prop
+     * @param string $key
+     * @return boolean|array
      */
     protected function getTemplateProperty($prop, $key)
     {
@@ -137,7 +201,7 @@ class Archivelist extends AbstractHelper
     }
     
     /**
-     *
+     * Set template properties
      * @param unknown $template
      */
     protected function setTemplate($template)
@@ -152,6 +216,9 @@ class Archivelist extends AbstractHelper
         }
     }
     
+    /**
+     * unset properties
+     */
     protected function unsetProperties()
     {
         foreach ($this->properties as $prop) {

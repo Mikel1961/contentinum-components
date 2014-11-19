@@ -87,7 +87,7 @@ class News extends AbstractHelper
         $newselement = $this->getTemplateProperty('row', 'element');
         $grid = $this->getTemplateProperty('grid', 'element');
         $cut = true;
-        if (false !== $this->view->article && $content['entries'][$this->view->article] ){
+        if (false !== $this->view->article && isset($content['entries'][$this->view->article]) ){
             $content['entries'] = array($content['entries'][$this->view->article]);
             $cut = false; 
         }
@@ -133,9 +133,15 @@ class News extends AbstractHelper
                         $attr = $footer['attr'];
                     }
                     $newsrow .= $this->view->contentelement($footer['element'], $this->formatPublishAuthor($row), $attr);
+                    if (false === $cut){
+                        $newsrow .= $this->backLink($row);
+                    }
                     $attr = array();
                 } else {
                     $newsrow .= $this->formatPublishAuthor($row);
+                    if (false === $cut){
+                        $newsrow .= $this->backLink($row);
+                    }                    
                 }                
                 $attr = array();
                 if ($grid){
@@ -211,6 +217,43 @@ class News extends AbstractHelper
             return '';
         }
     }
+    
+    /**
+     *
+     * @param unknown $row
+     * @return string
+     */
+    protected function backLink($row)
+    {
+            if ($this->labelReadMore) {
+                $elm = $this->getTemplateProperty('labelReadMore', 'row');
+                $grid = $this->getTemplateProperty('labelReadMore', 'grid');
+                $attr['href'] = '/'. $this->view->pageurl;
+                if ($this->view->category){
+                    $attr['href'] .= '/archive/' . $this->view->category;
+                }
+                $attr['title'] = 'Back';
+                $readMore = 'Back';
+                if (isset($grid['element'])) {
+                    if (isset($grid['attr'])) {
+                        $attr = array_merge($grid['attr'], $attr);
+                    }
+                    $readMore = $this->view->contentelement($grid['element'], $readMore, $attr);
+                    $attr = array();
+                }
+                if (isset($elm['attr'])) {
+                    $attr = $elm['attr'];
+                }
+                $readMore = $this->view->contentelement($elm['element'], $readMore, $attr);
+            } else {
+                $href = '/'. $this->view->pageurl;
+                if ($this->view->category){
+                    $href .= '/archive/' . $this->view->category;
+                }                
+                $readMore = '<a href="' . $href . '" title="Back">Back</a>';
+            }
+            return $readMore;
+    }    
 
     /**
      *
@@ -223,7 +266,10 @@ class News extends AbstractHelper
             if ($this->labelReadMore) {
                 $elm = $this->getTemplateProperty('labelReadMore', 'row');
                 $grid = $this->getTemplateProperty('labelReadMore', 'grid');
-                $attr['href'] = $this->view->pageurl . '/' . $row['source'];
+                $attr['href'] = '/'. $this->view->pageurl . '/' . $row['source'];
+                if ($this->view->category){
+                    $attr['href'] .= '/' . $this->view->category;
+                }
                 $attr['title'] = $row['labelReadMore'] . ' ' . $row['headline'];
                 $readMore = $row['labelReadMore'];
                 if (isset($grid['element'])) {

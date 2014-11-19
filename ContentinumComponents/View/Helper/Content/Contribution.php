@@ -135,14 +135,14 @@ class Contribution extends AbstractHelper
                     break;
                 case 'newsarchive':
                     if (isset($this->view->plugins['newsarchive'])) {
-                        $plugin = array_merge($entry, $this->view->plugins['topbar']);
+                        $plugin = array_merge($entry, $this->view->plugins['newsarchive']);
                         $html .= $this->view->newsarchivelist($plugin, $template);
                     }
                     break;
                 case 'news':
-                    if (isset($this->view->plugins['newsarchive'])) {
-                        // $plugin = array_merge($entry,$this->view->plugins['topbar']);
-                        $html .= '<p>news</p>';
+                    if (isset($this->view->plugins['news'])) {
+                        $plugin = array_merge($entry,$this->view->plugins['news']);
+                        $html .= $this->view->news($plugin, $medias, $template);
                     }
                     break;
                 default:
