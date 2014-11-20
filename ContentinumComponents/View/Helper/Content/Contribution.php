@@ -144,6 +144,11 @@ class Contribution extends AbstractHelper
                         $plugin = array_merge($entry,$this->view->plugins['news']);
                         $html .= $this->view->news($plugin, $medias, $template);
                     }
+                case 'navigation':
+                    if (isset($this->view->plugins['navigation'])) {
+                        $plugin = array_merge($entry,$this->view->plugins['navigation']);
+                        $html .= $this->view->navigationbuild($plugin, $medias, $template);
+                    }                    
                     break;
                 default:
                     break;

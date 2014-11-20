@@ -84,16 +84,25 @@ class Build extends AbstractHelper
      * @param array $template
      * @return Ambigous <string, multitype:>
      */
-    public function __invoke(array $nav, $content, $medias, array $template)
+    public function __invoke(array $entry, $medias, array $template)
     {
         $this->setTemplate($template);
-        $html = '';
-        $factory = false;
+        $navlist = $entry['modulContent'];
+        $ulClass = null;
+        $container = new \Zend\Navigation\Navigation($navlist);
+        $html = $this->view->navigationcontentinum($container)->setAcl($this->view->acl)->setRole($this->view->role)->setUlClass($ulClass);
         
+        $row = $this->getTemplateProperty('row', 'element');
+        $grid = $this->getTemplateProperty('grid', 'element');
         
+        if ($grid){
+            $html = $this->view->contentelement($grid, $html, $this->getTemplateProperty('grid', 'attr'));
+        }
         
-
- 
+        if ($row){
+            $html = $this->view->contentelement($grid, $html, $this->getTemplateProperty('row', 'attr'));
+        }
+        
         $this->unsetProperties();
         return $html;
     }
@@ -129,6 +138,9 @@ class Build extends AbstractHelper
         }
     }
     
+    /**
+     * 
+     */
     protected function unsetProperties()
     {
         foreach ($this->properties as $prop){
