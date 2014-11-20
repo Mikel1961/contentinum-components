@@ -150,6 +150,12 @@ class Contribution extends AbstractHelper
                         $html .= $this->view->navigationbuild($plugin, $medias, $template);
                     }                    
                     break;
+                case 'mediagroup':
+                    if (isset($this->view->plugins['mediagroup'])) {
+                        $plugin = array_merge($entry,$this->view->plugins['mediagroup']);
+                        $html .= $this->view->mediagroup($plugin, $medias, $template);
+                    }
+                    break;                    
                 default:
                     break;
             }
