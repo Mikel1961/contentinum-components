@@ -35,18 +35,36 @@ use ContentinumComponents\Html\HtmlAttribute;
 
 class Accordion extends AbstractHelper
 {
-
+    /**
+     * 
+     * @var array
+     */
     private $body;
     
-    
+    /**
+     * 
+     * @var array
+     */
     private $content;
     
-
+    /**
+     *
+     * @var array
+     */
     private $properties = array(
         'body',
         'content'
     );
 
+    /**
+     * Create accordion elements
+     * @param array $content
+     * @param array $template
+     * @param unknown $medias
+     * @param unknown $widgets
+     * @param array $specified
+     * @return Ambigous <string, multitype:>
+     */
     public function __invoke(array $content, array $template, $medias, $widgets, array $specified = null)
     {
         $this->setTemplate($template);
@@ -58,11 +76,10 @@ class Accordion extends AbstractHelper
         $filter = new Prepare();
         $grid = $this->getTemplateProperty('body', 'grid', 'element');
         
-        $content = $this->getTemplateProperty('body', 'content', 'element');
+        $bodyContent = $this->getTemplateProperty('body', 'content', 'element');
         foreach ($content['entries'] as $entry) {
             $attr = $this->getTemplateProperty('body', 'grid', 'attr');
             $panelId = $filter->filter($entry['title']);
-            
             $str .= '<' . $grid;
             if (0 === $i) {
                 $attr['class'] = $attr['class'] . ' active';
@@ -70,19 +87,21 @@ class Accordion extends AbstractHelper
             } else {
                 $attr['aria-hidden'] = 'true';
             }            
-            
             $str .= HtmlAttribute::attributeArray($attr) . '>';
-            
-            
+                       
             if (0 === $i) {
                 $str .= '<a href="#' . $panelId . '" role="tab" tabindex="0" aria-selected="true" controls="' . $panelId . '">' . $entry['title'] . '</a>';
             } else {
                 $str .= '<a href="#' . $panelId . '" role="tab" tabindex="0" aria-selected="false" controls="' . $panelId . '">' . $entry['title'] . '</a>';
             }
             
-            $str .= '<' . $content;
+            $str .= '<' . $bodyContent;
             $attr = false;
             $attr = $this->getTemplateProperty('body', 'content', 'attr');
+            
+            if (0 === $i) {
+                $attr['class'] = $attr['class'] . ' active';
+            }            
             
             $attr['id'] = $panelId;
             $str .= HtmlAttribute::attributeArray($attr) . '>';
@@ -91,7 +110,7 @@ class Accordion extends AbstractHelper
                     $entry
                 )
             ), $medias, $widgets);
-            $str .= '</'.$content.'></' . $grid . '>';
+            $str .= '</'.$bodyContent.'></' . $grid . '>';
             $attr = false;
             $i ++;
         }
@@ -116,6 +135,10 @@ class Accordion extends AbstractHelper
         return $accordion;
     }
 
+    /**
+     * Merge own format datas with template data
+     * @param unknown $specified
+     */
     protected function setSpecified($specified)
     {
         foreach ($specified as $key => $values) {
@@ -130,7 +153,7 @@ class Accordion extends AbstractHelper
     }
 
     /**
-     *
+     * Get template properties
      * @param unknown $prop
      * @param unknown $key
      * @return boolean
@@ -147,6 +170,10 @@ class Accordion extends AbstractHelper
         }
     }
 
+    /**
+     * Set and assig teplate to different properties
+     * @param unknown $template
+     */
     protected function setTemplate($template)
     {
         foreach ($template as $key => $values) {
