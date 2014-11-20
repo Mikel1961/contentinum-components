@@ -84,11 +84,21 @@ class Build extends AbstractHelper
      * @param array $template
      * @return Ambigous <string, multitype:>
      */
-    public function __invoke(array $entry, $medias, array $template)
+    public function __invoke(array $entry, $medias, $template)
     {
-        $this->setTemplate($template);
+        if (isset($entry['modulFormat']) && strlen($entry['modulFormat']) > 1){
+            if (isset($template[$entry['modulFormat']])){
+                $this->setTemplate($template[$entry['modulFormat']]->toArray());
+            }
+        }
+        
         $navlist = $entry['modulContent'];
-        $ulClass = null;
+        $ulClass = 'navigation-list';
+        $attr = $this->getTemplateProperty('list', 'attr');
+        if (isset($attr['class'])){
+            $ulClass = $attr['class'];
+        }
+        
         $container = new \Zend\Navigation\Navigation($navlist);
         $html = $this->view->navigationcontentinum($container)->setAcl($this->view->acl)->setRole($this->view->role)->setUlClass($ulClass);
         
@@ -100,7 +110,7 @@ class Build extends AbstractHelper
         }
         
         if ($row){
-            $html = $this->view->contentelement($grid, $html, $this->getTemplateProperty('row', 'attr'));
+            $html = $this->view->contentelement($row, $html, $this->getTemplateProperty('row', 'attr'));
         }
         
         $this->unsetProperties();
