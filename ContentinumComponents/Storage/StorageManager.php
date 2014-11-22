@@ -822,7 +822,8 @@ class StorageManager
 	 */
 	public function fetchAll ()
 	{
-		$path = $this->getDocumentRoot() . $this->path;
+	    $docroot = $this->getDocumentRoot();
+	    $path = $docroot . $this->path;
 		if (false !== ($dir = $this->getCurrent())) {
 			$path = $path . '' . $dir;
 		}
@@ -831,6 +832,7 @@ class StorageManager
 			$result = $row = array();
 			$iterator = new \DirectoryIterator($path);
 			foreach ($iterator as $element) {
+			    $row['documentroot'] = $docroot;
 				$row['filename'] = $key = $element->getFilename();
 				$row['extension'] = $this->getExtension($key);
 				if (true === $this->isImages($row['extension'])) {
