@@ -832,7 +832,6 @@ class StorageManager
 			$result = $row = array();
 			$iterator = new \DirectoryIterator($path);
 			foreach ($iterator as $element) {
-			    $row['documentroot'] = $docroot;
 				$row['filename'] = $key = $element->getFilename();
 				$row['extension'] = $this->getExtension($key);
 				if (true === $this->isImages($row['extension'])) {
@@ -852,6 +851,7 @@ class StorageManager
 				} else {
 					$row['items'] = '';
 				}
+				$row['docroot'] = $docroot;
 				$row['path'] = $element->getPath();
 				$row['pathname'] = $element->getPathname();
 				$row['type'] = $element->getType();

@@ -80,6 +80,12 @@ abstract class AbstractStorageEntity extends AbstractEntity
 	protected $counts;	
 	
 	/**
+	 * Document root
+	 * @var string
+	 */
+	protected $docroot;
+	
+	/**
 	 * Path of current Iterator item without filename
 	 * @var string
 	 */
@@ -312,6 +318,22 @@ abstract class AbstractStorageEntity extends AbstractEntity
 		$this->counts = $counts;
 		return $this;
 	}
+
+	/**
+     * @return the $docroot
+     */
+    public function getDocroot()
+    {
+        return $this->docroot;
+    }
+
+	/**
+     * @param string $docroot
+     */
+    public function setDocroot($docroot)
+    {
+        $this->docroot = $docroot;
+    }
 
 	/**
 	 * @return the $path
