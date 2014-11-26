@@ -250,7 +250,7 @@ class News extends AbstractHelper
                 if ($this->view->category){
                     $href .= '/archive/' . $this->view->category;
                 }                
-                $readMore = '<a href="' . $href . '" title="Back">Back</a>';
+                $readMore = '<a href="' . $href . '" title="Back">'. $this->view->translate('Back') .'</a>';
             }
             return $readMore;
     }    
