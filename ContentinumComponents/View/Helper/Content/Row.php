@@ -28,11 +28,14 @@
 namespace ContentinumComponents\View\Helper\Content;
 
 use Zend\View\Helper\AbstractHelper;
-use ContentinumComponents\Html\HtmlElements;
-use ContentinumComponents\Html\Element\FactoryElement;
 
 class Row extends AbstractHelper
 {
+    /**
+     * 
+     * @var unknown
+     */
+    private $section;
 
     /**
      *
@@ -63,6 +66,7 @@ class Row extends AbstractHelper
      * @var unknown
      */
     private $properties = array(
+        'section',
         'row',
         'grid',
         'media',
@@ -82,37 +86,35 @@ class Row extends AbstractHelper
         $factory = false;
         
         $this->assignTemplate($entry, $template);
-        $row = $this->getTemplateProperty('row', 'element');
         $grid = $this->getTemplateProperty('grid', 'element');
-        
-        if ($row || $grid) {
-            $factory = new HtmlElements(new FactoryElement());
-        }
-        
-        if ($row) {
-            $factory->setEncloseTag($row);
-            $attr = $this->getTemplateProperty('row', 'attr');
-            if (false !== $attr) {
-                $factory->setAttributes(false, $attr);
-                $attr = false;
+        if ($grid){
+            $attr = array();
+            if (false !== $this->getTemplateProperty('grid', 'attr')){
+                $attr = $this->getTemplateProperty('grid', 'attr');
             }
+            $content = $this->view->contentelement($grid, $content, $attr );            
         }
+        $row = $this->getTemplateProperty('row', 'element');
+        if ($row){
+            $attr = array();
+            if (false !== $this->getTemplateProperty('row', 'attr')){
+                $attr = $this->getTemplateProperty('row', 'attr');
+            }
+            $content = $this->view->contentelement($row, $content, $attr );
+        } 
+
+        $section = $this->getTemplateProperty('section', 'element');
+        if ($section){
+            $attr = array();
+            if (false !== $this->getTemplateProperty('section', 'attr')){
+                $attr = $this->getTemplateProperty('section', 'attr');
+            }
+            $content = $this->view->contentelement($section, $content, $attr );
+        }        
         
-        if ($grid) {
-            $factory->setContentTag($grid);
-            $attr = $this->getTemplateProperty('grid', 'attr');
-            $factory->setTagAttributtes(false, $attr, 0);
-        }
-        
-        if (false === $factory) {
-            $html .= $content;
-        } else {
-            $factory->setHtmlContent($content);
-            $html .= $factory->display();
-        }
         
         $this->unsetProperties();
-        return $html;
+        return $content;
     }
 
     protected function assignTemplate($row, $template)
