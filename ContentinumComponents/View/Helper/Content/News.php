@@ -93,6 +93,11 @@ class News extends AbstractHelper
         }
         
         $html = '';
+        
+        if (isset($content['groupName']) && '_default' !== $content['groupName']){
+            $html .= '<h1>' . $content['groupName'] . '</h1>';
+        }
+        
         foreach ($content['entries'] as $row) {
             $newsrow = '';
             if ('1' !== $row['id']) {
