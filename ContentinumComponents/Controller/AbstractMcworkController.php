@@ -73,6 +73,12 @@ abstract class AbstractMcworkController extends AbstractContentinumController
      * @var array
      */
     protected $attribute;
+    
+    /**
+     * Page services
+     * @var array
+     */
+    protected $services;
 
     /**
      *
@@ -142,6 +148,24 @@ abstract class AbstractMcworkController extends AbstractContentinumController
     }
 
     /**
+     * Get services for this page
+     * @return the $services
+     */
+    public function getServices()
+    {
+        return $this->services;
+    }
+
+	/**
+	 * Set services for this page
+     * @param multitype: $services
+     */
+    public function setServices($services)
+    {
+        $this->services = $services;
+    }
+
+	/**
      * Steps running form display, validation and output status message
      *
      * @param MvcEvent $e
