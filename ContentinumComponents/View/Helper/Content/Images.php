@@ -106,6 +106,10 @@ class Images extends AbstractHelper
             
             $img .= ' />';
             
+            if (isset($article['mediaLinkUrl']) && strlen($article['mediaLinkUrl']) > 0){
+                $img = '<a href="' . $article['mediaLinkUrl'] . '">' . $img . '</a>';
+            }
+            
             $caption = $this->caption($mediaMetas);
             $row = $this->getTemplateProperty('row', 'element');
             $grid = $this->getTemplateProperty('grid', 'element');
