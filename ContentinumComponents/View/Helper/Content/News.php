@@ -87,17 +87,18 @@ class News extends AbstractHelper
         $newselement = $this->getTemplateProperty('row', 'element');
         $grid = $this->getTemplateProperty('grid', 'element');
         $cut = true;
+
         if (false !== $this->view->article && isset($content['entries'][$this->view->article]) ){
             $content['entries'] = array($content['entries'][$this->view->article]);
             $cut = false; 
         }
-        
         $html = '';
-        
+
         if (isset($content['groupName']) && '_default' !== $content['groupName']){
             $html .= '<h1>' . $content['groupName'] . '</h1>';
         }
-        
+
+
         foreach ($content['entries'] as $row) {
             $newsrow = '';
             if ('1' !== $row['id']) {
@@ -255,7 +256,7 @@ class News extends AbstractHelper
                 if ($this->view->category){
                     $href .= '/archive/' . $this->view->category;
                 }                
-                $readMore = '<a href="' . $href . '" title="Back">'. $this->view->translate('Back') .'</a>';
+                $readMore = '<a href="' . $href . '" title="Back">Back</a>';
             }
             return $readMore;
     }    

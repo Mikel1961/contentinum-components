@@ -121,6 +121,7 @@ class Images extends AbstractHelper
                 }
             }
         }
+        $this->unsetProperties();
         return $content;
     }
 
