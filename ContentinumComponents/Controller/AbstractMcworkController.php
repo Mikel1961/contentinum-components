@@ -39,6 +39,8 @@ use Zend\Mvc\MvcEvent;
  */
 abstract class AbstractMcworkController extends AbstractContentinumController
 {
+    
+    const STD_FORMFACTORY = 'Mcwork\StandardForms';
 
     /**
      * Hostname
@@ -164,6 +166,31 @@ abstract class AbstractMcworkController extends AbstractContentinumController
     {
         $this->services = $services;
     }
+    
+    /**
+     * Form factory service
+     * @var string
+     */
+    private $formfactory;
+    
+    /**
+     * @return the $formfactory
+     */
+    public function getFormfactory()
+    {
+        if (null === $this->formfactory){
+            $this->formfactory = self::STD_FORMFACTORY;
+        }
+        return $this->formfactory;
+    }
+    
+    /**
+     * @param string $formfactory
+     */
+    public function setFormfactory($formfactory)
+    {
+        $this->formfactory = $formfactory;
+    }    
 
 	/**
      * Steps running form display, validation and output status message
@@ -192,8 +219,8 @@ abstract class AbstractMcworkController extends AbstractContentinumController
             ->isXmlHttpRequest());
         $routeMatch = $e->getRouteMatch();
         if ($this->getRequest()->isPost()) {
-            
-            return $this->process($this->getPageOptions(), $defaultRole, $acl);
+            $e->getRouteMatch()->setParam('action', 'process');
+            $app = $this->process($this->getPageOptions(), $defaultRole, $acl);
         } else {
             $e->getRouteMatch()->setParam('action', 'application');
             $app = $this->application($this->getPageOptions(), $defaultRole, $acl);
