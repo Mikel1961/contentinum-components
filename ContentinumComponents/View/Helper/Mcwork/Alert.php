@@ -31,18 +31,27 @@ use Zend\Form\View\Helper\AbstractHelper;
 
 /**
  * Handle content
+ * 
  * @author Michael Jochum, michael.jochum@jochum-mediaservices.de
  */
 class Alert extends AbstractHelper
 {
 
-	public function __invoke( $messages, $key = null)
-	{
-	    $html = '<div data-alert class="alert-box secondary">';
-	    $html .= $messages;
-	    $html .= '<a href="#" class="close">&times;</a>';
-	    $html .= '</div>';
-	    return $html;
-	}
-
+    public function __invoke($messages, $key = null)
+    {
+        if ($messages) {
+            $msg = '';
+            foreach ($messages as $message) {
+                $msg .= '<p>' . $message . '</p>';
+            }
+            
+            $html = '<div data-alert class="alert-box secondary">';
+            $html .= $msg;
+            $html .= '<a href="#" class="close">&times;</a>';
+            $html .= '</div>';
+            return $html;
+        } else {
+            return '';
+        }
+    }
 }
