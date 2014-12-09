@@ -306,7 +306,12 @@ abstract class AbstractForms
 		    foreach ($where as $conditions => $params){
 		        $builder->where($conditions);
 		        $builder->setParameter($params[0],$params[1]);
+		        break;
 		    }
+		    if (isset($where['andWhere'])){
+		        $builder->andWhere($where['andWhere']);
+		    }
+		    
 		}
 		
 		if (!empty($sort)){
