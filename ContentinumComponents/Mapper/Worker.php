@@ -337,6 +337,21 @@ class Worker extends AbstractMapper
 		$this->targetEntities = $entity;
 	}
 	
+	/**
+	 * Unset a target entity
+	 * @param string $key form field name
+	 */
+	public function unsetTargetEntities($key = null)
+	{
+	   if (null === $key){
+	       $this->targetEntities = array();
+	   } else {
+	       if (isset($this->targetEntities[$key])){
+	           unset($this->targetEntities[$key]);
+	       }
+	   }
+	}	
+	
 	
 	/**
 	 * @return the $configuration
