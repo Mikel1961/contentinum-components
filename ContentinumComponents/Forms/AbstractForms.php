@@ -290,7 +290,7 @@ abstract class AbstractForms
 	 * @throws InvalidValueEntityException
 	 * @return multitype:unknown
 	 */
-	public function getSelectOptions($fieldName,$columns = array('value' => 'id', 'label' => 'name'), array $where = null, $entityName = null, $dist = false, $options = array(),$sort = array())
+	public function getSelectOptions($fieldName,$columns = array('value' => 'id', 'label' => 'name'), array $where = null, $entityName = null, $dist = false, $options = array(),$sort = array(),$groupBy = array())
 	{
 		$em = $this->storage->getStorage();
 		if (null === $entityName){
@@ -312,6 +312,10 @@ abstract class AbstractForms
 		        $builder->andWhere($where['andWhere']);
 		    }
 		    
+		}
+		
+		if (!empty($groupBy)){
+		    $builder->groupBy($groupBy[0]);
 		}
 		
 		if (!empty($sort)){
