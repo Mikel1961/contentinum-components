@@ -107,7 +107,7 @@ class Resize
      * File name prefix after image size number
      * @var unknown
      */
-    protected $prefix = '';
+    protected $prefix;
 
     /**
      * Construct
@@ -429,6 +429,9 @@ class Resize
         }
         $fileName = Name::get($this->fileName);
         $fileName = strtolower($fileName) . '-' . $this->target;
+        if ($this->prefix && strlen($this->prefix) > 0){
+            $fileName += '-' . $this->prefix;
+        }        
         // save the resize images
         switch ($ext) {
             case "JPG":
