@@ -102,6 +102,12 @@ class Resize
      * @var sting
      */
     protected $resizeImageSource;
+    
+    /**
+     * File name prefix after image size number
+     * @var unknown
+     */
+    protected $prefix = '';
 
     /**
      * Construct
@@ -309,6 +315,22 @@ class Resize
     }
 
     /**
+     * @return the $prefix
+     */
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
+
+	/**
+     * @param \ContentinumComponents\Images\unknown $prefix
+     */
+    public function setPrefix($prefix)
+    {
+        $this->prefix = $prefix;
+    }
+
+	/**
      * Run the resize process
      */
     public function execute()
@@ -357,6 +379,9 @@ class Resize
         }
         $fileName = Name::get($this->fileName);
         $fileName = strtolower($fileName) . '-' . $this->target;
+        if ($this->prefix && strlen($this->prefix) > 0){
+            $fileName += '-' . $this->prefix;
+        }
         // save the resize images
         switch ($ext) {
             case "JPG":
