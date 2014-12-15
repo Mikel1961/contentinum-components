@@ -381,7 +381,7 @@ class Resize
         $fileName = Name::get($this->fileName);
         $fileName = strtolower($fileName) . '-' . $this->target;
         if ($this->postfix){
-            $fileName = $fileName . '-' . $this->prefix;
+            $fileName = $fileName . '-' . $this->postfix;
         }
         // save the resize images
         switch ($ext) {
@@ -431,7 +431,7 @@ class Resize
         $fileName = Name::get($this->fileName);
         $fileName = strtolower($fileName) . '-' . $this->target;
             if ($this->postfix){
-            $fileName = $fileName . '-' . $this->prefix;
+            $fileName = $fileName . '-' . $this->postfix;
         }      
         // save the resize images
         switch ($ext) {
