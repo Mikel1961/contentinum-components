@@ -104,10 +104,10 @@ class Resize
     protected $resizeImageSource;
     
     /**
-     * File name prefix after image size number
+     * File name postfix after image size number
      * @var unknown
      */
-    protected $prefix;
+    protected $postfix;
 
     /**
      * Construct
@@ -315,20 +315,21 @@ class Resize
     }
 
     /**
-     * @return the $prefix
+     * @return the $postfix
      */
-    public function getPrefix()
+    public function getPostfix()
     {
-        return $this->prefix;
+        return $this->postfix;
     }
 
 	/**
-     * @param \ContentinumComponents\Images\unknown $prefix
+     * @param \ContentinumComponents\Images\unknown $postfix
      */
-    public function setPrefix($prefix)
+    public function setPostfix($postfix)
     {
-        $this->prefix = $prefix;
+        $this->postfix = $postfix;
     }
+
 
 	/**
      * Run the resize process
@@ -379,8 +380,8 @@ class Resize
         }
         $fileName = Name::get($this->fileName);
         $fileName = strtolower($fileName) . '-' . $this->target;
-        if ($this->prefix && strlen($this->prefix) > 0){
-            $fileName += '-' . $this->prefix;
+        if ($this->postfix){
+            $fileName = $fileName . '-' . $this->prefix;
         }
         // save the resize images
         switch ($ext) {
@@ -429,9 +430,9 @@ class Resize
         }
         $fileName = Name::get($this->fileName);
         $fileName = strtolower($fileName) . '-' . $this->target;
-        if ($this->prefix && strlen($this->prefix) > 0){
-            $fileName += '-' . $this->prefix;
-        }        
+            if ($this->postfix){
+            $fileName = $fileName . '-' . $this->prefix;
+        }      
         // save the resize images
         switch ($ext) {
             case "JPG":
