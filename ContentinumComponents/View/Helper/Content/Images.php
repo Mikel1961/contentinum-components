@@ -126,7 +126,7 @@ class Images extends AbstractHelper
             $grid = $this->getTemplateProperty('grid', 'element');
             
             if ($row && $grid) {
-                $content = $this->format($row, $grid, $img, $caption);
+                $content = $this->format($row, $grid, $img, $caption, $article['mediaStyle']);
             } else {
                 if (false !== $caption){
                     $this->setTemplate($this->stdTemplate);
