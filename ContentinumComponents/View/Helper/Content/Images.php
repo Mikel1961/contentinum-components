@@ -83,8 +83,19 @@ class Images extends AbstractHelper
         $this->setTemplate($template);
         $size = $article['mediaStyle'];
         $id = $article['medias'];
+        
+        // expensive loop !!
+        foreach ($medias as $mediaRow){
+            if ($mediaRow->id == $id ){
+                $medias = array();
+                $medias[$id] = $mediaRow->toArray();
+                break;
+            }
+        }        
+        
+        
         $factory = false;
-        if (isset($medias[$id]) && ! empty($medias[$id])) {
+        if (isset($medias[$id])) {
             $medias = $medias[$id];
             $src = $medias['mediaLink'];
             
@@ -138,10 +149,20 @@ class Images extends AbstractHelper
         }
     }
     
-    protected function format($row, $grid, $img,$caption)
+    protected function format($row, $grid, $img,$caption, $mediaStyle)
     {
         $html = '<' . $row;
         $attr = $this->getTemplateProperty('row', 'attr');
+
+        if (strlen($mediaStyle) > 1){
+            $class = '';
+            if (isset($attr['class'])){
+                $class = $attr['class'] . ' ';
+            }
+            $attr['class'] = $class . $mediaStyle;            
+        }
+        
+        
         if ($attr) {
             $html .= HtmlAttribute::attributeArray($attr);
         }
