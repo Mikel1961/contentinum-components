@@ -127,6 +127,15 @@ abstract class AbstractFrontendController extends AbstractContentinumController
         $defaultRole = $this->getServiceLocator()->get('Contentinum\Acl\DefaultRole');
         $acl = $this->getServiceLocator()->get('Contentinum\Acl\Acl');
         
+        if ('index' !== $this->pageOptions->resource) {
+            $authService = $this->getServiceLocator()->get('User\Authentication');
+            if (! $authService->hasIdentity()) {
+                return $this->redirect()->toUrl('/login');
+            } else {
+                $this->setIdentity($authService->getIdentity());
+            }
+        }        
+        
         
         if (method_exists($this, 'prepare')) {
             $this->prepare();
