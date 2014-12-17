@@ -98,7 +98,11 @@ class News extends AbstractHelper
             $html .= '<h1>' . $content['groupName'] . '</h1>';
         }
 
-
+        $i = 0;
+        $iTotal = 10;
+        if ('archive' == $this->view->article){
+            $iTotal = 999;
+        }
         foreach ($content['entries'] as $row) {
             $newsrow = '';
             if ('1' !== $row['id']) {
@@ -158,7 +162,10 @@ class News extends AbstractHelper
                 } else {
                     $html .= $newsrow;
                 }
-                
+                $i++;
+                if ($iTotal == $i){
+                    break;
+                }
             }
         }
         
@@ -256,7 +263,7 @@ class News extends AbstractHelper
                 if ($this->view->category){
                     $href .= '/archive/' . $this->view->category;
                 }                
-                $readMore = '<a href="' . $href . '" title="Back">Back</a>';
+                $readMore = '<a href="' . $href . '" title="Back">'. $this->view->translate('Back')  .'</a>';
             }
             return $readMore;
     }    
