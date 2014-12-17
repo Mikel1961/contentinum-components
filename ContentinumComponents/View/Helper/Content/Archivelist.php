@@ -43,13 +43,13 @@ class Archivelist extends AbstractHelper
      *
      * @var unknown
      */
-    private $row = array('element' => 'ul', 'attr' => array());
+    private $row = array('element' => 'ul', array('class' => 'news-archive-sublist'));
     
     /**
      *
      * @var unknown
      */
-    private $grid = array('element' => 'li', 'attr' => array());
+    private $grid = array('element' => 'li', 'attr' => array('class' => 'news-archive-list-item'));
     
     /**
      *
@@ -156,7 +156,7 @@ class Archivelist extends AbstractHelper
         $html .= '>';        
         foreach ($month as $num => $url){
             $html .= '<' . $grid;
-            $attr = array();
+            $attr = $this->getTemplateProperty('grid', 'attr');
             $html .= HtmlAttribute::attributeArray($attr);
             $html .= '><a';
             $attr = array();
