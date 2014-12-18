@@ -146,7 +146,7 @@ class News extends AbstractHelper
             $iTotal = 999;
         }
         foreach ($content['entries'] as $row) {
-            if ('1' !== $row['id']) {
+            if ('1' === $row['id']) {
                 $this->convertParams($row['groupParams']);
             }   
         
@@ -173,7 +173,7 @@ class News extends AbstractHelper
                         } else {
                             $mediaTemplate = $this->mediateaserleft;
                         }
-                        $newsrow .= $this->view->images($row, $medias, $mediaTemplate, 200);
+                        $newsrow .= $this->view->images($row, $medias, $mediaTemplate, 250);
                     }                    
                     
                     if (strlen($row['contentTeaser']) > 1) {
@@ -219,7 +219,6 @@ class News extends AbstractHelper
                     if (isset($footer['attr'])) {
                         $attr = $footer['attr'];
                     }
-                    $newsrow .= $this->view->contentelement($footer['element'], $this->formatPublishAuthor($row), $attr);
                     if (false === $cut){
                         $newsrow .= $this->backLink($row);
                     }
@@ -341,8 +340,8 @@ class News extends AbstractHelper
                 if ($this->view->category){
                     $attr['href'] .= '/archive/' . $this->view->category;
                 }
-                $attr['title'] = 'Back';
-                $readMore = 'Back';
+                $attr['title'] = $this->view->translate('Back');
+                $readMore = $this->view->translate('Back');
                 if (isset($grid['element'])) {
                     if (isset($grid['attr'])) {
                         $attr = array_merge($grid['attr'], $attr);
@@ -359,7 +358,7 @@ class News extends AbstractHelper
                 if ($this->view->category){
                     $href .= '/archive/' . $this->view->category;
                 }                
-                $readMore = '<a href="' . $href . '" title="Back">'. $this->view->translate('Back')  .'</a>';
+                $readMore = '<a href="' . $href . '" title="'. $this->view->translate('Back')  .'">'. $this->view->translate('Back')  .'</a>';
             }
             return $readMore;
     }    
