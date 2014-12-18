@@ -128,37 +128,37 @@ class Contribution extends AbstractHelper
             }
             switch ($entry['modul']) {
                 case 'topbar':
-                    if (isset($this->view->plugins['topbar'])) {
-                        $plugin = array_merge($entry, $this->view->plugins['topbar']);
+                    if (isset($this->view->plugins['topbar'][$entry['id']])) {
+                        $plugin = array_merge($entry, $this->view->plugins['topbar'][$entry['id']]);
                         $html .= $this->view->navigationtopbar($plugin, $template);
                     }
                     break;
                 case 'newsarchive':
-                    if (isset($this->view->plugins['newsarchive'])) {
-                        $plugin = array_merge($entry, $this->view->plugins['newsarchive']);
+                    if (isset($this->view->plugins['newsarchive'][$entry['id']])) {
+                        $plugin = array_merge($entry, $this->view->plugins['newsarchive'][$entry['id']]);
                         $html .= $this->view->newsarchivelist($plugin, $template);
                     }
                     break;
                 case 'news':
-                    if (isset($this->view->plugins['news'])) {
-                        $plugin = array_merge($entry,$this->view->plugins['news']);
+                    if (isset($this->view->plugins['news'][$entry['id']])) {
+                        $plugin = array_merge($entry,$this->view->plugins['news'][$entry['id']]);
                         $html .= $this->view->news($plugin, $medias, $template);
                     }
                 case 'navigation':
-                    if (isset($this->view->plugins['navigation'])) {
-                        $plugin = array_merge($entry,$this->view->plugins['navigation']);
+                    if (isset($this->view->plugins['navigation'][$entry['id']])) {
+                        $plugin = array_merge($entry,$this->view->plugins['navigation'][$entry['id']]);
                         $html .= $this->view->navigationbuild($plugin, $medias, $template);
                     }                    
                     break;
                 case 'mediagroup':
-                    if (isset($this->view->plugins['mediagroup'])) {
-                        $plugin = array_merge($entry,$this->view->plugins['mediagroup']);
+                    if (isset($this->view->plugins['mediagroup'][$entry['id']])) {
+                        $plugin = array_merge($entry,$this->view->plugins['mediagroup'][$entry['id']]);
                         $html .= $this->view->mediagroup($plugin, $medias, $template);
                     }
                     break;  
                 case 'filegroup':
-                    if (isset($this->view->plugins['filegroup'])) {
-                        $plugin = array_merge($entry,$this->view->plugins['filegroup']);
+                    if (isset($this->view->plugins['filegroup'][$entry['id']])) {
+                        $plugin = array_merge($entry,$this->view->plugins['filegroup'][$entry['id']]);
                         $html .= $this->view->filegroup($plugin, $medias, $template);
                     }
                     break;                                      

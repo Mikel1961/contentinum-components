@@ -78,7 +78,7 @@ class Images extends AbstractHelper
         'content'
     );
 
-    public function __invoke($article, $medias, $template = null)
+    public function __invoke($article, $medias, $template = null, $setSize = null)
     {
         $this->setTemplate($template);
         $size = $article['mediaStyle'];
@@ -108,6 +108,9 @@ class Images extends AbstractHelper
             }
             
             $img = '<img src="' . $src . '"';
+            if (null !== $setSize){
+                $img .= ' width="'.$setSize.'"';
+            }
             if (isset($mediaMetas['alt']) && strlen($mediaMetas['alt']) > 1) {
                 $img .= ' alt="' . $mediaMetas['alt'] . '"';
             }

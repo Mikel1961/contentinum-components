@@ -27,22 +27,64 @@
  */
 namespace ContentinumComponents\View\Helper\Content;
 
-
-
 use Zend\Form\View\Helper\AbstractHelper;
+
 class Filegroup extends AbstractHelper
 {
 
+    /**
+     * 
+     * @param array $entry
+     * @param unknown $medias
+     * @param unknown $template
+     * @return string
+     */
     public function __invoke(array $entry, $medias, $template)
     {
-        //$grid = $this->getTemplateProperty('grid', 'element');
-        var_dump(':-)');
-        var_dump('<br>');
-        var_dump($entry['modulContent']);
-        exit;
-    
-        //$html = $this->view->contentelement($this->getTemplateProperty('row', 'element'), $list, $this->getTemplateProperty('row', 'attr'));
-        //return $html;
-    }    
-    
+        $list = '';
+        $desc = '';
+        foreach ($entry['modulContent'] as $ident => $fileRow) {
+            $headline = $fileRow["headline"];
+            $desc = $fileRow["description"];
+            $list .= '<dd class="filegroup-list-element">';
+            
+            if (strlen($fileRow['attr']['headline']) > 1) {
+                // $list .= '<h4>' . $fileRow['attr']['headline'] . '</h4>';
+            }
+            
+            $list .= '<p><a href="/mcwork/medias/download/' . $ident . '" class="filegroup-list-element-link"';
+            
+            if (strlen($fileRow['attr']['linkname']) > 1) {
+                $label = $fileRow['attr']['linkname'];
+            } else {
+                $label = $fileRow['mediaName'];
+            }
+            $list .= ' data-tooltip aria-haspopup="true" class="has-tip tip-top" role="tooltip" title="Zum Download von ' . $label . ' bitte hier klicken">';
+            
+            switch ($fileRow['mediaType']) {
+                case 'application/pdf':
+                    $icon = '<i class="fa fa-file-pdf-o"></i>';
+                    break;
+                case 'application/msexcel':
+                    $icon = '<i class="fa fa-file-excel-o"></i>';
+                    break;
+                default:
+                    $icon = '<i class="fa fa-file"></i>';
+                    break;
+            }
+            
+            $list .= $icon . ' ' . $label;
+            
+            $list .= '</a></p>';
+            $list .= '</dd>';
+        }
+        
+        $html = '<dl class="filegroup-list"><dt class="filegroup-list-headline">' . $headline . '</dt>';
+        if (strlen($desc) > 2) {
+            $html .= '<dd class="filegroup-list-description">' . $desc . '</dd>';
+        }
+        $html .= $list;
+        $html .= '</dl>';
+        return $html;
+    }
 }

@@ -28,55 +28,101 @@
 namespace ContentinumComponents\View\Helper\Content;
 
 use Zend\View\Helper\AbstractHelper;
+use ContentinumComponents\Tools\HandleSerializeDatabase;
 
 class News extends AbstractHelper
 {
 
     /**
      *
-     * @var unknown
+     * @var array
      */
     private $row;
 
     /**
      *
-     * @var unknown
+     * @var array
      */
     private $grid;
 
     /**
      *
-     * @var unknown
+     * @var array
      */
     private $header;
 
     /**
      *
-     * @var unknown
+     * @var array
      */
     private $footer;
+    
+    /**
+     * 
+     * @var array
+     */
+    private $media;
+    
+    /**
+     * 
+     * @var array
+     */
+    private $mediateaser;
+    
+    /**
+     * 
+     * @var array
+     */
+    private $mediateaserleft;
+    
+    /**
+     * 
+     * @var array
+     */
+    private $mediateaserright;
 
     /**
      *
-     * @var unknown
+     * @var array
      */
     private $publishAuthor;
+    
+    /**
+     * 
+     * @var array
+     */
+    private $groupParams;
 
     /**
      *
-     * @var unknown
+     * @var array
      */
     private $labelReadMore;
 
+    /**
+     * 
+     * @var array
+     */
     private $properties = array(
         'row',
         'grid',
         'header',
         'footer',
+        'media',
+        'mediateaserleft',
+        'mediateaserright',
         'publishAuthor',
         'labelReadMore'
     );
 
+    /**
+     * 
+     * @param array $content
+     * @param unknown $medias
+     * @param string $template
+     * @param string $teasers
+     * @return string
+     */
     public function __invoke(array $content, $medias, $template = null, $teasers = true)
     {
         $this->setTemplate($template);
@@ -94,19 +140,20 @@ class News extends AbstractHelper
         }
         $html = '';
 
-        if (isset($content['groupName']) && '_default' !== $content['groupName']){
-            $html .= '<h1>' . $content['groupName'] . '</h1>';
-        }
-
         $i = 0;
         $iTotal = 10;
         if ('archive' == $this->view->article){
             $iTotal = 999;
         }
         foreach ($content['entries'] as $row) {
+            if ('1' !== $row['id']) {
+                $this->convertParams($row['groupParams']);
+            }   
+        
             $newsrow = '';
             if ('1' !== $row['id']) {
                 $head = '<time>' . $this->view->dateFormat(new \DateTime($row['publishDate']), \IntlDateFormatter::FULL) . '</time>';
+                $head .= $this->formatPublishAuthor($row);
                 $head .= '<h2>' . $row['headline'] . '</h2>';
                 $attr = array();
                 if ($header) {
@@ -119,6 +166,16 @@ class News extends AbstractHelper
                     $newsrow .= $head;
                 }
                 if (true === $cut){
+                    
+                    if (isset($row['medias']) && $row['medias'] > 1) {
+                        if ('mediateaserright' == $row['htmlwidgets']){
+                            $mediaTemplate = $this->mediateaserright;
+                        } else {
+                            $mediaTemplate = $this->mediateaserleft;
+                        }
+                        $newsrow .= $this->view->images($row, $medias, $mediaTemplate, 200);
+                    }                    
+                    
                     if (strlen($row['contentTeaser']) > 1) {
                         $newsrow .= $row['contentTeaser'];
                         $newsrow .= $this->readMoreLink($row);
@@ -134,7 +191,27 @@ class News extends AbstractHelper
                     }
                 } else {
                     $newsrow .= $row['contentTeaser'];
+                    if (isset($row['medias']) && $row['medias'] > 1) {
+                        $newsrow .= $this->view->images($row, $medias, $this->media);
+                    }                    
                     $newsrow .= $row['content'];
+                    
+                    switch ($row['modul']) {
+                        case 'mediagroup':
+                            if (isset($this->view->plugins['mediagroup'][$row['id']])) {
+                                $plugin = array_merge($row,$this->view->plugins['mediagroup'][$row['id']]);
+                                $newsrow .= $this->view->mediagroup($plugin, $medias, $template);
+                            }
+                            break;  
+                        case 'filegroup':
+                            if (isset($this->view->plugins['filegroup'][$row['id']])) {
+                                $plugin = array_merge($row,$this->view->plugins['filegroup'][$row['id']]);
+                                $newsrow .= $this->view->filegroup($plugin, $medias, $template);
+                            }
+                            break; 
+                        default:
+                            break;
+                    }
                 }
                 
                 
@@ -148,7 +225,6 @@ class News extends AbstractHelper
                     }
                     $attr = array();
                 } else {
-                    $newsrow .= $this->formatPublishAuthor($row);
                     if (false === $cut){
                         $newsrow .= $this->backLink($row);
                     }                    
@@ -172,7 +248,27 @@ class News extends AbstractHelper
         if (false !== $newselement){
             $html = $this->view->contentelement($newselement, $html, $this->getTemplateProperty('row', 'attr'));
         }
+        
+        if (isset($this->groupParams['headline']) && strlen($this->groupParams['headline']) > 1){
+            $html = '<h1>' . $this->groupParams['headline'] . '</h1>' . $html;
+        }
+        
+        
         return $html;
+    }
+    
+    /**
+     * 
+     * @param unknown $params
+     */
+    protected function convertParams($params)
+    {
+        if (strlen($params) > 4){
+            $mcSerialize = new HandleSerializeDatabase();
+            $this->groupParams = $mcSerialize->execUnserialize($params);
+        } else {
+            $this->groupParams = array();
+        }
     }
 
     /**
@@ -225,7 +321,7 @@ class News extends AbstractHelper
             } else {
                 $publishAuthor = $row['publishAuthor'];
             }
-            return $publishAuthor;
+            return ' - ' . $publishAuthor;
         } else {
             return '';
         }
