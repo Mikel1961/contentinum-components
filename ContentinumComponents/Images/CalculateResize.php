@@ -72,6 +72,12 @@ class CalculateResize
      * @var array
      */
     protected $newSize = array();
+    
+    /**
+     * 
+     * @var unknown
+     */
+    protected $format;
 
     /**
      * Construct
@@ -204,6 +210,22 @@ class CalculateResize
     }
 
     /**
+     * @return the $format
+     */
+    public function getFormat()
+    {
+        return $this->format;
+    }
+
+	/**
+     * @param \ContentinumComponents\Images\unknown $format
+     */
+    public function setFormat($format)
+    {
+        $this->format = $format;
+    }
+
+	/**
      * Get the new images size as an html string
      * for implement in a img tag
      *
@@ -216,7 +238,7 @@ class CalculateResize
         if (empty($this->newSize)) {
             throw new ErrorLogicImagesException('Calculate faild, no values to resize images');
         }
-        return "width=\"{$this->_newSize['width']}\" height=\"{$this->_newSize['height']}\"";
+        return "width=\"{$this->newSize['width']}\" height=\"{$this->newSize['height']}\"";
     }
 
     /**
@@ -248,8 +270,10 @@ class CalculateResize
          * this script will work dynamically with any size image
          */
         if ($width > $height) {
+            $this->format = 'landscape';
             $percentage = ($target / $width);
         } else {
+            $this->format = 'portrait';
             $percentage = ($target / $height);
         }
         // gets the new value and applies the percentage, then rounds the value
