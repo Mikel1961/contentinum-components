@@ -38,7 +38,7 @@ class Mediagroup extends AbstractHelper
      */
     private $row = array(
         'element' => 'ul',
-        'attr' => array('class' => 'small-block-grid-1 medium-block-grid-2 large-block-grid-3')
+        'attr' => array('class' => 'small-block-grid-1 medium-block-grid-2 large-block-grid-3 mediagroup-list')
         
     );
     
@@ -60,21 +60,32 @@ class Mediagroup extends AbstractHelper
         'grid',
     );  
 
+    /**
+     * 
+     * @param array $entry
+     * @param unknown $medias
+     * @param unknown $template
+     * @return unknown
+     */
     public function __invoke(array $entry, $medias, $template)
     {
         $grid = $this->getTemplateProperty('grid', 'element');
         $list = '';
         foreach ($entry['modulContent'] as $media => $entryRow){
-            $list .= '<' . $grid . '>';
-            $list .= '<img src="' . $media . '" alt="" />';
-            $list .= '</' . $grid . '>';
+            $list .= '<' . $grid . ' class="mediagroup-list-item"><figure class="mediagroup-list-item-figure">';
+            $img = '<img src="' . $media . '" alt="'.$entryRow['alt'].'" />';
+            if (isset($entryRow['caption'])){
+                $list .= $img . '<figcaption class="mediagroup-list-item-figcaption">';
+                $list .= $entryRow['caption'] . '</figcaption>';
+            } else {
+                $list = $img;
+            }           
+            $list .= '</figure></' . $grid . '>';
         }
         
         $html = $this->view->contentelement($this->getTemplateProperty('row', 'element'), $list, $this->getTemplateProperty('row', 'attr'));
         return $html;
     }
-    
-    
     
     /**
      *
