@@ -98,6 +98,18 @@ class News extends AbstractHelper
      * @var array
      */
     private $labelReadMore;
+    
+    /**
+     * 
+     * @var integer
+     */
+    private $teaserLandscapeSize;
+    
+    /**
+     * 
+     * @var integer
+     */
+    private $teaserPortraitSize;
 
     /**
      * 
@@ -112,7 +124,9 @@ class News extends AbstractHelper
         'mediateaserleft',
         'mediateaserright',
         'publishAuthor',
-        'labelReadMore'
+        'labelReadMore',
+        'teaserLandscapeSize',
+        'teaserPortraitSize'
     );
 
     /**
@@ -173,7 +187,8 @@ class News extends AbstractHelper
                         } else {
                             $mediaTemplate = $this->mediateaserleft;
                         }
-                        $newsrow .= $this->view->images($row, $medias, $mediaTemplate, 250);
+                        $setSizes = array('landscape' => $this->teaserLandscapeSize, 'portrait' => $this->teaserPortraitSize);
+                        $newsrow .= $this->view->images($row, $medias, $mediaTemplate, $setSizes);
                     }                    
                     
                     if (strlen($row['contentTeaser']) > 1) {

@@ -30,6 +30,7 @@ namespace ContentinumComponents\View\Helper\Content;
 use Zend\View\Helper\AbstractHelper;
 use ContentinumComponents\Tools\HandleSerializeDatabase;
 use ContentinumComponents\Html\HtmlAttribute;
+use ContentinumComponents\Images\CalculateResize;
 
 class Images extends AbstractHelper
 {
@@ -109,7 +110,24 @@ class Images extends AbstractHelper
             
             $img = '<img src="' . $src . '"';
             if (null !== $setSize){
-                $img .= ' width="'.$setSize.'"';
+                if (is_array($setSize) && isset($setSize['landscape']) ){
+                    $landscape = $setSize['landscape'];
+                    if (isset($setSize['portrait'])){
+                        $portrait = $setSize['portrait'];
+                    } else {
+                        $portrait = $landscape;
+                    }
+                } else {
+                    $portrait = $landscape = $setSize;
+                }
+                $resize = new CalculateResize($landscape);
+                $resize->setFile( DOCUMENT_ROOT . DS . $src );
+                $resize->getNewSize();
+                if ('portrait' == $resize->getFormat() ){
+                    $resize->setTarget($portrait);
+                    $resize->getNewSize();
+                }              
+                $img .= ' ' . $resize->getHtmlString();
             }
             if (isset($mediaMetas['alt']) && strlen($mediaMetas['alt']) > 1) {
                 $img .= ' alt="' . $mediaMetas['alt'] . '"';
