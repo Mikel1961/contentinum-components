@@ -30,7 +30,7 @@ namespace ContentinumComponents\View\Helper\Content;
 use Zend\View\Helper\AbstractHelper;
 
 
-class HsgbAccounts extends AbstractHelper
+class AccountMembers extends AbstractHelper
 {
     /**
      *
