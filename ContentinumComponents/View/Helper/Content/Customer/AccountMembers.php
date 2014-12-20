@@ -38,7 +38,7 @@ class AccountMembers extends AbstractHelper
      */
     private $row = array(
         'element' => 'ul',
-        'attr' => array('class' => 'small-block-grid-1 medium-block-grid-2 large-block-grid-3 hsgb-member-list')
+        'attr' => array('class' => 'small-block-grid-1 medium-block-grid-2 large-block-grid-3 account-member-list')
     
     );
     
@@ -67,9 +67,9 @@ class AccountMembers extends AbstractHelper
         foreach ($entry['modulContent'] as $orga => $entryRow){
             if ( is_file(DOCUMENT_ROOT . $entryRow['imgSource']) ){
                 $list .= '<' . $grid . '>';
-                $list .= '<figure class="hsgb-member-list-item">';
+                $list .= '<figure class="account-member-list-item">';
                 $list .= '<img src="' . $entryRow['imgSource'] . '" alt="" />';
-                $list .= '<figcaption class="hsgb-member-list-item-caption">' . $entryRow['organisation'] . '</figcaption>';
+                $list .= '<figcaption class="account-member-list-item-caption">' . $entryRow['organisation'] . '</figcaption>';
                 $list .= '</figure>';
                 $list .= '</' . $grid . '>';
             }
