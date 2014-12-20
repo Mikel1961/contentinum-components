@@ -349,7 +349,7 @@ abstract class AbstractForms
 	 * @param string $valueKey
 	 * @return multitype:NULL
 	 */
-	public function getOptions($key, $options = array(), $valueKey = null)
+	public function getOptions($key, $options = array(), $valueKey = null, $exceptions = false)
 	{
 		$entries = $this->sl->get($key);
 		if (!is_array($options) || !empty($options) ) {
@@ -359,7 +359,13 @@ abstract class AbstractForms
 		    if (null !== $valueKey){
 		        $id = $entry->$valueKey;
 		    }
-			$options[$id] = $entry->name;
+		    if (false === $exceptions){
+		        $options[$id] = $entry->name;
+		    } else {
+		        if ( !in_array($id, $exceptions) ){
+		            $options[$id] = $entry->name;
+		        }
+		    }
 		}
 		return $options;
 	}	
