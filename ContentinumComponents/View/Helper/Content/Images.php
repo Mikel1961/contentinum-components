@@ -107,14 +107,17 @@ class Images extends AbstractHelper
             if (isset($mediaAlternate[$size])) {
                 $src = $mediaAlternate[$size]['mediaLink'];
             }
-            
+            $styleAttr = '';
             $img = '<img src="' . $src . '"';
             if (null !== $setSize){
                 if (is_array($setSize) && isset($setSize['landscape']) ){
                     $landscape = $setSize['landscape'];
+                    $styleAttr = ' landscape';
                     if (isset($setSize['portrait'])){
+                        $styleAttr = ' portrait';
                         $portrait = $setSize['portrait'];
                     } else {
+                        $styleAttr = ' portrait';
                         $portrait = $landscape;
                     }
                 } else {
@@ -146,12 +149,16 @@ class Images extends AbstractHelper
             $row = $this->getTemplateProperty('row', 'element');
             $grid = $this->getTemplateProperty('grid', 'element');
             
+            if (strlen($styleAttr) > 1){
+                $article['mediaStyle'] = $article['mediaStyle'] . $styleAttr;
+            }
+            
             if ($row && $grid) {
                 $content = $this->format($row, $grid, $img, $caption, $article['mediaStyle']);
             } else {
                 if (false !== $caption){
                     $this->setTemplate($this->stdTemplate);
-                    $content = $this->format($this->getTemplateProperty('row', 'element'), $this->getTemplateProperty('grid', 'element'), $img, $caption);
+                    $content = $this->format($this->getTemplateProperty('row', 'element'), $this->getTemplateProperty('grid', 'element'), $img, $caption, $article['mediaStyle']);
                 } else {
                     $content = $img;
                 }
