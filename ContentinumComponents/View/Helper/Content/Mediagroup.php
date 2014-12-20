@@ -73,7 +73,7 @@ class Mediagroup extends AbstractHelper
         $list = '';
         foreach ($entry['modulContent'] as $media => $entryRow){
             $list .= '<' . $grid . ' class="mediagroup-list-item"><figure class="mediagroup-list-item-figure">';
-            $img = '<img src="' . $media . '" alt="'.$entryRow['alt'].'" />';
+            $img = '<img src="' . $media . '" alt="'.$entryRow['attr']['alt'].'" />';
             if (isset($entryRow['caption'])){
                 $list .= $img . '<figcaption class="mediagroup-list-item-figcaption">';
                 $list .= $entryRow['caption'] . '</figcaption>';
