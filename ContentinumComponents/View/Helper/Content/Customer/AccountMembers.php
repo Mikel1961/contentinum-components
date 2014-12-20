@@ -25,7 +25,7 @@
  * @link      https://github.com/Mikel1961/contentinum-components
  * @version   1.0.0
  */
-namespace ContentinumComponents\View\Helper\Content;
+namespace ContentinumComponents\View\Helper\Content\Customer;
 
 use Zend\View\Helper\AbstractHelper;
 
@@ -65,7 +65,7 @@ class AccountMembers extends AbstractHelper
         $grid = $this->getTemplateProperty('grid', 'element');
         $list = '';
         foreach ($entry['modulContent'] as $orga => $entryRow){
-            if ( is_file(DOCUMENT_ROOT . DS . 'public' . $entryRow['imgSource']) ){
+            if ( is_file(DOCUMENT_ROOT . $entryRow['imgSource']) ){
                 $list .= '<' . $grid . '>';
                 $list .= '<figure class="hsgb-member-list-item">';
                 $list .= '<img src="' . $entryRow['imgSource'] . '" alt="" />';

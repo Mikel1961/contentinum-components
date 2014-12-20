@@ -163,9 +163,9 @@ class Contribution extends AbstractHelper
                     }
                     break;     
                 case 'accountmembers':
-                    if (isset($this->view->plugins['hsgbaccounts'][$entry['id']])) {
-                        $plugin = array_merge($entry,$this->view->plugins['hsgbaccounts'][$entry['id']]);
-                        $html .= $this->view->hsgbaccounts($plugin, $medias, $template);
+                    if (isset($this->view->plugins['accountmembers'][$entry['id']])) {
+                        $plugin = array_merge($entry,$this->view->plugins['accountmembers'][$entry['id']]);
+                        $html .= $this->view->accountmembers($plugin, $medias, $template);
                     }
                     break;                                                     
                 default:
