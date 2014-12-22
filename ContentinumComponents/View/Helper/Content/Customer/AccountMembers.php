@@ -32,6 +32,8 @@ use Zend\View\Helper\AbstractHelper;
 
 class AccountMembers extends AbstractHelper
 {
+
+    
     /**
      *
      * @var unknown
@@ -65,19 +67,42 @@ class AccountMembers extends AbstractHelper
         $grid = $this->getTemplateProperty('grid', 'element');
         $list = '';
         foreach ($entry['modulContent'] as $orga => $entryRow){
-            if ( is_file(DOCUMENT_ROOT . $entryRow['imgSource']) ){
-                $list .= '<' . $grid . '>';
+                $character = substr($orga, 1);
+                $characters[$character] = $character; 
+                $dataKey = ' data-sortkey="' . $character . '"';
+                $list .= '<' . $grid . $dataKey . '>';
                 $list .= '<figure class="account-member-list-item">';
                 $list .= '<img src="' . $entryRow['imgSource'] . '" alt="" />';
                 $list .= '<figcaption class="account-member-list-item-caption">' . $entryRow['organisation'] . '</figcaption>';
                 $list .= '</figure>';
                 $list .= '</' . $grid . '>';
-            }
         }
-        
-        $html = $this->view->contentelement($this->getTemplateProperty('row', 'element'), $list, $this->getTemplateProperty('row', 'attr'));
+        $html = $this->navigation($characters);
+        $html .= $this->view->contentelement($this->getTemplateProperty('row', 'element'), $list, $this->getTemplateProperty('row', 'attr'));
         return $html;      
-    }   
+    } 
+
+    /**
+     * 
+     * @param unknown $characters
+     * @return string
+     */
+    protected function navigation($characters)
+    {
+        $list = '<ul class="nav-letter-list">';
+        foreach (range('a', 'z') as $letter){
+            $list .= '<li class="nav-letter-list-item';
+            if (isset($characters[$letter])){
+                $list .= ' hascontent">';
+                $list .= '<a class="nav-letter-list-item-link" href="#" data-letterkey="'.$letter.'">' . strtoupper($letter) . '</a>';
+            } else {
+                $list .= '"><a href="#">' . strtoupper($letter) . '</a>';
+            }
+            $list .= '</li>'; 
+        }
+        $list .= '</ul>';
+        return $list;
+    }
 
     /**
      *
