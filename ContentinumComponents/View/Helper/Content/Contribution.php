@@ -167,7 +167,13 @@ class Contribution extends AbstractHelper
                         $plugin = array_merge($entry,$this->view->plugins['accountmembers'][$entry['id']]);
                         $html .= $this->view->accountmembers($plugin, $medias, $template);
                     }
-                    break;                                                     
+                    break;  
+                case 'maps':
+                    if (isset($this->view->plugins['maps'][$entry['id']])) {
+                        $plugin = array_merge($entry,$this->view->plugins['maps'][$entry['id']]);
+                        $html .= $this->view->maps($plugin, $medias, $template);
+                    }
+                    break;                                                                       
                 default:
                     break;
             }
