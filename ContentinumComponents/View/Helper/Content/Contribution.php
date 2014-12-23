@@ -173,7 +173,13 @@ class Contribution extends AbstractHelper
                         $plugin = array_merge($entry,$this->view->plugins['maps'][$entry['id']]);
                         $html .= $this->view->maps($plugin, $medias, $template);
                     }
-                    break;                                                                       
+                    break;    
+                case 'forms':
+                    if (isset($this->view->plugins['forms'][$entry['id']])) {
+                        $plugin = array_merge($entry,$this->view->plugins['forms'][$entry['id']]);
+                        $html .= $this->view->forms($plugin, $medias, $template);
+                    }
+                    break;                                                                                       
                 default:
                     break;
             }
