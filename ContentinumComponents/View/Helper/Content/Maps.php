@@ -33,41 +33,46 @@ use Zend\View\Helper\AbstractHelper;
 
 class Maps extends AbstractHelper
 {
-    private $mapJsFile = '/assets/app/js/maps.js';
+    private $mapJsFile = '/assets/app/js/modul.maps.js';
+
     /**
-     *
-     * @param array $content
+     * 
+     * @param unknown $entries
      * @param unknown $medias
-     * @param array $template
-     * @return Ambigous <string, multitype:>
+     * @param string $template
+     * @return string
      */
     public function __invoke($entries, $medias, $template = null)
     {
+
+        $jsMarker = '';
+        $i = 0;
         foreach ($entries['modulContent'] as $marker => $entry){
             $headline = $entry->webMaps->headline;
-            $centerLatitude = $entry->webMaps->centerlatitude;
-            $centerLongitude = $entry->webMaps->centerlongitude;
-            $startzoom = $entry->webMaps->startzoom;
+            $centerLatitude = (float) $entry->webMaps->centerlatitude;
+            $centerLongitude = (float) $entry->webMaps->centerlongitude;
+            $startzoom = (int) $entry->webMaps->startzoom;
             $js = '"' . $entry->name . '",';
-            $js .= '"' . $entry->latitude . '",';
-            $js .= '"' . $entry->longitude . '",';
-            $js .= '"1",';
+            $js .= '"' . (float) $entry->latitude . '",';
+            $js .= '"' . (float)  $entry->longitude . '",';
+            $js .= '1,';
             $js .= '"",';
             $js .= '"' . $entry->street . '",';
             $js .= '"' . $entry->city . '",';
             $js .= '"","","",""';
             $jsMarker .= '[[' . $js . ']],';
+            $i++;
         }
         
         
         
-        $script = 'var centerLatitude = "'.$centerLatitude.'"; var centerLongitude = "'.$centerLongitude.'"; var startZoom = "'.$startzoom.'";';
+        $script = 'var centerLatitude = '.$centerLatitude.'; var centerLongitude = '.$centerLongitude.'; var startZoom = '.$startzoom.';';
         $script .= 'var mapMarker = ['.$jsMarker.'];';
         $this->view->inlinescript()->appendScript($script);
         $this->view->inlinescript()->appendFile('http://maps.googleapis.com/maps/api/js?sensor=false');
-        $this->view->inlinescript()->appendFile($this->mapJsFile);
+        $this->view->inlinescript()->prependFile($this->mapJsFile);
         $html = '<h2>' . $headline . '</h2>';
         $html .= '<div id="map_canvas"> </div>';
-        return $html;
+        return $html;        
     }    
 }
