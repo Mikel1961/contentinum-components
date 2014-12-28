@@ -44,8 +44,10 @@ class Forms extends AbstractHelper
      */
     public function __invoke($entries, $medias, $template = null)
     {
-        $html = '<h2>' . $entries['headline'] . '<h2>';
-        $html .= $this->view->renderForm($entries['form']);
+        $html = '<h2>' . $entries['modulContent']['headline'] . '<h2>';
+        $html .= '<div id="form-container">';
+        $html .= $this->view->renderForm($entries['modulContent']['form']);
+        $html .= '</div>';
         return $html;
     }
 }
