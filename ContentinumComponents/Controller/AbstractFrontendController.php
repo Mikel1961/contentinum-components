@@ -145,7 +145,7 @@ abstract class AbstractFrontendController extends AbstractContentinumController
         $routeMatch = $e->getRouteMatch();
         if ($this->getRequest()->isPost()) {
             
-            $formprocess = $this->process();
+            $formprocess = $this->process($this->getPageOptions(), $this->page, $defaultRole, $acl);
                         
             $e->getRouteMatch()->setParam('action', 'application');
             $app = $this->application($this->getPageOptions(), $this->page, $defaultRole, $acl);            
