@@ -44,8 +44,15 @@ class Forms extends AbstractHelper
      */
     public function __invoke($entries, $medias, $template = null)
     {
-        $html = '<h2>' . $entries['modulContent']['headline'] . '<h2>';
-        $html .= '<div id="form-container">';
+        $html = '';
+        if (isset($entries['modulContent']['subheadline'])){
+            $html .= '<h4>' . $entries['modulContent']['subheadline'] . '<h4>';
+        }
+        if (isset($entries['modulContent']['description'])){
+            $html .= $entries['modulContent']['description'];
+        }
+        
+        $html .= '<div id="form-container"> <div class="server-process"> </div>';
         $html .= $this->view->renderForm($entries['modulContent']['form']);
         $html .= '</div>';
         return $html;

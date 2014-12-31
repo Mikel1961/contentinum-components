@@ -145,7 +145,7 @@ class FormBuild extends AbstractHelper
 
         $error =  $this->renderErrors($element);
         $html .= $error;
-        $html .= $this->renderDescription($element->getOption('description'));
+        $html .= $this->renderDescription($element->getOption('description'),$element);
         $name = $element->getAttribute('name');
         if (true == ($deco = $element->getOption('deco-row'))) {
             if (isset($deco['tags'])) {
@@ -233,14 +233,14 @@ class FormBuild extends AbstractHelper
      * @param array $desc            
      * @return string
      */
-    private function renderDescription($desc, $key = 'deco-desc')
+    private function renderDescription($desc, $element)
     {
         $html = '';
-        if (is_array($desc) && ! empty($desc)) {
+        if ($desc && strlen($desc) > 1) {
             
             $tag = 'span';
             $attributes = '';
-            if (true == ($deco = $desc[$key])) {
+            if (true == ($deco = $element->getOption('deco-desc') )) {
                 if (isset($deco['tag'])) {
                     $tag = $deco['tag'];
                 }
@@ -249,7 +249,7 @@ class FormBuild extends AbstractHelper
                 }
             }
             
-            $html = '<' . $tag . '' . $attributes . '>' . $desc['text'] . '</' . $tag . '>';
+            $html = '<' . $tag . '' . $attributes . '>' . $this->view->translate($desc) . '</' . $tag . '>';
         }
         return $html;
     }
