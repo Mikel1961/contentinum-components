@@ -239,7 +239,7 @@ class FormBuild extends AbstractHelper
         if ($desc && strlen($desc) > 1) {
             
             $tag = 'span';
-            $attributes = '';
+            $attributes = ' class="form-field-desc"';
             if (true == ($deco = $element->getOption('deco-desc') )) {
                 if (isset($deco['tag'])) {
                     $tag = $deco['tag'];
