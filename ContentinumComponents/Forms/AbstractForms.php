@@ -300,7 +300,13 @@ abstract class AbstractForms
     		}
 		}
 		$builder = $em->createQueryBuilder ();
-		$builder->add ( 'select', 'main.' . implode(', main.', $columns) );
+		if (is_array($columns['label'])){
+		    $queryColumns = $columns['value'];
+		    $queryColumns .= ', main.' . implode(', main.', $columns['label']);
+		} else {
+		    $queryColumns = implode(', main.', $columns);
+		}
+		$builder->add ( 'select', 'main.' . $queryColumns );
 		$builder->add ( 'from', $entityName . ' AS main' );
 		if ( is_array($where) && !empty($where) ){
 		    foreach ($where as $conditions => $params){
@@ -336,7 +342,15 @@ abstract class AbstractForms
 		}
 		if ( is_array($datas) ){	
 			foreach ($datas as $row){
-				$dataOptions[$row[$columns['value']]] = $row[$columns['label']];
+			    if (is_array($columns['label'])){
+			        $label = '';
+			        foreach ($columns['label'] as $labelKey){
+			            $label .= $row[$labelKey] . ' '; 
+			        }
+				    $dataOptions[$row[$columns['value']]] = $label;
+			    } else {
+			        $dataOptions[$row[$columns['value']]] = $row[$columns['label']];
+			    }
 			}
 		}
 		return $dataOptions;
