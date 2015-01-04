@@ -91,8 +91,12 @@ class Build extends AbstractHelper
                 $this->setTemplate($template[$entry['modulFormat']]->toArray());
             }
         }
+        $html = '';
+        if (isset($entry['modulContent']['headline'])){
+            $html = '<' . $entry['modulContent']['tags'] . '>' . $entry['modulContent']['headline'] . '</' . $entry['modulContent']['tags'] . '>';
+        }
         
-        $navlist = $entry['modulContent'];
+        $navlist = $entry['modulContent']['nav'];
         $ulClass = 'navigation-list';
         $attr = $this->getTemplateProperty('list', 'attr');
         if (isset($attr['class'])){
@@ -100,7 +104,7 @@ class Build extends AbstractHelper
         }
         
         $container = new \Zend\Navigation\Navigation($navlist);
-        $html = $this->view->navigationcontentinum($container)->setAcl($this->view->acl)->setRole($this->view->role)->setUlClass($ulClass);
+        $html .= $this->view->navigationcontentinum($container)->setAcl($this->view->acl)->setRole($this->view->role)->setUlClass($ulClass);
         
         $row = $this->getTemplateProperty('row', 'element');
         $grid = $this->getTemplateProperty('grid', 'element');
