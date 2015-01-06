@@ -67,13 +67,13 @@ class AccountMembers extends AbstractHelper
         $grid = $this->getTemplateProperty('grid', 'element');
         $list = '';
         foreach ($entry['modulContent'] as $orga => $entryRow){
-                $character = substr($orga, 1);
+                $character = $orga{0};
                 $characters[$character] = $character; 
                 $dataKey = ' data-sortkey="' . $character . '"';
                 $list .= '<' . $grid . $dataKey . '>';
                 $list .= '<figure class="account-member-list-item">';
                 $list .= '<img src="' . $entryRow['imgSource'] . '" alt="" />';
-                $list .= '<figcaption class="account-member-list-item-caption">' . $entryRow['organisation'] . '</figcaption>';
+                $list .= '<figcaption class="account-member-list-item-caption"><p>' . $entryRow['organisation'] . '</p></figcaption>';
                 $list .= '</figure>';
                 $list .= '</' . $grid . '>';
         }
