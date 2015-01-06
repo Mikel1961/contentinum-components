@@ -30,13 +30,76 @@ namespace ContentinumComponents\View\Helper\Content\Customer;
 use Zend\View\Helper\AbstractHelper;
 use ContentinumComponents\Html\HtmlTable;
 use ContentinumComponents\Html\Table\FactoryTable;
+use ContentinumComponents\Filter\Url\Prepare;
 
 class ExpressServices extends AbstractHelper
 {
 
     public function __invoke(array $entry, $medias, $template)
     {
-        return $this->ausgaben($entry['modulContent']);
+        if ('ausgabe' == $this->view->category){
+            return $this->displayAusgabe($entry['modulContent']);
+        } else {
+            return $this->ausgaben($entry['modulContent']);
+        }
+    }
+    
+    protected function displayAusgabe($entries)
+    {
+        
+        
+        $html = '<dl id="accordionEidlienst" class="accordion" data-accordion>';
+        
+        $filter = new Prepare();
+        $i = 0;
+        $id = false;
+        $issue = '';
+        $topic = '';
+        $panelId = '';
+        $headline = '';
+        foreach ($entries as $entry) {
+            //if (false === $id){
+            $dateTime = '<time>' . $this->view->dateFormat(new \DateTime($entry->webEildienst->publishUp), \IntlDateFormatter::FULL) . '</time>';
+            $headline = '<h3>' . $entry->webEildienst->name . '</h3><p>' . $dateTime . '</p>';
+            //}
+        
+        
+            if ($id != $entry->id && false !== $id){
+                $html .= '<dd class="accordion-navigation">';
+                $html .= $issue;
+                $html .= '<div id="'.$panelId.'" class="content">' . $topic . '</div>';
+                $html .= '</dd>';
+            }
+        
+            if ($id != $entry->id){
+                $id = $entry->id;
+                $topic = '';
+                $issue = '';
+                $panelId = $filter->filter($entry->name);
+        
+                $issue = '<a class="eildienst-panel" href="#' . $panelId . '" role="tab" tabindex="0" aria-selected="false" controls="' . $panelId . '"><span class="eildienst-panel-name">' . $entry->name . '</span> <i class="fa fa-arrow-circle-o-down fa-2x right"></i></a>';
+        
+                $topic .= '<h5>' . $entry->webContent->title . '</h5>';
+                $topic .= $entry->webContent->content;
+            } else {
+                $topic .= '<h5>' . $entry->webContent->title . '</h5>';
+                $topic .= $entry->webContent->content;
+            }
+        }
+        
+        $html .= '<dd class="accordion-navigation">';
+        $html .= $issue;
+        $html .= '<div id="'.$panelId.'" class="content">' . $topic . '</div>';
+        $html .= '</dd>';
+        
+        
+        
+        
+        
+        $html .= '</dl>';
+        $html .= '<p><a class="button" href="/'. $this->view->pageurl.'">Zur&uuml;ck</a></p>';     
+        $html = $headline . $html;
+        return $html;
     }
 
     protected function ausgaben($entries)
@@ -45,6 +108,7 @@ class ExpressServices extends AbstractHelper
         $this->view->headLink()->appendStylesheet('/assets/app/css/vendor/datatables/dataTables.foundation.css');
         $this->view->inlinescript()->offsetSetFile(100, '/assets/app/js/vendor/datatables/jquery.dataTables.min.js');
         $this->view->inlinescript()->offsetSetFile(101, '/assets/app/js/vendor/datatables/dataTables.foundation.js');
+        $this->view->inlinescript()->offsetSetFile(102, '/assets/app/js/vendor/datatables/datatable.js');
         // prepare content, create a table
         $tableFactory = new HtmlTable(new FactoryTable());
         // set table tag attributes
@@ -106,7 +170,7 @@ class ExpressServices extends AbstractHelper
                 $topic = '';
                 $id = $entry->webEildienst->id;
                 $dateTime = '<time>' . $this->view->dateFormat(new \DateTime($entry->webEildienst->publishUp), \IntlDateFormatter::FULL) . '</time>';
-                $issue = '<h3>' . $entry->webEildienst->name . '</h3><p>' . $dateTime . '</p><p><a class="button" href="/eildienst/ausgabe/category/';
+                $issue = '<h3>' . $entry->webEildienst->name . '</h3><p>' . $dateTime . '</p><p><a class="button" href="/'.$this->view->pageurl.'/ausgabe/';
                 $issue .= $entry->webEildienst->id . '">Diesen Eildienst anzeigen</a></p>';
                 $topic .= '<li>' . $entry->name . ', ' . $entry->webContent->headline . '</li>';
             } else {
