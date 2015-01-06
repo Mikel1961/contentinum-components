@@ -179,7 +179,13 @@ class Contribution extends AbstractHelper
                         $plugin = array_merge($entry,$this->view->plugins['forms'][$entry['id']]);
                         $html .= $this->view->forms($plugin, $medias, $template);
                     }
-                    break;                                                                                       
+                    break;   
+                case 'eildienst':
+                    if (isset($this->view->plugins['eildienst'][$entry['id']])) {
+                        $plugin = array_merge($entry,$this->view->plugins['eildienst'][$entry['id']]);
+                        $html .= $this->view->expressservice($plugin, $medias, $template);
+                    }
+                    break;                                                                                                        
                 default:
                     break;
             }
