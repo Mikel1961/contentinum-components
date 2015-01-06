@@ -71,10 +71,12 @@ class Assets extends AbstractHelper
 	                }
 	                break;
 	            case 'footer':
+	                $i = 10;
 	                foreach ($types as $typeKey => $type){
 	                    if ('scripts' === $typeKey){
 	                        foreach ($type as $fileKey => $file){
-	                            $this->view->inlinescript()->appendFile($file['file']);
+	                            $this->view->inlinescript()->offsetSetFile($i, $file['file']);
+	                            $i++;
 	                        }
 	                    }	                    
 	                }

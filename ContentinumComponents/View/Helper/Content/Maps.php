@@ -69,8 +69,8 @@ class Maps extends AbstractHelper
         $script = 'var centerLatitude = '.$centerLatitude.'; var centerLongitude = '.$centerLongitude.'; var startZoom = '.$startzoom.';';
         $script .= 'var mapMarker = ['.$jsMarker.'];';
         $this->view->inlinescript()->appendScript($script);
-        $this->view->inlinescript()->appendFile('http://maps.googleapis.com/maps/api/js?sensor=false');
-        $this->view->inlinescript()->prependFile($this->mapJsFile);
+        $this->view->inlinescript()->offsetSetFile(2,'http://maps.googleapis.com/maps/api/js?sensor=false');
+        $this->view->inlinescript()->offsetSetFile(20,$this->mapJsFile);
         $html = '<h2>' . $headline . '</h2>';
         $html .= '<div id="map_canvas"> </div>';
         return $html;        

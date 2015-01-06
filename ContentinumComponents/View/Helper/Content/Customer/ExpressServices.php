@@ -36,11 +36,15 @@ class ExpressServices extends AbstractHelper
 
     public function __invoke(array $entry, $medias, $template)
     {
-        return 'Eildienst';
+        return $this->ausgaben($entry['modulContent']);
     }
 
     protected function ausgaben($entries)
     {
+        $this->view->headLink()->appendStylesheet('/assets/app/css/vendor/datatables/jquery.dataTables.min.css');
+        $this->view->headLink()->appendStylesheet('/assets/app/css/vendor/datatables/dataTables.foundation.css');
+        $this->view->inlinescript()->offsetSetFile(100, '/assets/app/js/vendor/datatables/jquery.dataTables.min.js');
+        $this->view->inlinescript()->offsetSetFile(101, '/assets/app/js/vendor/datatables/dataTables.foundation.js');
         // prepare content, create a table
         $tableFactory = new HtmlTable(new FactoryTable());
         // set table tag attributes
@@ -68,7 +72,7 @@ class ExpressServices extends AbstractHelper
         );
         $ihead = count($headlines);
         foreach ($headlines as $column => $attributes) {
-            $columns[] = $this->translate($column);
+            $columns[] = $this->view->translate($column);
             if (is_array($attributes) && ! empty($attributes)) {
                 foreach ($attributes as $area => $attribute) {
                     switch ($area) {
@@ -90,7 +94,7 @@ class ExpressServices extends AbstractHelper
         $id = false;
         $issue = '';
         $topic = '';
-        foreach ($this->entries as $entry) {
+        foreach ($entries as $entry) {
             if ($id != $entry->webEildienst->id && false !== $id) {
                 $rowContent = array();
                 $rowContent[] = $issue;
@@ -101,7 +105,7 @@ class ExpressServices extends AbstractHelper
             if ($id != $entry->webEildienst->id) {
                 $topic = '';
                 $id = $entry->webEildienst->id;
-                $dateTime = '<time>' . $this->dateFormat(new \DateTime($entry->webEildienst->publishUp), \IntlDateFormatter::FULL) . '</time>';
+                $dateTime = '<time>' . $this->view->dateFormat(new \DateTime($entry->webEildienst->publishUp), \IntlDateFormatter::FULL) . '</time>';
                 $issue = '<h3>' . $entry->webEildienst->name . '</h3><p>' . $dateTime . '</p><p><a class="button" href="/eildienst/ausgabe/category/';
                 $issue .= $entry->webEildienst->id . '">Diesen Eildienst anzeigen</a></p>';
                 $topic .= '<li>' . $entry->name . ', ' . $entry->webContent->headline . '</li>';
