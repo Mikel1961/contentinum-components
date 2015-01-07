@@ -92,6 +92,12 @@ class News extends AbstractHelper
      * @var array
      */
     private $groupParams;
+    
+    /**
+     * 
+     * @var string
+     */
+    private $groupName;
 
     /**
      *
@@ -147,25 +153,27 @@ class News extends AbstractHelper
         $newselement = $this->getTemplateProperty('row', 'element');
         $grid = $this->getTemplateProperty('grid', 'element');
         $cut = true;
+        
+        if (isset($content['entries'][1]) ){
+            $this->convertParams($content['entries'][1]['groupParams']);
+        }
 
         if (false !== $this->view->article && isset($content['entries'][$this->view->article]) ){
             $content['entries'] = array($content['entries'][$this->view->article]);
             $cut = false; 
         }
         $html = '';
-
         $i = 0;
         $iTotal = 10;
         if ('archive' == $this->view->article){
             $iTotal = 999;
         }
         foreach ($content['entries'] as $row) {
-            if ('1' === $row['id']) {
-                $this->convertParams($row['groupParams']);
-            }   
-        
             $newsrow = '';
             if ('1' !== $row['id']) {
+                if (null == $this->groupName){
+                    $this->groupName = $row['groupName'];
+                }
                 $head = '<time>' . $this->view->dateFormat(new \DateTime($row['publishDate']), \IntlDateFormatter::FULL) . '</time>';
                 $head .= $this->formatPublishAuthor($row);
                 $head .= '<h2>' . $row['headline'] . '</h2>';
@@ -265,6 +273,8 @@ class News extends AbstractHelper
         
         if (isset($this->groupParams['headline']) && strlen($this->groupParams['headline']) > 1){
             $html = '<h1>' . $this->groupParams['headline'] . '</h1>' . $html;
+        } elseif (null !== $this->groupName){
+            $html = '<h1>' . $this->groupName . '</h1>' . $html;
         }
         
         
