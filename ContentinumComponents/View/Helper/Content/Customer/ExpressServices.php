@@ -37,7 +37,7 @@ class ExpressServices extends AbstractHelper
 
     public function __invoke(array $entry, $medias, $template)
     {
-        if ('ausgabe' == $this->view->category){
+        if ('ausgabe' == $this->view->article){
             return $this->displayAusgabe($entry['modulContent']);
         } else {
             return $this->ausgaben($entry['modulContent']);
@@ -117,22 +117,7 @@ class ExpressServices extends AbstractHelper
         $i = 0;
         $iClass = 0;
         $headlines = array(
-            'Eildienst' => array(
-                'head' => array(
-                    'class' => 'width25'
-                ),
-                'body' => array(
-                    'class' => 'width25'
-                )
-            ),
-            'Themen' => array(
-                'head' => array(
-                    'class' => 'width75'
-                ),
-                'body' => array(
-                    'class' => 'width75'
-                )
-            )
+            '&nbsp;' => array(),
         );
         $ihead = count($headlines);
         foreach ($headlines as $column => $attributes) {
@@ -158,11 +143,11 @@ class ExpressServices extends AbstractHelper
         $id = false;
         $issue = '';
         $topic = '';
+        $button = '';
         foreach ($entries as $entry) {
             if ($id != $entry->webEildienst->id && false !== $id) {
                 $rowContent = array();
-                $rowContent[] = $issue;
-                $rowContent[] = '<ul>' . $topic . '</ul>';
+                $rowContent[] = $issue . '<ul class="topic-list">' . $topic . '</ul>' . $button;
                 $tableFactory->setHtmlContent($rowContent);
             }
             
@@ -170,16 +155,16 @@ class ExpressServices extends AbstractHelper
                 $topic = '';
                 $id = $entry->webEildienst->id;
                 $dateTime = '<time>' . $this->view->dateFormat(new \DateTime($entry->webEildienst->publishUp), \IntlDateFormatter::FULL) . '</time>';
-                $issue = '<h3>' . $entry->webEildienst->name . '</h3><p>' . $dateTime . '</p><p><a class="button" href="/'.$this->view->pageurl.'/ausgabe/';
-                $issue .= $entry->webEildienst->id . '">Diesen Eildienst anzeigen</a></p>';
+                $issue = '<h4 class="topic-headline">' . $entry->webEildienst->name . ', ' . $dateTime . '</h4>';
+                $button ='<p><a class="button expand" href="/'.$this->view->pageurl.'/ausgabe/';
+                $button .= $entry->webEildienst->id . '">Diesen Eildienst anzeigen</a></p>';
                 $topic .= '<li>' . $entry->name . ', ' . $entry->webContent->headline . '</li>';
             } else {
                 $topic .= '<li>' . $entry->name . ', ' . $entry->webContent->headline . '</li>';
             }
         }
         $rowContent = array();
-        $rowContent[] = $issue;
-        $rowContent[] = $topic;
+        $rowContent[] = $issue . '<ul>' . $topic . '</ul>' . $button;
         $tableFactory->setHtmlContent($rowContent);
         
         $html = $tableFactory->display();
