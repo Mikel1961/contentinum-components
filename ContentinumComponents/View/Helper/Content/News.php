@@ -272,7 +272,11 @@ class News extends AbstractHelper
         }
         
         if (isset($this->groupParams['headlineImages']) && strlen($this->groupParams['headlineImages']) > 1){
-            $html = $this->view->images(array('medias' => $this->groupParams['headlineImages'], 'style' => ''), $medias, $this->media);
+            $styles = '';
+            if (isset($this->groupParams['imageStyles']) && strlen($this->groupParams['imageStyles']) > 1){
+                $styles = $this->groupParams['imageStyles'];
+            }          
+            $html = $this->view->images(array('medias' => $this->groupParams['headlineImages'], 'mediaStyle' => $styles), $medias, $this->media);
         }
         
         if (isset($this->groupParams['headline']) && strlen($this->groupParams['headline']) > 1){
