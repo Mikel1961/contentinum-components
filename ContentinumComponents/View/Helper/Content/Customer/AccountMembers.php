@@ -64,6 +64,11 @@ class AccountMembers extends AbstractHelper
     
     public function __invoke(array $entry, $medias, $template)
     {
+        if ('shufflepictures' === $entry['modulFormat']){
+            return $this->shufflepictures($entry, $medias, $template);
+        }
+        
+        
         $grid = $this->getTemplateProperty('grid', 'element');
         $list = '';
         foreach ($entry['modulContent'] as $orga => $entryRow){
@@ -102,6 +107,29 @@ class AccountMembers extends AbstractHelper
         }
         $list .= '</ul>';
         return $list;
+    }
+    
+    protected function shufflepictures(array $entry, $medias, $template)
+    {
+        $grid = $this->getTemplateProperty('grid', 'element');
+        $list = '';        
+        $listcontent = $entry['modulContent'];
+        shuffle($listcontent);
+        $list = '';
+        $i = 0;
+        foreach ($listcontent as $orga => $entryRow){
+            $list .= '<' . $grid . ' class="account-list-item">';
+            $list .= '<figure class="account-list-item-img">';
+            $list .= '<img src="' . $entryRow['imgSource'] . '" alt="" />';
+            $list .= '</figure>';
+            $list .= '</' . $grid . '>';     
+            $i++;
+            if ($i == $entry['modulDisplay']){
+                break;
+            }       
+        }
+        $html = $this->view->contentelement($this->getTemplateProperty('row', 'element'), $list, $this->getTemplateProperty('row', 'attr'));
+        return $html;        
     }
 
     /**
