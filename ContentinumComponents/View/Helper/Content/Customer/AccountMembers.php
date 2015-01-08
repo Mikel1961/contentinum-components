@@ -71,8 +71,13 @@ class AccountMembers extends AbstractHelper
         
         $grid = $this->getTemplateProperty('grid', 'element');
         $list = '';
+        $breakloop = false;
         foreach ($entry['modulContent'] as $orga => $entryRow){
                 $character = $orga{0};
+                if (false !== $breakloop && $breakloop !== $character){
+                    break;
+                }
+                $breakloop = $character;
                 $characters[$character] = $character; 
                 $dataKey = ' data-sortkey="' . $character . '"';
                 $list .= '<' . $grid . $dataKey . '>';
