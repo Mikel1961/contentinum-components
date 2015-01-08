@@ -29,50 +29,95 @@ namespace ContentinumComponents\View\Helper\Content;
 
 use Zend\View\Helper\AbstractHelper;
 
-
 class NewsActual extends AbstractHelper
 {
 
-    
     /**
      *
      * @var unknown
      */
     private $row = array(
         'element' => 'ul',
-        'attr' => array('class' => 'small-block-grid-1 medium-block-grid-2 large-block-grid-3 account-member-list')
-    
-    );
-    
+        'attr' => array(
+            'class' => 'small-block-grid-1 medium-block-grid-2 large-block-grid-3 account-member-list'
+        )
+    )
+    ;
+
     /**
      *
      * @var unknown
-    */
+     */
     private $grid = array(
-        'element' => 'li',
-    
-    );
-    
+        'element' => 'li'
+    )
+    ;
+
     /**
      *
      * @var unknown
-    */
+     */
     private $properties = array(
         'row',
-        'grid',
+        'grid'
     );
-    
+
     public function __invoke(array $entry, $medias, $template)
     {
         $grid = $this->getTemplateProperty('grid', 'element');
-        $html = 'news';
-        foreach ($entry['modulContent'] as $entry){
-
+        $url = $entry['modulContent']['url'];
+        $html = '';
+        foreach ($entry['modulContent']['news'] as $entry) {
+            if (0 === $entry->webContent->overwrite) {
+                $html .= '<article class="news-article">';
+                $head = '<time>' . $this->view->dateFormat(new \DateTime($entry->webContent->publishDate), \IntlDateFormatter::FULL) . '</time>';
+                if (strlen($entry->webContent->publishAuthor) > 1) {
+                    $head .= '- <span class="news-article-author">' . $entry->webContent->publishAuthor . '</span>';
+                }
+                $head .= '<h2>' . $entry->webContent->headline . '</h2>';
+                $html .= $this->newsheader($head);
+                
+                if (strlen($entry->webContent->contentTeaser) > 1) {
+                    $html .= $entry->webContent->contentTeaser;
+                    $html .= $this->readMoreLink($entry,$url);
+                } else {
+                    $content = $entry->webContent->content;
+                    if (strlen($entry->webContent->numberCharacterTeaser) > 0) {
+                        $content = substr($content, 0, $entry->webContent->numberCharacterTeaser);
+                        $content = substr($content, 0, strrpos($content, " "));
+                        $content = $content . ' ...</p>';
+                    }
+                    $html .= $content;
+                    $html .= $this->readMoreLink($entry,$url);
+                }
+                $html .= '</article>';
+            }
         }
-        //$html .= $this->view->contentelement($this->getTemplateProperty('row', 'element'), $list, $this->getTemplateProperty('row', 'attr'));
-        return $html;      
-    } 
+        return '<section class="news">' .  $html . '</section>';
+    }
 
+    /**
+     *
+     * @param unknown $row
+     * @return string
+     */
+    protected function readMoreLink($entry,$url)
+    {
+        if (strlen($entry->webContent->labelReadMore) > 1) {
+            
+            $readMore = '<p class="news-article-readmore"><a class="button" href="/'.$url.'/'.$entry->webContent->source.'" title="' . $entry->webContent->labelReadMore . ' ' . $entry->webContent->headline . '">';
+            $readMore .= $entry->webContent->labelReadMore . '</a></p>';
+            
+            return $readMore;
+        } else {
+            return '';
+        }
+    }
+
+    protected function newsheader($str)
+    {
+        return '<header class="news-article-header">' . $str . '</header>';
+    }
 
     /**
      *
@@ -88,7 +133,7 @@ class NewsActual extends AbstractHelper
             return false;
         }
     }
-    
+
     /**
      *
      * @param unknown $template
@@ -96,7 +141,7 @@ class NewsActual extends AbstractHelper
     protected function setTemplate($template)
     {
         if (null !== $template) {
-    
+            
             foreach ($template as $key => $values) {
                 if (in_array($key, $this->properties)) {
                     $this->{$key} = $values;
@@ -104,11 +149,11 @@ class NewsActual extends AbstractHelper
             }
         }
     }
-    
+
     protected function unsetProperties()
     {
-        foreach ($this->properties as $prop){
+        foreach ($this->properties as $prop) {
             $this->{$prop} = null;
         }
-    }    
+    }
 }
