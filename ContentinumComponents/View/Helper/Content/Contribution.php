@@ -142,7 +142,7 @@ class Contribution extends AbstractHelper
                 case 'news':
                     if (isset($this->view->plugins['news'][$entry['id']])) {
                         $plugin = array_merge($entry,$this->view->plugins['news'][$entry['id']]);
-                        $html .= $this->view->news($plugin, $medias, $template);
+                        $html .= $this->view->newsactual($plugin, $medias, $template);
                     }
                 case 'navigation':
                     if (isset($this->view->plugins['navigation'][$entry['id']])) {

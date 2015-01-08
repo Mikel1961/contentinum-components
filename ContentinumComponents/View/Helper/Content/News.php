@@ -273,8 +273,10 @@ class News extends AbstractHelper
         
         if (isset($this->groupParams['headline']) && strlen($this->groupParams['headline']) > 1){
             $html = '<h1>' . $this->groupParams['headline'] . '</h1>' . $html;
-        } elseif (null !== $this->groupName){
+        } else {
+            if (null !== $this->groupName){
             $html = '<h1>' . $this->groupName . '</h1>' . $html;
+            }
         }
         
         

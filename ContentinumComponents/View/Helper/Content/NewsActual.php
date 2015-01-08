@@ -25,7 +25,7 @@
  * @link      https://github.com/Mikel1961/contentinum-components
  * @version   1.0.0
  */
-namespace ContentinumComponents\View\Helper\Content\Customer;
+namespace ContentinumComponents\View\Helper\Content;
 
 use Zend\View\Helper\AbstractHelper;
 
