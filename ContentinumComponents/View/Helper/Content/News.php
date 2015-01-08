@@ -271,11 +271,15 @@ class News extends AbstractHelper
             $html = $this->view->contentelement($newselement, $html, $this->getTemplateProperty('row', 'attr'));
         }
         
+        if (isset($this->groupParams['headlineImages']) && strlen($this->groupParams['headlineImages']) > 1){
+            $html = $this->view->images(array('medias' => $this->groupParams['headlineImages'], 'style' => ''), $medias, $this->media);
+        }
+        
         if (isset($this->groupParams['headline']) && strlen($this->groupParams['headline']) > 1){
             $html = '<h1>' . $this->groupParams['headline'] . '</h1>' . $html;
         } else {
             if (null !== $this->groupName){
-            $html = '<h1>' . $this->groupName . '</h1>' . $html;
+                $html = '<h1>' . $this->groupName . '</h1>' . $html;
             }
         }
         
