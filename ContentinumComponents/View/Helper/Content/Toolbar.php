@@ -35,19 +35,19 @@ class Toolbar extends AbstractContentHelper
      *
      * @var array
      */
-    private $row;
+    protected $row;
     
     /**
      *
      * @var array
      */
-    private $grid;
+    protected $grid;
 
     /**
      * 
      * @var array
      */
-    private $elements;
+    protected $elements;
     
     /**
      *
@@ -86,7 +86,7 @@ class Toolbar extends AbstractContentHelper
             $attr = $this->getTemplateProperty('row', 'attr');
         } 
 
-        $html = $this->view->contentelement($grid,  $html  , $attr );
+        $html = $this->view->contentelement($row,  $html  , $attr );
         return $html;
     }
     
@@ -97,7 +97,13 @@ class Toolbar extends AbstractContentHelper
      */
     protected function buildLink($link)
     {
-        $ln = '<a href="' . $link['href'] . '">';
+        $ln = '<a href="' . $link['href'] . '"';
+        
+        if (isset($link['title'])){
+            $ln .= ' title="'. $link['title'] . '"';
+        }
+        
+        $ln .= '>';
         $label = '';
         if (isset($link['icon'])){
             $label .= $link['icon'];
@@ -108,7 +114,7 @@ class Toolbar extends AbstractContentHelper
             }
             $label .= $link['content'];
         } 
-        $ln .= $label . '<a>';
+        $ln .= $label . '</a>';
         return $ln;
         
     }
