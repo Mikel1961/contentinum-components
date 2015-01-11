@@ -79,7 +79,12 @@ class Filegroup extends AbstractHelper
             $list .= '</dd>';
         }
         
-        $html = '<dl class="filegroup-list"><dt class="filegroup-list-headline">' . $headline . '</dt>';
+        $html = '<dl class="filegroup-list">';
+        if ( strlen($headline) > 1){
+            $html .= '<dt class="filegroup-list-headline">' . $headline . '</dt>';
+        }
+        
+        
         if (strlen($desc) > 2) {
             $html .= '<dd class="filegroup-list-description">' . $desc . '</dd>';
         }

@@ -72,24 +72,32 @@ class AccountMembers extends AbstractHelper
         $grid = $this->getTemplateProperty('grid', 'element');
         $list = '';
         $breakloop = false;
+        $liAttr = '';
         foreach ($entry['modulContent'] as $orga => $entryRow){
-                $character = $orga{0};
-                if (false !== $breakloop && $breakloop !== $character){
-                    break;
-                }
-                $breakloop = $character;
-                $characters[$character] = $character; 
-                $dataKey = ' data-sortkey="' . $character . '"';
-                $list .= '<' . $grid . $dataKey . '>';
-                $list .= '<figure class="account-member-list-item">';
-                $list .= '<img src="' . $entryRow['imgSource'] . '" alt="" />';
-                $list .= '<figcaption class="account-member-list-item-caption"><p>' . $entryRow['organisation'] . '</p></figcaption>';
-                $list .= '</figure>';
-                $list .= '</' . $grid . '>';
+            $character = $orga{0};
+            if (false !== $breakloop && $breakloop !== $character){
+                $liAttr = ' class="list-item-displaynone"';
+            }
+            $breakloop = $character;
+            $characters[$character] = $character;
+            $dataKey = ' data-sortkey="' . $character . '"';
+            $list .= '<' . $grid . $liAttr . $dataKey . '>';
+            $list .= '<figure class="account-member-list-item">';
+            $list .= '<img src="' . $entryRow['imgSource'] . '" alt="" />';
+            $list .= '<figcaption class="account-member-list-item-caption"><p>' . $entryRow['organisation'];
+
+            //account_street 	account_addresss 	account_zipcode 	account_city
+            //if ( strlen($entryRow['accountStreet']) > 1 ){
+            //    $list .= '<br />' . $entryRow['accountStreet'];
+            //}
+            
+            $list .= '</p></figcaption>';
+            $list .= '</figure>';
+            $list .= '</' . $grid . '>';
         }
         $html = $this->navigation($characters);
         $html .= $this->view->contentelement($this->getTemplateProperty('row', 'element'), $list, $this->getTemplateProperty('row', 'attr'));
-        return $html;      
+        return $html;        
     } 
 
     /**
