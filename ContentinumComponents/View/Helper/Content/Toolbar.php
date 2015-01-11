@@ -29,6 +29,7 @@ namespace ContentinumComponents\View\Helper\Content;
 
 
 
+use ContentinumComponents\Html\HtmlAttribute;
 class Toolbar extends AbstractContentHelper
 {
     /**
@@ -99,8 +100,8 @@ class Toolbar extends AbstractContentHelper
     {
         $ln = '<a href="' . $link['href'] . '"';
         
-        if (isset($link['title'])){
-            $ln .= ' title="'. $link['title'] . '"';
+        if (isset($link['attr'])){
+            $ln .= HtmlAttribute::attributeArray($link['attr']);
         }
         
         $ln .= '>';
