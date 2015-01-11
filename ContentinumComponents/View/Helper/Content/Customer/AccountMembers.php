@@ -141,7 +141,7 @@ class AccountMembers extends AbstractHelper
                 break;
             }       
         }
-        $html = $this->view->contentelement($this->getTemplateProperty('row', 'element'), $list, $this->getTemplateProperty('row', 'attr'));
+        $html = $this->view->contentelement($this->getTemplateProperty('row', 'element'), $list, array('class' => 'account-list-images'));
         return $html;        
     }
 
