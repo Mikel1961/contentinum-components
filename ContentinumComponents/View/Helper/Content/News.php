@@ -116,6 +116,9 @@ class News extends AbstractHelper
      * @var integer
      */
     private $teaserPortraitSize;
+    
+    
+    private $toolbar;
 
     /**
      * 
@@ -132,7 +135,8 @@ class News extends AbstractHelper
         'publishAuthor',
         'labelReadMore',
         'teaserLandscapeSize',
-        'teaserPortraitSize'
+        'teaserPortraitSize',
+        'toolbar'
     );
 
     /**
@@ -176,6 +180,7 @@ class News extends AbstractHelper
                 }
                 $head = '<time>' . $this->view->dateFormat(new \DateTime($row['publishDate']), \IntlDateFormatter::FULL) . '</time>';
                 $head .= $this->formatPublishAuthor($row);
+                $head .= $this->buildToolbar($row, $row['id'], $medias);
                 $head .= '<h2>' . $row['headline'] . '</h2>';
                 $attr = array();
                 if ($header) {
@@ -434,5 +439,17 @@ class News extends AbstractHelper
         } else {
             return '';
         }
+    }
+    
+    
+    
+    private function buildToolbar($row, $id, $medias)
+    {
+        $html = '';
+        if (null !== $this->toolbar){
+            $toolbar = $this->toolbar;
+            $html = $this->view->contenttoolbar(array(),$medias, $toolbar); 
+        }
+        return $html;
     }
 }
