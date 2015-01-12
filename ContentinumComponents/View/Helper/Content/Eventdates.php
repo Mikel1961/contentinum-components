@@ -115,7 +115,7 @@ class Eventdates extends AbstractContentHelper
             $dataProp = array();
             
         }
-        $this->view->inlinescript()->offsetSetFile(31,'/assets/app/js/vendor/ics/ics-libs.js');
+        $this->view->inlinescript()->offsetSetFile(30,'/assets/app/js/vendor/ics/ics-libs.js');
         $this->view->inlinescript()->offsetSetFile(31,'/assets/app/js/vendor/ics/getics.js');
         return $events;
     }  

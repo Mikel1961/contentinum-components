@@ -75,11 +75,11 @@ class MunicipalGroups extends AbstractContentHelper
         $filter = new \Zend\Filter\Digits(); // business
         foreach ($departments as $entry) {
             if ('4' != $entry->employeeTypes->id) {
-                $html .= $this->buildContact($entry, $entry->departments->name, $filter);
+                $html .= $this->buildContact($entry, $entry->departments->name, $filter,$medias);
             }
             if ($id !== $entry->departments->id) {
                 if (isset($business[$entry->departments->id])) {
-                    $html .= $this->buildBusiness($business[$entry->departments->id]);
+                    $html .= $this->buildBusiness($business[$entry->departments->id],$medias);
                 }
             }
             $id = $entry->departments->id;
@@ -87,13 +87,13 @@ class MunicipalGroups extends AbstractContentHelper
         return $html;
     }
 
-    protected function buildBusiness($businessEntries)
+    protected function buildBusiness($businessEntries,$medias)
     {
         $html = '';
         $filter = new \Zend\Filter\Digits(); // business
         foreach ($businessEntries as $entry) {
             if ('4' != $entry->employeeTypes->id) {
-                $html .= $this->buildContact($entry, $entry->business->name . '<br />' . $entry->business->nameDesc, $filter);
+                $html .= $this->buildContact($entry, $entry->business->name . '<br />' . $entry->business->nameDesc, $filter,$medias);
             }
         }
         return $html;
@@ -106,7 +106,7 @@ class MunicipalGroups extends AbstractContentHelper
      * @param \Zend\Filter\Digits $filter \Zend\Filter\Digits
      * @return string
      */
-    protected function buildContact($entry, $department, $filter)
+    protected function buildContact($entry, $department, $filter,$medias)
     {
         $contact = '<div class="panel" itemscope itemtype="http://schema.org/Person">';
         
@@ -116,7 +116,12 @@ class MunicipalGroups extends AbstractContentHelper
         $contact .= '</div>';
         $contact .= '<div class="vcard-description">';
         
+        if (strlen($entry->contact->contactImgSource) > 1){
+            $contact .= '<figure class="vcard-images right" itemprop="image">' . $this->view->images(array('medias' => $entry->contact->contactImgSource, 'mediaStyle' => ''), $medias) . '</figure>';
+        }        
+                
         $contact .= '<h4 itemprop="name">' . $this->cSalutation($entry->contact->salutation) . $entry->contact->firstName . ' ' . $entry->contact->lastName . '</h4>';
+                
         $contact .= '<p itemprop="jobTitle">' . $entry->contact->title . '<br />';
         $contact .= '' . $entry->contact->businessTitle . '</p>';
         $contact .= '<ul class="vcard-contact-list">';
