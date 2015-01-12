@@ -185,6 +185,12 @@ class Contribution extends AbstractHelper
                         $plugin = array_merge($entry,$this->view->plugins['eildienst'][$entry['id']]);
                         $html .= $this->view->expressservice($plugin, $medias, $template);
                     }
+                    break;
+                case 'eventdates':
+                    if (isset($this->view->plugins['eventdates'][$entry['id']])) {
+                        $plugin = array_merge($entry,$this->view->plugins['eventdates'][$entry['id']]);
+                        $html .= $this->view->eventdates($plugin, $medias, $template);
+                    }                    
                     break;                                                                                                        
                 default:
                     break;
