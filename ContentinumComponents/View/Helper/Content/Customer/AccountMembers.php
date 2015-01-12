@@ -84,14 +84,28 @@ class AccountMembers extends AbstractHelper
             $list .= '<' . $grid . $liAttr . $dataKey . '>';
             $list .= '<figure class="account-member-list-item">';
             $list .= '<img src="' . $entryRow['imgSource'] . '" alt="" />';
-            $list .= '<figcaption class="account-member-list-item-caption"><p>' . $entryRow['organisation'];
-
-            //account_street 	account_addresss 	account_zipcode 	account_city
-            //if ( strlen($entryRow['accountStreet']) > 1 ){
-            //    $list .= '<br />' . $entryRow['accountStreet'];
-            //}
+            $list .= '<figcaption class="account-member-list-item-caption">';
+            $caption = $entryRow['organisation'];
+            $internet = '';
+            //account_street 	account_addresss 	account_zipcode 	account_city internet
+            if ( strlen($entryRow['accountStreet']) > 1 ){
+                $caption .= '<br />' . $entryRow['accountStreet'];
+            }
             
-            $list .= '</p></figcaption>';
+            if ( strlen($entryRow['accountZipcode']) > 1 && strlen($entryRow['accountCity']) > 1 ){
+                $caption .= '<br />' . $entryRow['accountZip'] . ' ' . $entryRow['accountCity'];
+            }  
+
+            if ( strlen($entryRow['internet']) > 1 ){
+                $internet = 'http://' . $entryRow['internet'];
+                $caption .= '<br />' . $entryRow['internet'];
+            }
+            
+            if ( strlen($internet) > 1 ){
+                $caption = '<a href="'.$internet.'" target="_blank">' . $caption . '</a>';
+            }
+            
+            $list .= '<p>'.$caption.'</p></figcaption>';
             $list .= '</figure>';
             $list .= '</' . $grid . '>';
         }
