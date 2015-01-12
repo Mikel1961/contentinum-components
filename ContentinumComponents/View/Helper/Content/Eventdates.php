@@ -83,12 +83,12 @@ class Eventdates extends AbstractContentHelper
             // time
             
             $datetime = new \DateTime($entry->dateStart);        
-            $dataProp['data-dstart'] = $datetime->format('c');
+            $dataProp['data-dstart'] = $datetime->format("Ymd\\THis");
             $dataProp['data-dend'] = '00000000T000000';
             $dateData .= '<p class="event-date"><meta content="' . $datetime->format("Y-m-d\\TH:i:s\\Z+01:00") . '" itemprop="startDate">';
             $dateData .= '<time>' . $this->view->dateFormat(new \DateTime($entry->dateStart), \IntlDateFormatter::FULL);
             $dateData .= ', ' . $datetime->format("H:i");
-            $dateData .= 'Uhr</time></p>';
+            $dateData .= ' Uhr</time></p>';
             
             // location
             $dateData .= '<div class="location" itemtype="http://schema.org/Place" itemscope="" itemprop="location">';
