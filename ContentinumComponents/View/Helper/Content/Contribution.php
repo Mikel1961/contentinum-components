@@ -190,7 +190,12 @@ class Contribution extends AbstractHelper
                     if (isset($this->view->plugins['eventdates'][$entry['id']])) {
                         $plugin = array_merge($entry,$this->view->plugins['eventdates'][$entry['id']]);
                         $html .= $this->view->eventdates($plugin, $medias, $template);
-                    }                    
+                    }  
+                case 'municipalgroupview':
+                    if (isset($this->view->plugins['municipalgroupview'][$entry['id']])) {
+                        $plugin = array_merge($entry,$this->view->plugins['municipalgroupview'][$entry['id']]);
+                        $html .= $this->view->municipalgroupview($plugin, $medias, $template);
+                    }                                      
                     break;                                                                                                        
                 default:
                     break;
