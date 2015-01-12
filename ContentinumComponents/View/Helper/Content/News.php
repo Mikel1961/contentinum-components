@@ -158,11 +158,14 @@ class News extends AbstractHelper
         $grid = $this->getTemplateProperty('grid', 'element');
         $cut = true;
         
-        if (isset($content['entries'][1]) ){
-            $this->convertParams($content['entries'][1]['groupParams']);
-        }
 
         if (false !== $this->view->article && isset($content['entries'][$this->view->article]) ){
+            foreach ($content['entries'] as $row){
+                if ('1' === $row['id']) {
+                    $this->convertParams($row['groupParams']);
+                    break;
+                }                
+            }
             $content['entries'] = array($content['entries'][$this->view->article]);
             $cut = false; 
         }
@@ -174,6 +177,9 @@ class News extends AbstractHelper
         }
         foreach ($content['entries'] as $row) {
             $newsrow = '';
+            if ('1' === $row['id']) {
+                $this->convertParams($row['groupParams']);
+            }
             if ('1' !== $row['id']) {
                 if (null == $this->groupName){
                     $this->groupName = $row['groupName'];
@@ -281,7 +287,7 @@ class News extends AbstractHelper
             if (isset($this->groupParams['imageStyles']) && strlen($this->groupParams['imageStyles']) > 1){
                 $styles = $this->groupParams['imageStyles'];
             }          
-            $html = $this->view->images(array('medias' => $this->groupParams['headlineImages'], 'mediaStyle' => $styles), $medias, $this->media);
+            $html = $this->view->images(array('medias' => $this->groupParams['headlineImages'], 'mediaStyle' => $styles), $medias, $this->media) . $html;
         }
         
         if (isset($this->groupParams['headline']) && strlen($this->groupParams['headline']) > 1){

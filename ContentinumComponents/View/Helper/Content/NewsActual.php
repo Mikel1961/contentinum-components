@@ -62,18 +62,19 @@ class NewsActual extends AbstractHelper
         'grid'
     );
 
-    public function __invoke(array $entry, $medias, $template)
+    public function __invoke(array $entries, $medias, $template)
     {
         $grid = $this->getTemplateProperty('grid', 'element');
-        $url = $entry['modulContent']['url'];
+        $url = $entries['modulContent']['url'];
         $html = '';
-        foreach ($entry['modulContent']['news'] as $entry) {
+        foreach ($entries['modulContent']['news'] as $entry) {
             if (0 === $entry->webContent->overwrite) {
                 $html .= '<article class="news-article">';
                 $head = '<time>' . $this->view->dateFormat(new \DateTime($entry->webContent->publishDate), \IntlDateFormatter::FULL) . '</time>';
                 if (strlen($entry->webContent->publishAuthor) > 1) {
                     $head .= '- <span class="news-article-author">' . $entry->webContent->publishAuthor . '</span>';
                 }
+                $head .= $this->buildToolbar($entry, $entry->id, $medias);
                 $head .= '<h2>' . $entry->webContent->headline . '</h2>';
                 $html .= $this->newsheader($head);
                 
@@ -156,4 +157,13 @@ class NewsActual extends AbstractHelper
             $this->{$prop} = null;
         }
     }
+    
+    private function buildToolbar($row, $id, $medias)
+    {
+        $html = '<ul class="inline-list right">';
+        $html .= '<li class="toolbar-list-element"><a title="Diesen Artikel als Link versenden" href="#"><i class="fa fa-envelope"> </i></a></li>';
+        $html .= '<li class="toolbar-list-element"><a title="Diesen Artikel als PDF herunterladen" href="#"><i class="fa fa-download"> </i></a></li>';
+        $html .= '<li class="toolbar-list-element"><a title="Diesen Artikel auf Facebook liken" href="#"><i class="fa fa-facebook"> </i></a></li></ul>';
+        return $html;
+    }    
 }
