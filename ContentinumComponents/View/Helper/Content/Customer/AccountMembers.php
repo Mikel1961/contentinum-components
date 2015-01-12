@@ -93,7 +93,7 @@ class AccountMembers extends AbstractHelper
             }
             
             if ( strlen($entryRow['accountZipcode']) > 1 && strlen($entryRow['accountCity']) > 1 ){
-                $caption .= '<br />' . $entryRow['accountZip'] . ' ' . $entryRow['accountCity'];
+                $caption .= '<br />' . $entryRow['accountZipcode'] . ' ' . $entryRow['accountCity'];
             }  
 
             if ( strlen($entryRow['internet']) > 1 ){
