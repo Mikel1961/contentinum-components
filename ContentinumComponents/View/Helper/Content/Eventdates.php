@@ -30,6 +30,7 @@ namespace ContentinumComponents\View\Helper\Content;
 
 
 
+use ContentinumComponents\Html\HtmlAttribute;
 class Eventdates extends AbstractContentHelper
 {
     /**
@@ -73,23 +74,61 @@ class Eventdates extends AbstractContentHelper
         $this->setTemplate($template);
         $events = '';
         $dataProp = array();
-        foreach ($entries['modulContent'] as $datas) {
+        foreach ($entries['modulContent'] as $entry) {
             $dateData = '';
-            $dataProp['data-summary'] = $datas->summary;
-            $dateData .= '<h3><span  class="summary" itemprop="name"> '. $datas->summary .' </span></h3>';
-            $dataProp['data-attendee'] = $datas->organizer;
-            $dateData .= '<h5><span class="attendee" itemprop="attendee">'. $datas->organizer .'</span></h5>';
+            $dataProp['data-summary'] = $entry->summary;
+            $dateData .= '<h3  class="event-summary"><span  class="summary" itemprop="name"> '. $entry->summary .' </span></h3>';
+            $dataProp['data-attendee'] = $entry->organizer;
+            $dateData .= '<h5  class="event-location-organizer"><span class="attendee" itemprop="attendee">'. $entry->organizer .'</span></h5>';
+            // time
             
-            $dateData .= '<p><meta content="2015-01-16T11:00:00Z+01:00" itemprop="startDate">';
+            $datetime = new \DateTime($entry->dateStart);        
+            $dataProp['data-dstart'] = $datetime->format('c');
+            $dataProp['data-dend'] = '00000000T000000';
+            $dateData .= '<p class="event-date"><meta content="' . $datetime->format("Y-m-d\\TH:i:s\\Z+01:00") . '" itemprop="startDate">';
             $dateData .= '<time>' . $this->view->dateFormat(new \DateTime($entry->dateStart), \IntlDateFormatter::FULL);
-            $dateData .= $this->view->dateFormat(new \DateTime($entry->dateStart), \IntlDateFormatter::NONE, \IntlDateFormatter::SHORT);
+            $dateData .= ', ' . $datetime->format("H:i");
             $dateData .= 'Uhr</time></p>';
             
-            $events .= '<div itemscope="itemscope" itemtype="http://schema.org/Event">';
+            // location
+            $dateData .= '<div class="location" itemtype="http://schema.org/Place" itemscope="" itemprop="location">';
+            $dateData .= '<p class="event-location-name" itemprop="name">';
+            $orgExt = '';
+            $dateData .= $entry->account->organisation;
+            if (strlen($entry->account->organisation) > 1){
+                $dateData .= ', ' . $entry->account->organisationExt;
+                $orgExt = ', ' . $entry->account->organisationExt;
+            }    
+
+            $dateData .= '</p>';
+            $dateData .= '<p class="event-location-address" itemtype="http://schema.org/PostalAddress" itemscope="itemscope" itemprop="address">';
+            $dateData .= '<span itemprop="streetAddress">'.$entry->account->accountStreet .'</span>';
+            $dateData .= ', <span itemprop="postalCode">'.$entry->account->accountZipcode .'</span>';
+            $dateData .= ' <span itemprop="addressLocality">'.$entry->account->accountCity .'</span>';
+            $dateData .= '</p>';
+            $dateData .= '</div>';
+            $dataProp['data-location'] = $entry->account->organisation . $orgExt . ', ' . $entry->account->accountStreet . ', ' . $entry->account->accountZipcode . ' ' . $entry->account->accountCity;
+            $events .= '<div class="event-wrapper panel" itemscope="itemscope" itemtype="http://schema.org/Event">';
+            $events .= $this->btnroup($dataProp);
             $events .= $dateData;
             $events .= '</div>';
+            $dataProp = array();
             
         }
+        $this->view->inlinescript()->offsetSetFile(31,'/assets/app/js/vendor/ics/ics-libs.js');
+        $this->view->inlinescript()->offsetSetFile(31,'/assets/app/js/vendor/ics/getics.js');
         return $events;
-    }    
+    }  
+
+    
+    protected function btnroup($datas)
+    {
+        $datas['class'] = 'getics';
+        $datas['title'] = 'Termin herunterladen';
+        $str = '<ul class="inline-list right right"><li>';
+        $str .= '<a ' . HtmlAttribute::attributeArray($datas) . '>';
+        $str .= '<i class="fa fa-download"></i></a>';
+        $str .= '</li></ul>';
+        return $str;
+    }
 }
