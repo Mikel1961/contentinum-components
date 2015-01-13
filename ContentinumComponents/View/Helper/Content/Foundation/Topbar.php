@@ -101,7 +101,7 @@ class Topbar extends AbstractHelper
      * @param array $template
      * @return Ambigous <string, multitype:>
      */
-    public function __invoke($entry, $template)
+    public function __invoke($entry, $template, $medias)
     {
         $this->assignTemplate($entry, $template);
         $html = '';
@@ -125,6 +125,11 @@ class Topbar extends AbstractHelper
                 $brand = $this->getTemplateProperty('listelements', '0');
                 $factory->setContentTag($brand['element']);
                 $label = $entry['modulDisplay'];
+                
+                if (isset($entry['modulConfig']) && $entry['modulConfig'] > '0'){
+                    $label = $this->view->images(array('medias' => $entry['modulConfig'], 'mediaStyle' => ''), $medias);
+                }
+
                 if ($this->brand){
                     $label = str_replace('%s1', $label, $this->brand);
                 }
@@ -140,17 +145,17 @@ class Topbar extends AbstractHelper
                 $i++;
             }
             
-            if (isset($entry['modulConfig'])){
-                $mLabel = $this->getTemplateProperty('listelements', '1');
-                $factory->setContentTag($mLabel['element']);
-                if ($this->mobilemenue){
-                    $mobilemenue = str_replace('%s1', $entry['modulConfig'], $this->mobilemenue);
-                } else {
-                    $mobilemenue = $entry['modulConfig'];
-                }
-                $factory->setHtmlContent($mobilemenue);
-                $factory->setTagAttributtes(false, $mLabel['attr'], $i);
+            
+            $mLabel = $this->getTemplateProperty('listelements', '1');
+            $factory->setContentTag($mLabel['element']);
+            if ($this->mobilemenue){
+                $mobilemenue = str_replace('%s1', $entry['modulConfig'], $this->mobilemenue);
+            } else {
+                $mobilemenue = $entry['modulConfig'];
             }
+            $factory->setHtmlContent($this->mobilemenue);
+            $factory->setTagAttributtes(false, $mLabel['attr'], $i);
+       
             
             $brand = $factory->display();
             $factory = false;

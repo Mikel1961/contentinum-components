@@ -130,7 +130,7 @@ class Contribution extends AbstractHelper
                 case 'topbar':
                     if (isset($this->view->plugins['topbar'][$entry['id']])) {
                         $plugin = array_merge($entry, $this->view->plugins['topbar'][$entry['id']]);
-                        $html .= $this->view->navigationtopbar($plugin, $template);
+                        $html .= $this->view->navigationtopbar($plugin, $template, $medias);
                     }
                     break;
                 case 'newsarchive':
