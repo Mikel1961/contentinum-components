@@ -30,7 +30,7 @@ namespace ContentinumComponents\View\Helper\Content;
 use ContentinumComponents\Html\HtmlElements;
 use ContentinumComponents\Html\Element\FactoryElement;
 
-class Grid extends AbstractContentHelper
+class Blockgrid extends AbstractContentHelper
 {
 
     protected $row;
