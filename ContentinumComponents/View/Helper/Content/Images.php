@@ -84,7 +84,7 @@ class Images extends AbstractHelper
         $this->setTemplate($template);
         $size = $article['mediaStyle'];
         $id = $article['medias'];
-        
+        $content = '';
         // expensive loop !!
         foreach ($medias as $mediaRow){
             if ($mediaRow->id == $id ){
