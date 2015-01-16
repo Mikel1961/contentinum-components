@@ -139,6 +139,12 @@ class Contribution extends AbstractHelper
                         $html .= $this->view->newsarchivelist($plugin, $template);
                     }
                     break;
+                case 'newsyeararchive':
+                    if (isset($this->view->plugins['newsyeararchive'][$entry['id']])) {
+                        $plugin = array_merge($entry, $this->view->plugins['newsyeararchive'][$entry['id']]);
+                        $html .= $this->view->newsarchiveyearlist($plugin, $template);
+                    }
+                    break;                    
                 case 'news':
                     if (isset($this->view->plugins['news'][$entry['id']])) {
                         $plugin = array_merge($entry,$this->view->plugins['news'][$entry['id']]);
