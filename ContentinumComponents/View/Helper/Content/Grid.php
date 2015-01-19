@@ -93,6 +93,7 @@ class Grid extends AbstractHelper
             $factory->setHtmlContent($this->view->contribution(array('entries' => array($row)),$medias,$widgets));
             $i ++;
         }
+        $this->unsetProperties();
         return $factory->display();
     }
 
@@ -132,4 +133,11 @@ class Grid extends AbstractHelper
             }
         }
     }
+    
+    protected function unsetProperties()
+    {
+        foreach ($this->properties as $prop) {
+            $this->{$prop} = null;
+        }
+    }    
 }

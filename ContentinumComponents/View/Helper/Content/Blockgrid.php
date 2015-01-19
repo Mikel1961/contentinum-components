@@ -66,6 +66,7 @@ class Blockgrid extends AbstractContentHelper
             $i ++;
             
         }
+        $this->unsetProperties();
         return $factory->display();
     }
 }

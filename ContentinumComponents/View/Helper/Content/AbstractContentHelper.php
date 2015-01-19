@@ -65,6 +65,16 @@ abstract class AbstractContentHelper extends AbstractHelper
         } else {
             return false;
         }
+    } 
+
+    /**
+     * 
+     */
+    protected function unsetProperties()
+    {
+        foreach ($this->properties as $prop) {
+            $this->{$prop} = null;
+        }
     }    
     
     /**

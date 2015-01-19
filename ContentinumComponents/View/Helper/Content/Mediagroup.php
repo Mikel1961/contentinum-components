@@ -78,7 +78,7 @@ class Mediagroup extends AbstractHelper
                 $list .= $img . '<figcaption class="mediagroup-list-item-figcaption">';
                 $list .= $entryRow['caption'] . '</figcaption>';
             } else {
-                $list = $img;
+                $list .= $img;
             }           
             $list .= '</figure></' . $grid . '>';
         }
