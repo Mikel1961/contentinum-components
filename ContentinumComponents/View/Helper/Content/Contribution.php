@@ -107,9 +107,10 @@ class Contribution extends AbstractHelper
                     $usrAttr = $entry['elementAttribute'];
                 }
                 $attr = $this->getTemplateProperty('grid', 'attr');
-                if (false !== $usrAttr && false !== $attr) {
-                    
+                if (false !== $usrAttr && false !== $attr) {          
                     $attr = array_merge($attr, $usrAttr);
+                } else {
+                    $attr = $usrAttr;
                 }
                 $factory->setTagAttributtes(false, $attr, 0);
             }

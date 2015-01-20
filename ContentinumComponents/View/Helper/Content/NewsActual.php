@@ -69,7 +69,7 @@ class NewsActual extends AbstractHelper
         $html = '';
         foreach ($entries['modulContent']['news'] as $entry) {
             if (0 === $entry->webContent->overwrite) {
-                $html .= '<article class="news-article">';
+                $html .= '<article class="news-article-actual">';
                 $head = '<time>' . $this->view->dateFormat(new \DateTime($entry->webContent->publishDate), \IntlDateFormatter::FULL) . '</time>';
                 if (strlen($entry->webContent->publishAuthor) > 1) {
                     $head .= '- <span class="news-article-author">' . $entry->webContent->publishAuthor . '</span>';
@@ -83,7 +83,7 @@ class NewsActual extends AbstractHelper
                     $html .= $this->readMoreLink($entry,$url);
                 } else {
                     $content = $entry->webContent->content;
-                    if (strlen($entry->webContent->numberCharacterTeaser) > 0) {
+                    if (strlen($entry->webContent->numberCharacterTeaser) > 0 && strlen($content) > $entry->webContent->numberCharacterTeaser) {
                         $content = substr($content, 0, $entry->webContent->numberCharacterTeaser);
                         $content = substr($content, 0, strrpos($content, " "));
                         $content = $content . ' ...</p>';
