@@ -53,6 +53,13 @@ abstract class AbstractStorage extends AbstractManager
 	protected $configuration;	
 	
 	/**
+	 * Service Manager
+	 *
+	 * @var use Zend\ServiceManager\ServiceLocatorInterface;
+	 */
+	protected $sl;
+	
+	/**
 	 * Set a logger
 	 * @param object $logger
 	 */
@@ -175,5 +182,21 @@ abstract class AbstractStorage extends AbstractManager
 		
 		return $this;
 	}
+	/**
+     * @return the $sl
+     */
+    public function getSl()
+    {
+        return $this->sl;
+    }
+
+	/**
+     * @param \ContentinumComponents\Storage\use $sl
+     */
+    public function setSl($sl)
+    {
+        $this->sl = $sl;
+    }
+
 	
 }
