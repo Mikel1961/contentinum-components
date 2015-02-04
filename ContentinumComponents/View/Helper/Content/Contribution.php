@@ -198,6 +198,13 @@ class Contribution extends AbstractHelper
                         $plugin = array_merge($entry,$this->view->plugins['eventdates'][$entry['id']]);
                         $html .= $this->view->eventdates($plugin, $medias, $template);
                     }  
+                    break;
+                case 'actualdates':
+                    if (isset($this->view->plugins['actualdates'][$entry['id']])) {
+                        $plugin = array_merge($entry,$this->view->plugins['actualdates'][$entry['id']]);
+                        $html .= $this->view->eventdates($plugin, $medias, $template);
+                    }
+                    break;                    
                 case 'municipalgroupview':
                     if (isset($this->view->plugins['municipalgroupview'][$entry['id']])) {
                         $plugin = array_merge($entry,$this->view->plugins['municipalgroupview'][$entry['id']]);

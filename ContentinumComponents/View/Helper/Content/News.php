@@ -215,7 +215,7 @@ class News extends AbstractHelper
                         $newsrow .= $this->readMoreLink($row);
                     } else {
                         $content = $row['content'];
-                        if (strlen($row['numberCharacterTeaser']) > 0 && strlen($content) > $row['numberCharacterTeaser']) {
+                        if ($row['numberCharacterTeaser'] > 0 && strlen($content) > $row['numberCharacterTeaser']) {
                             $content = substr($content, 0, $row['numberCharacterTeaser']);
                             $content = substr($content, 0, strrpos($content, " "));
                             $content = $content . ' ...</p>';

@@ -111,7 +111,7 @@ class MunicipalGroups extends AbstractContentHelper
      */
     protected function buildContact($entry, $department, $filter, $medias)
     {
-        $contact = '<div class="panel" itemscope itemtype="http://schema.org/Person">';
+        $contact = '<div class="panel vcard-item" itemscope itemtype="http://schema.org/Person">';
         
         $contact .= '<div itemscope itemtype="http://schema.org/Organization">';
         $contact .= '<h5 itemprop="department">';
