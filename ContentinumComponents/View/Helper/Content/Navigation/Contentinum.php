@@ -154,10 +154,14 @@ class Contentinum extends Menu
             
             if(true == ($listClass = $page->get('listClass'))){
             	$liClasses[] = $listClass;
-            }            
+            }  
+            $liIdent = '';
+            if(true == ($listIdent = $page->get('listIdent'))){
+                $liIdent = ' id="' . $listIdent . '"';
+            }                      
             $liClass = empty($liClasses) ? '' : ' class="' . implode(' ', $liClasses) . '"';
 
-            $html .= $myIndent . '    <li' . $liClass . '>' . self::EOL
+            $html .= $myIndent . '    <li' . $liIdent . $liClass . '>' . self::EOL
                 . $myIndent . '        ' . $this->htmlify($page, $escapeLabels, $addClassToListItem) . self::EOL;
 
             // store as previous depth for next iteration
