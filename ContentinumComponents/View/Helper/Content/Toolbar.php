@@ -78,6 +78,15 @@ class Toolbar extends AbstractContentHelper
         }
         $html = '';
         foreach ($this->elements as $element => $row){
+            if (isset($entry[$element])){
+                if (isset($entry[$element]['attr'])){
+                    if (isset($row['attr'])){
+                        $row['attr'] = array_merge($entry[$element]['attr'],$row['attr']);
+                    }
+                }
+            }
+            
+            
             $configure = $row;
             $html .= $this->view->contentelement($grid,  $this->buildLink($configure)  , $attr );
         }
