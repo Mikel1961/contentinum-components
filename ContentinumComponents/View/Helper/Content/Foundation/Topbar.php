@@ -121,11 +121,10 @@ class Topbar extends AbstractHelper
                 
             }
             $i = 0;
-            if (isset($entry['modulDisplay'])){
-                $brand = $this->getTemplateProperty('listelements', '0');
-                $factory->setContentTag($brand['element']);
-                $label = $entry['modulDisplay'];
-                
+            $brand = $this->getTemplateProperty('listelements', '0');
+            $factory->setContentTag($brand['element']);
+            if (isset($entry['modulDisplay']) && strlen($entry['modulDisplay']) > 0){
+                $label = $entry['modulDisplay'];                
                 if (isset($entry['modulConfig']) && $entry['modulConfig'] > '0'){
                     $label = $this->view->images(array('medias' => $entry['modulConfig'], 'mediaStyle' => ''), $medias);
                 }
@@ -133,8 +132,7 @@ class Topbar extends AbstractHelper
                 if ($this->brand){
                     $label = str_replace('%s1', $label, $this->brand);
                 }
-                
-                
+
                 if (isset($entry['modulLink'])){
                     if ($this->brand){
                         $label = str_replace('#', $entry['modulLink'], $label);
@@ -143,9 +141,12 @@ class Topbar extends AbstractHelper
                 $factory->setHtmlContent($label);
                 $factory->setTagAttributtes(false, $brand['attr'], $i);
                 $i++;
+            } else {
+                $factory->setHtmlContent('');
+                $factory->setTagAttributtes(false, $brand['attr'], $i);
+                $i++;
             }
-            
-            
+                      
             $mLabel = $this->getTemplateProperty('listelements', '1');
             $factory->setContentTag($mLabel['element']);
             if ($this->mobilemenue){
