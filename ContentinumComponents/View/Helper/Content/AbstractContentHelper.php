@@ -31,12 +31,27 @@ use Zend\View\Helper\AbstractHelper;
 
 abstract class AbstractContentHelper extends AbstractHelper
 {
+    /**
+     * 
+     * @var string
+     */
+    protected $layoutKey;
     
     /**
      * 
      * @var array
      */
     protected $properties = array();
+    
+    
+    
+    protected function getLayoutKey()
+    {
+        if (null === $this->layoutKey){
+            $this->layoutKey = $this->view->htmllayouts[$this->view->templateKey]->layoutkey;
+        }
+        return $this->layoutKey;
+    }
     
     /**
      * 
@@ -130,4 +145,54 @@ abstract class AbstractContentHelper extends AbstractHelper
         }
         return $template;
     }
+    
+    /**
+     * 
+     * @param unknown $pattern
+     * @param unknown $content
+     * @param string $beforeGrid
+     */
+    protected function deployRow($pattern, $content, $beforeGrid = '')
+    {
+        $html = '';
+        if (null !== $pattern){
+            $pattern = $pattern->toArray();
+            $html .= $beforeGrid;
+            if (isset($pattern['grid'])){
+                $attr = array();
+                
+                if (isset($pattern['grid']['attr']) && !empty($pattern['grid']['attr'])){
+                    $attr = $pattern['grid']['attr'];
+                }
+                $str = '';
+                if (isset($pattern['grid']['content'])){
+                    $str = $pattern['grid']['content'];
+                }                
+                $html .= $this->view->contentelement($pattern['grid']['element'],$content . $str,$attr);
+            }
+            
+            
+            if (isset($pattern['row'])){
+                $attr = array();
+                
+                if (isset($pattern['row']['attr']) && !empty($pattern['row']['attr'])){
+                    $attr = $pattern['row']['attr'];
+                }
+                $html = $this->view->contentelement($pattern['row']['element'],$html,$attr);                
+            }
+        }
+        return $html;
+    }
+    
+    /**
+     * 
+     * @param unknown $files
+     */
+    protected function deployFiles($files)
+    {
+        foreach ($files as $index => $file){
+            $this->view->inlinescript()->offsetSetFile($index,$file);
+        }
+    }
+    
 }

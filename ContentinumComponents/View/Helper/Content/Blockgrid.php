@@ -37,9 +37,12 @@ class Blockgrid extends AbstractContentHelper
 
     protected $grid;
 
+    protected $inner;
+
     protected $properties = array(
         'row',
-        'grid'
+        'grid',
+        'inner'
     );
 
     public function __invoke(array $content, array $template, $medias, $widgets, array $specified = null)
@@ -55,16 +58,25 @@ class Blockgrid extends AbstractContentHelper
         $attr = $this->getTemplateProperty('grid', 'attr');
         $i = 0;
         foreach ($content['entries'] as $row) {
-
+            
             $factory->setContentTag($grid);
             $factory->setTagAttributtes(false, $attr, $i);
-            $factory->setHtmlContent($this->view->contribution(array(
-                'entries' => array(
-                    $row
-                )
-            ), $medias, $widgets));
+            if (null === $this->inner) {
+                $factory->setHtmlContent($this->view->contribution(array(
+                    'entries' => array(
+                        $row
+                    )
+                ), $medias, $widgets));
+            } else {
+                $inner = $this->getTemplateProperty('inner', 'element');
+                $innerAttr = $this->getTemplateProperty('inner', 'attr');
+                $factory->setHtmlContent($this->view->contentelement($inner, $this->view->contribution(array(
+                    'entries' => array(
+                        $row
+                    )
+                ), $medias, $widgets), $innerAttr));
+            }
             $i ++;
-            
         }
         $this->unsetProperties();
         return $factory->display();
