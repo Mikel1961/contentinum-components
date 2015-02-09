@@ -27,39 +27,80 @@
  */
 namespace ContentinumComponents\View\Helper\Content;
 
-
-
-
-use ContentinumComponents\Html\HtmlAttribute;
 class Eventdates extends AbstractContentHelper
 {
+    
+    const VIEW_TEMPLATE = 'events';
+   
     /**
      *
      * @var array
      */
-    protected $row;
+    protected $files;
     
     /**
      *
      * @var array
      */
-    protected $grid;
+    protected $toolbar;
+    
+    /**
+     * 
+     * @var unknown
+     */
+    protected $schema;
     
     /**
      *
      * @var array
      */
-    protected $elements;
+    protected $wrapper;
+
     
     /**
      *
      * @var array
      */
-    protected $properties = array(
-        'row',
-        'grid',
-        'elements'
+    protected $summary;
     
+    /**
+     *
+     * @var array
+     */
+    protected $organizer;
+    
+    /**
+     *
+     * @var array
+     */
+    protected $dateStart;
+
+    /**
+     *
+     * @var array
+     */
+    protected $organisation;
+    
+    /**
+     *
+     * @var array
+     */
+    protected $location;  
+    
+    /**
+     *
+     * @var array
+     */
+    protected $properties = array(        
+        'files',        
+        'toolbar',    
+        'wrapper',
+        'schema',
+        'summary',
+        'organizer',
+        'dateStart',
+        'organisation',
+        'location',
     );
     
     /**
@@ -71,64 +112,127 @@ class Eventdates extends AbstractContentHelper
     */
     public function __invoke(array $entries, $medias, $template)
     {
-        $this->setTemplate($template);
+        
+        $viewTemplate = $this->view->groupstyles[$this->getLayoutKey()];
+        if (isset($viewTemplate[self::VIEW_TEMPLATE])){
+            $this->setTemplate($viewTemplate[self::VIEW_TEMPLATE]);
+        }
         $events = '';
+   
         $dataProp = array();
         foreach ($entries['modulContent'] as $entry) {
             $dateData = '';
             $dataProp['data-summary'] = $entry->summary;
-            $dateData .= '<h3  class="event-summary"><span  class="summary" itemprop="name"> '. $entry->summary .' </span></h3>';
+            
+            $dateData .= $this->deployRow($this->summary, $entry->summary);
             $dataProp['data-attendee'] = $entry->organizer;
-            $dateData .= '<h5  class="event-location-organizer"><span class="attendee" itemprop="attendee">'. $entry->organizer .'</span></h5>';
+            $dateData .= $this->deployRow($this->organizer, $entry->organizer);
             // time
             
             $datetime = new \DateTime($entry->dateStart);        
             $dataProp['data-dstart'] = $datetime->format("Ymd\\THis");
             $dataProp['data-dend'] = '00000000T000000';
-            $dateData .= '<p class="event-date"><meta content="' . $datetime->format("Y-m-d\\TH:i:s\\Z+01:00") . '" itemprop="startDate">';
-            $dateData .= '<time>' . $this->view->dateFormat(new \DateTime($entry->dateStart), \IntlDateFormatter::FULL);
-            $dateData .= ', ' . $datetime->format("H:i");
-            $dateData .= ' Uhr</time></p>';
             
-            // location
-            $dateData .= '<div class="location" itemtype="http://schema.org/Place" itemscope="" itemprop="location">';
-            $dateData .= '<p class="event-location-name" itemprop="name">';
-            $orgExt = '';
-            $dateData .= $entry->account->organisation;
-            if (strlen($entry->account->organisation) > 1){
-                $dateData .= ', ' . $entry->account->organisationExt;
-                $orgExt = ', ' . $entry->account->organisationExt;
-            }    
+            $content = $this->view->dateFormat(new \DateTime($entry->dateStart), \IntlDateFormatter::FULL) . ', ' . $datetime->format("H:i");
+            $dateData .= $this->deployRow($this->dateStart, $content, '<meta content="' . $datetime->format("Y-m-d\\TH:i:s\\Z+01:00") . '" itemprop="startDate">');
+            
+            
+            // location new
+            if (1 !== $entry->account->id){
+                if (isset($this->location['grids'])){
+                    $location = '';
+                    $grids = $this->location['grids'];
+                    if (strlen($entry->account->accountStreet) > 1){
+                        if (isset($grids['accountStreet'])){
+                            $location .= $this->deployRow($grids['accountStreet'], $entry->account->accountStreet);
+                        } else {
+                            $location .= $entry->account->accountStreet . ' ';
+                        }
+                    }
+                                  
+                    if (strlen($entry->account->accountZipcode) > 1){
+                        if (isset($grids['accountZipcode'])){
+                            $location .= $this->deployRow($grids['accountZipcode'], $entry->account->accountZipcode);
+                        } else {
+                            $location .= $entry->account->accountZipcode . ' ';
+                        }                    
+                    }
+                    
+                    if (strlen($entry->account->accountCity) > 1){
+                        if (isset($grids['accountZipcode'])){
+                            $location .= $this->deployRow($grids['accountCity'], $entry->account->accountCity);
+                        } else {
+                            $location .= $entry->account->accountCity;
+                        }
+                    }                
+                    
+                }
+                $orgaExt = '';
+                if ( strlen($entry->account->organisationExt) > 1 ){
+                    $orgaExt = ' ' . $entry->account->organisationExt;
+                }
+                
+                $locationName = $this->deployRow($this->organisation, $entry->account->organisation.$orgaExt);
+                
+                $dateData .= $this->deployRow($this->location, $location, $locationName);
+                
+                $dataProp['data-location'] = $entry->account->organisation . $orgaExt . ' ' . $entry->account->accountStreet . ' ' . $entry->account->accountZipcode . ' ' . $entry->account->accountCity;
+            } else {
+                if (isset($this->location['grids'])){
+                    $location = '';
+                    $grids = $this->location['grids'];
+                    if (strlen($entry->locationAddresse) > 1){
+                        if (isset($grids['accountStreet'])){
+                            $location .= $this->deployRow($grids['accountStreet'], $entry->locationAddresse);
+                        } else {
+                            $location .= $entry->locationAddresse . ' ';
+                        }
+                    }
+                    
+                    if (strlen($entry->locationZipcode) > 1){
+                        if (isset($grids['accountZipcode'])){
+                            $location .= $this->deployRow($grids['accountZipcode'], $entry->locationZipcode);
+                        } else {
+                            $location .= $entry->locationZipcode . ' ';
+                        }
+                    }                    
+                    
+                    
+                    if (strlen($entry->locationCity) > 1){
+                        if (isset($grids['accountZipcode'])){
+                            $location .= $this->deployRow($grids['accountCity'], $entry->locationCity);
+                        } else {
+                            $location .= $entry->locationCity;
+                        }
+                    } 
+                }
+                
+                $locationName = $this->deployRow($this->organisation, $entry->location);
+                
+                $dateData .= $this->deployRow($this->location, $location, $locationName);
+                
+                $dataProp['data-location'] = $entry->location . ' ' . $entry->locationAddresse . ' ' . $entry->locationZipcode . ' ' . $entry->locationCity;                
+                
+            }
+            
+            $toolbar = '';
+            if (null !== $this->toolbar){
+                $toolbar = $this->view->contenttoolbar(array('getevent' => array('attr' => $dataProp)),$medias, $this->toolbar->toArray());
 
-            $dateData .= '</p>';
-            $dateData .= '<p class="event-location-address" itemtype="http://schema.org/PostalAddress" itemscope="itemscope" itemprop="address">';
-            $dateData .= '<span itemprop="streetAddress">'.$entry->account->accountStreet .'</span>';
-            $dateData .= ', <span itemprop="postalCode">'.$entry->account->accountZipcode .'</span>';
-            $dateData .= ' <span itemprop="addressLocality">'.$entry->account->accountCity .'</span>';
-            $dateData .= '</p>';
-            $dateData .= '</div>';
-            $dataProp['data-location'] = $entry->account->organisation . $orgExt . ', ' . $entry->account->accountStreet . ', ' . $entry->account->accountZipcode . ' ' . $entry->account->accountCity;
-            $events .= '<div class="event-wrapper panel" itemscope="itemscope" itemtype="http://schema.org/Event">';
-            $events .= $this->btnroup($dataProp);
-            $events .= $dateData;
-            $events .= '</div>';
+            }            
+            $events .= $this->deployRow($this->schema, $toolbar . $dateData);
             $dataProp = array();
             
         }
-        $this->view->inlinescript()->offsetSetFile(30,'/assets/app/js/vendor/ics/ics-libs.js');
-        $this->view->inlinescript()->offsetSetFile(31,'/assets/app/js/vendor/ics/getics.js');
+     
+        
+        $events = $this->deployRow($this->wrapper, $events);
+        
+        if (null !== $this->files){
+            $this->deployFiles($this->files);
+        }
+        
         return $events;
     }  
 
-    
-    protected function btnroup($datas)
-    {
-        $datas['class'] = 'getics';
-        $datas['title'] = 'Termin herunterladen';
-        $str = '<ul class="inline-list right right"><li>';
-        $str .= '<a ' . HtmlAttribute::attributeArray($datas) . '>';
-        $str .= '<i class="fa fa-download"></i></a>';
-        $str .= '</li></ul>';
-        return $str;
-    }
 }
