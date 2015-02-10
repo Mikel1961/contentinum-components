@@ -147,8 +147,10 @@ class AccountMembers extends AbstractHelper
         foreach ($listcontent as $orga => $entryRow){
             $list .= '<' . $grid . ' class="account-list-item">';
             $list .= '<figure class="account-list-item-img">';
-            $list .= '<img src="' . $entryRow['imgSource'] . '" alt="" />';
+            $list .= '<img title="'.$entryRow['organisation'].'" src="' . $entryRow['imgSource'] . '" alt="" />';
             $list .= '</figure>';
+            //$list .= '<figcaption class="account-member-list-item-caption">';
+            //$list .= '<p>'.$entryRow['organisation'].'</p></figcaption>';
             $list .= '</' . $grid . '>';     
             $i++;
             if ($i == $entry['modulDisplay']){

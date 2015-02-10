@@ -210,7 +210,22 @@ class Contribution extends AbstractHelper
                         $plugin = array_merge($entry,$this->view->plugins['municipalgroupview'][$entry['id']]);
                         $html .= $this->view->municipalgroupview($plugin, $medias, $template);
                     }                                      
-                    break;                                                                                                        
+                    break; 
+
+                case 'wanted':
+                    if (isset($this->view->plugins['wanted'][$entry['id']])) {
+                        $plugin = array_merge($entry,$this->view->plugins['wanted'][$entry['id']]);
+                        $html .= $this->view->wanted($plugin, $medias, $template);
+                    }
+                    break;
+                case 'wantedgroup':
+                    if (isset($this->view->plugins['wantedgroup'][$entry['id']])) {
+                        $plugin = array_merge($entry,$this->view->plugins['wantedgroup'][$entry['id']]);
+                        $html .= $this->view->wantedgroup($plugin, $medias, $template);
+                    }
+                    break;                                            
+                    
+                    
                 default:
                     break;
             }

@@ -77,7 +77,7 @@ class ExpressServices extends AbstractHelper
                 $issue = '';
                 $panelId = $filter->filter($entry->name);
         
-                $issue = '<a class="eildienst-panel" href="#' . $panelId . '" role="tab" tabindex="0" aria-selected="false" controls="' . $panelId . '"><span class="eildienst-panel-name">' . $entry->name . '</span> <i class="fa fa-arrow-circle-o-down fa-2x right"></i></a>';
+                $issue = '<a class="eildienst-panel" href="#' . $panelId . '" role="tab" tabindex="0" aria-selected="false" controls="' . $panelId . '"><span class="eildienst-panel-name">'. $entry->shortname . ' '  . $entry->name . '</span> <i class="fa fa-arrow-circle-o-down fa-2x right"></i></a>';
         
                 $topic .= '<h5>' . $entry->webContent->title . '</h5>';
                 $topic .= $entry->webContent->content;
@@ -158,9 +158,9 @@ class ExpressServices extends AbstractHelper
                 $issue = '<h4 class="topic-headline">' . $entry->webEildienst->name . ', ' . $dateTime . '</h4>';
                 $button ='<p><a class="button expand" href="/'.$this->view->pageurl.'/ausgabe/';
                 $button .= $entry->webEildienst->id . '">Diesen Eildienst anzeigen</a></p>';
-                $topic .= '<li>' . $entry->name . ', ' . $entry->webContent->headline . '</li>';
+                $topic .= '<li>'. $entry->shortname . ' ' . $entry->name . ', ' . $entry->webContent->headline . '</li>';
             } else {
-                $topic .= '<li>' . $entry->name . ', ' . $entry->webContent->headline . '</li>';
+                $topic .= '<li>'. $entry->shortname . ' ' . $entry->name . ', ' . $entry->webContent->headline . '</li>';
             }
         }
         $rowContent = array();

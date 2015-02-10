@@ -178,7 +178,12 @@ abstract class AbstractContentHelper extends AbstractHelper
                 if (isset($pattern['row']['attr']) && !empty($pattern['row']['attr'])){
                     $attr = $pattern['row']['attr'];
                 }
-                $html = $this->view->contentelement($pattern['row']['element'],$html,$attr);                
+                $str = '';
+                if (isset($pattern['row']['content'])){
+                    $str = $pattern['row']['content'];
+                }                
+                
+                $html = $this->view->contentelement($pattern['row']['element'],$str . $html,$attr);                
             }
         }
         return $html;
