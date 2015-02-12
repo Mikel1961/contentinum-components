@@ -43,7 +43,7 @@ class Archivelist extends AbstractHelper
      *
      * @var unknown
      */
-    private $row = array('element' => 'ul', array('class' => 'news-archive-sublist'));
+    private $row = array('element' => 'ul', 'attr' => array('class' => 'news-archive-sublist'));
     
     /**
      *
@@ -126,9 +126,11 @@ class Archivelist extends AbstractHelper
         foreach ($entries as $year => $month){
             $html .= '<' . $grid;
             $attr = array();
-            $html .= HtmlAttribute::attributeArray($attr);
+            if (false !== ($attr = $this->getTemplateProperty('grid', 'attr')) ){
+                $html .= HtmlAttribute::attributeArray($attr);
+            }            
             $html .= '><a';
-            $attr = array();
+            $attr = array('class' => 'element-toogle', 'data-archive-year' => $year);
             $html .= HtmlAttribute::attributeArray($attr);
             $html .= '>' . $this->view->translate('Year') . ' ' . $year . '</a>'; //
             $html .= $this->months($year, $month);
@@ -150,6 +152,7 @@ class Archivelist extends AbstractHelper
         $html = '';
         $html .= '<' . $row;
         if (false !== ($attr = $this->getTemplateProperty('row', 'attr')) ){
+            $attr = array_merge($attr, array('id' => $year));
             $html .= HtmlAttribute::attributeArray($attr);
             $attr = false;
         }
