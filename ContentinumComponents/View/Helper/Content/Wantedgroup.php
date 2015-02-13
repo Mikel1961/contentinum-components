@@ -27,16 +27,118 @@
  */
 namespace ContentinumComponents\View\Helper\Content;
 
-use Zend\View\Helper\AbstractHelper;
-
-
-
-class Wantedgroup extends AbstractHelper
+class Wantedgroup extends AbstractContentHelper
 {
+
+    const VIEW_TEMPLATE = 'person';
     
+    /**
+     *
+     * @var array
+     */
+    protected $files;
+    
+    /**
+     *
+     * @var array
+     */
+    protected $toolbar;
+    
+    /**
+     *
+     * @var array
+     */
+    protected $schema;
+    
+    /**
+     *
+     * @var array
+     */
+    protected $wrapper;
+    
+    /**
+     *
+     * @var array
+     */
+    protected $name;
+    
+    /**
+     *
+     * @var array
+     */
+    protected $internet;
+    
+    /**
+     *
+     * @var array
+     */
+    protected $contactImgSource;
+    
+    /**
+     *
+     * @var array
+     */
+    protected $businessTitle;
+    
+    /**
+     *
+     * @var array
+     */
+    protected $phoneWork;
+    
+    /**
+     *
+     * @var array
+     */
+    protected $phoneFax;
+    
+    /**
+     *
+     * @var array
+     */
+    protected $contactEmail;
+    
+    /**
+     *
+     * @var array
+     */
+    protected $organisation;
+    
+    /**
+     *
+     * @var array
+     */
+    protected $address;
+    
+    /**
+     *
+     * @var array
+     */
+    protected $description;
 
     /**
-     * 
+     *
+     * @var array
+     */
+    protected $properties = array(
+        'files',
+        'toolbar',
+        'wrapper',
+        'schema',
+        'name',
+        'internet',
+        'contactImgSource',
+        'businessTitle',
+        'phoneWork',
+        'phoneFax',
+        'contactEmail',
+        'organisation',
+        'address',
+        'description'
+    );
+
+    /**
+     *
      * @param unknown $entries
      * @param unknown $medias
      * @param string $template
@@ -44,12 +146,86 @@ class Wantedgroup extends AbstractHelper
      */
     public function __invoke($entries, $medias, $template = null)
     {
-
-        $html = '';
-        foreach ($entries['modulContent'] as $marker => $entry){
-
-        }
+        $viewTemplate = $this->view->groupstyles[$this->getLayoutKey()];
+        if (isset($viewTemplate[self::VIEW_TEMPLATE])){
+            $this->setTemplate($viewTemplate[self::VIEW_TEMPLATE]);
+        }        
         
-        return $html;        
-    }    
+        $html = '';
+        foreach ($entries['modulContent'] as $entry) {
+            $cardData = '';
+            $name = $this->salutation($entry->contacts->salutation) . $entry->contacts->firstName . ' ' . $entry->contacts->lastName;
+            if (1 != $entry->contacts->contactImgSource){
+                $cardData .= $this->deployRow($this->contactImgSource, $this->view->images(array('mediaStyle' => '','medias' => $entry->contacts->contactImgSource), $medias));
+
+            }
+            $cardData .= $this->deployRow($this->name, $name);
+            $cardData .= $this->deployRow($this->businessTitle, $entry->contacts->businessTitle);
+            
+            if (isset($this->address['grids'])){
+                $location = '';
+                $grids = $this->address['grids'];
+                if (strlen($entry->contacts->contactAddress) > 1){
+                    if (isset($grids['contactAddress'])){
+                        $location .= $this->deployRow($grids['contactAddress'], $entry->contacts->contactAddress);
+                    } else {
+                        $location .= $entry->contacts->contactAddress . ' ';
+                    }
+                }
+            
+                if (strlen($entry->contacts->contactZipcode) > 1){
+                    if (isset($grids['contactZipcode'])){
+                        $location .= $this->deployRow($grids['contactZipcode'], $entry->contacts->contactZipcode);
+                    } else {
+                        $location .= $entry->contacts->contactZipcode . ' ';
+                    }
+                }
+            
+                if (strlen($entry->contacts->contactCity) > 1){
+                    if (isset($grids['contactCity'])){
+                        $location .= $this->deployRow($grids['contactCity'], $entry->contacts->contactCity);
+                    } else {
+                        $location .= $entry->contacts->contactCity;
+                    }
+                }
+                $cardData .= $this->deployRow($this->address, $location);
+                
+            }        
+            if (strlen($entry->contacts->phoneWork) > 1){    
+                $cardData .= $this->deployRow($this->phoneWork, $entry->contacts->phoneWork);
+            }
+            if (strlen($entry->contacts->phoneFax) > 1){
+                $cardData .= $this->deployRow($this->phoneFax, $entry->contacts->phoneFax);
+            }            
+            if (strlen($entry->contacts->contactEmail) > 1){
+                $cardData .= $this->deployRow($this->contactEmail, $entry->contacts->contactEmail);
+            }
+            $html .= $this->deployRow($this->schema, $cardData);
+        }
+        if (null !== $this->wrapper){
+            $html = $this->deployRow($this->wrapper, $html);
+        }
+        return $html;
+    }
+
+    /**
+     *
+     * @param unknown $var
+     * @return string
+     */
+    protected function salutation($var)
+    {
+        $str = '';
+        switch ($var) {
+            case 'mr':
+                $str = 'Herr ';
+                break;
+            case 'ms':
+                $str = 'Frau ';
+                break;
+            default:
+                break;
+        }
+        return $str;
+    }
 }

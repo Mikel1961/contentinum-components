@@ -66,6 +66,8 @@ class AccountMembers extends AbstractHelper
     {
         if ('shufflepictures' === $entry['modulFormat']){
             return $this->shufflepictures($entry, $medias, $template);
+        } elseif ('listdatas' === $entry['modulFormat']){
+            return $this->accountgroup($entry, $medias, $template);
         }
         
         

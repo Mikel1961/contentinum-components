@@ -147,7 +147,7 @@ abstract class AbstractContentHelper extends AbstractHelper
     }
     
     /**
-     * 
+     * Format a content row
      * @param unknown $pattern
      * @param unknown $content
      * @param string $beforeGrid
@@ -163,12 +163,17 @@ abstract class AbstractContentHelper extends AbstractHelper
                 
                 if (isset($pattern['grid']['attr']) && !empty($pattern['grid']['attr'])){
                     $attr = $pattern['grid']['attr'];
+                    $attr = $this->deployAttrHref($attr, $content);
                 }
-                $str = '';
-                if (isset($pattern['grid']['content'])){
-                    $str = $pattern['grid']['content'];
-                }                
-                $html .= $this->view->contentelement($pattern['grid']['element'],$content . $str,$attr);
+                $before = '';
+                $after = '';
+                if (isset($pattern['grid']['content:after'])){
+                    $after = $pattern['grid']['content:after'];
+                }  
+                if (isset($pattern['grid']['content:before'])){
+                    $before = $pattern['grid']['content:before'];
+                }                              
+                $html .= $this->view->contentelement($pattern['grid']['element'],$before . $content . $after ,$attr);
             }
             
             
@@ -178,26 +183,44 @@ abstract class AbstractContentHelper extends AbstractHelper
                 if (isset($pattern['row']['attr']) && !empty($pattern['row']['attr'])){
                     $attr = $pattern['row']['attr'];
                 }
-                $str = '';
-                if (isset($pattern['row']['content'])){
-                    $str = $pattern['row']['content'];
-                }                
+                $before = '';
+                $after = '';
+                if (isset($pattern['row']['content:after'])){
+                    $after = $pattern['row']['content:after'];
+                }  
+                if (isset($pattern['row']['content:before'])){
+                    $before = $pattern['row']['content:before'];
+                }                   
                 
-                $html = $this->view->contentelement($pattern['row']['element'],$str . $html,$attr);                
+                $html = $this->view->contentelement($pattern['row']['element'],$before . $html. $after,$attr);                
             }
         }
         return $html;
     }
     
     /**
-     * 
-     * @param unknown $files
+     * Register javascript files
+     * @param array $files
      */
     protected function deployFiles($files)
     {
         foreach ($files as $index => $file){
             $this->view->inlinescript()->offsetSetFile($index,$file);
         }
+    }
+    
+    /**
+     * Configure href attribute set link
+     * @param array $attr
+     * @param string $content
+     * @return string
+     */
+    protected function deployAttrHref($attr, $content)
+    {
+        if (isset($attr['href'])){
+            $attr['href'] = $attr['href'] . $content;
+        }
+        return $attr;
     }
     
 }

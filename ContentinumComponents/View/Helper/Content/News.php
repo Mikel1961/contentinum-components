@@ -117,6 +117,12 @@ class News extends AbstractHelper
      */
     private $teaserPortraitSize;
     
+    /**
+     * 
+     * @var integer
+     */
+    private $iTotal = 10;
+    
     
     private $toolbar;
 
@@ -171,14 +177,16 @@ class News extends AbstractHelper
         }
         $html = '';
         $i = 0;
-        $iTotal = 10;
         if ('archive' == $this->view->article){
-            $iTotal = 999;
+            $this->iTotal = 999;
         }
         foreach ($content['entries'] as $row) {
             $newsrow = '';
             if ('1' === $row['id']) {
                 $this->convertParams($row['groupParams']);
+                if (isset($this->groupParams['numbernews'])) {
+                    $this->iTotal = $this->groupParams['numbernews'];
+                }
             }
             if ('1' !== $row['id']) {
                 if (null == $this->groupName){
@@ -272,7 +280,7 @@ class News extends AbstractHelper
                     $html .= $newsrow;
                 }
                 $i++;
-                if ($iTotal == $i){
+                if ($this->iTotal == $i){
                     break;
                 }
             }

@@ -27,89 +27,89 @@
  */
 namespace ContentinumComponents\View\Helper\Content;
 
-class Wanted extends AbstractContentHelper
+class AccountGroup extends AbstractContentHelper
 {
 
-    const VIEW_TEMPLATE = 'person';
-
+    const VIEW_TEMPLATE = 'orga';
+    
     /**
      *
      * @var array
      */
     protected $files;
-
+    
     /**
      *
      * @var array
      */
     protected $toolbar;
-
+    
     /**
      *
      * @var array
      */
     protected $schema;
-
+    
     /**
      *
      * @var array
      */
     protected $wrapper;
-
+    
     /**
      *
      * @var array
      */
     protected $name;
-
+    
     /**
      *
      * @var array
      */
     protected $internet;
-
+    
     /**
      *
      * @var array
      */
     protected $contactImgSource;
-
+    
     /**
      *
      * @var array
      */
     protected $businessTitle;
-
+    
     /**
      *
      * @var array
      */
     protected $phoneWork;
-
+    
     /**
      *
      * @var array
      */
     protected $phoneFax;
-
+    
     /**
      *
      * @var array
      */
     protected $contactEmail;
-
+    
     /**
      *
      * @var array
      */
     protected $organisation;
-
+    
     /**
      *
      * @var array
      */
     protected $address;
-
+    
     /**
      *
      * @var array
@@ -134,7 +134,11 @@ class Wanted extends AbstractContentHelper
         'contactEmail',
         'organisation',
         'address',
-        'description'
+        'description',
+        'accountFax',
+        'accountPhone',
+        'accountEmail',
+        'imgSource'
     );
 
     /**
@@ -154,55 +158,58 @@ class Wanted extends AbstractContentHelper
         $html = '';
         foreach ($entries['modulContent'] as $entry) {
             $cardData = '';
-            $name = $this->salutation($entry->salutation) . $entry->firstName . ' ' . $entry->lastName;
-            if (1 != $entry->contactImgSource){
-                $cardData .= $this->deployRow($this->contactImgSource, $this->view->images(array('mediaStyle' => '','medias' => $entry->contactImgSource), $medias));
+            
+            $cardData .= $this->deployRow($this->organisation, $entry->organisation);
+            if (1 != $entry->imgSource){
+                $cardData .= $this->deployRow($this->imgSource, $this->view->images(array('mediaStyle' => '','medias' => $entry->imgSource), $medias));
 
             }
-            $cardData .= $this->deployRow($this->name, $name);
-            $cardData .= $this->deployRow($this->businessTitle, $entry->businessTitle);
+            $cardData .= $this->deployRow($this->member, $entry->organisation);
+        
             
             if (isset($this->address['grids'])){
                 $location = '';
                 $grids = $this->address['grids'];
-                if (strlen($entry->contactAddress) > 1){
-                    if (isset($grids['contactAddress'])){
-                        $location .= $this->deployRow($grids['contactAddress'], $entry->contactAddress);
-                    } else {
-                        $location .= $entry->contactAddress . ' ';
+                    if (strlen($entry->accountStreet) > 1){
+                        if (isset($grids['accountStreet'])){
+                            $location .= $this->deployRow($grids['accountStreet'], $entry->accountStreet);
+                        } else {
+                            $location .= $entry->accountStreet . ' ';
+                        }
                     }
-                }
-            
-                if (strlen($entry->contactZipcode) > 1){
-                    if (isset($grids['contactZipcode'])){
-                        $location .= $this->deployRow($grids['contactZipcode'], $entry->contactZipcode);
-                    } else {
-                        $location .= $entry->contactZipcode . ' ';
+                                  
+                    if (strlen($entry->accountZipcode) > 1){
+                        if (isset($grids['accountZipcode'])){
+                            $location .= $this->deployRow($grids['accountZipcode'], $entry->accountZipcode);
+                        } else {
+                            $location .= $entry->accountZipcode . ' ';
+                        }                    
                     }
-                }
-            
-                if (strlen($entry->contactCity) > 1){
-                    if (isset($grids['contactCity'])){
-                        $location .= $this->deployRow($grids['contactCity'], $entry->contactCity);
-                    } else {
-                        $location .= $entry->contactCity;
-                    }
-                }
+                    
+                    if (strlen($entry->accountCity) > 1){
+                        if (isset($grids['accountZipcode'])){
+                            $location .= $this->deployRow($grids['accountCity'], $entry->accountCity);
+                        } else {
+                            $location .= $entry->accountCity;
+                        }
+                    }   
                 $cardData .= $this->deployRow($this->address, $location);
                 
             }        
-            if (strlen($entry->phoneWork) > 1){    
-                $cardData .= $this->deployRow($this->phoneWork, $entry->phoneWork);
+            if (strlen($entry->accountPhone) > 1){    
+                $cardData .= $this->deployRow($this->accountPhone, $entry->accountPhone);
             }
-            if (strlen($entry->phoneFax) > 1){
-                $cardData .= $this->deployRow($this->phoneFax, $entry->phoneFax);
+            if (strlen($entry->accountFax) > 1){
+                $cardData .= $this->deployRow($this->accountFax, $entry->accountFax);
             }            
-            if (strlen($entry->contactEmail) > 1){
-                $cardData .= $this->deployRow($this->contactEmail, $entry->contactEmail);
+            if (strlen($entry->accountEmail) > 1){
+                $cardData .= $this->deployRow($this->accountEmail, $entry->accountEmail);
             }
             $html .= $this->deployRow($this->schema, $cardData);
         }
-        
+        if (null !== $this->wrapper){
+            $html = $this->deployRow($this->wrapper, $html);
+        }
         return $html;
     }
 
