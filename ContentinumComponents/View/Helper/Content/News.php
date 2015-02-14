@@ -462,6 +462,9 @@ class News extends AbstractHelper
         $html = '';
         if (null !== $this->toolbar){
             $toolbar = $this->toolbar;
+            if ( isset($toolbar['pdf']) ){
+                $toolbar['pdf']['href'] = '/pdf/news/' . $id;
+            }
             $html = $this->view->contenttoolbar(array(),$medias, $toolbar); 
         }
         return $html;
