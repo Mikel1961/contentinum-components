@@ -108,6 +108,12 @@ class AccountGroup extends AbstractContentHelper
      *
      * @var array
      */
+    protected $member;    
+    
+    /**
+     *
+     * @var array
+     */
     protected $address;
     
     /**
@@ -138,7 +144,8 @@ class AccountGroup extends AbstractContentHelper
         'accountFax',
         'accountPhone',
         'accountEmail',
-        'imgSource'
+        'imgSource',
+        'member'
     );
 
     /**
@@ -164,7 +171,7 @@ class AccountGroup extends AbstractContentHelper
                 $cardData .= $this->deployRow($this->imgSource, $this->view->images(array('mediaStyle' => '','medias' => $entry->imgSource), $medias));
 
             }
-            $cardData .= $this->deployRow($this->member, $entry->organisation);
+            $cardData .= $this->deployRow($this->member, $entry->organisationExt);
         
             
             if (isset($this->address['grids'])){
