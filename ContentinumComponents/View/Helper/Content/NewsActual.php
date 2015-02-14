@@ -27,43 +27,22 @@
  */
 namespace ContentinumComponents\View\Helper\Content;
 
-use Zend\View\Helper\AbstractHelper;
 
-class NewsActual extends AbstractHelper
+
+class NewsActual extends AbstractNewsHelper
 {
-
-    /**
-     *
-     * @var unknown
-     */
-    private $row = array(
-        'element' => 'ul',
-        'attr' => array(
-            'class' => 'small-block-grid-1 medium-block-grid-2 large-block-grid-3 account-member-list'
-        )
-    )
-    ;
-
-    /**
-     *
-     * @var unknown
-     */
-    private $grid = array(
-        'element' => 'li'
-    )
-    ;
-
-    /**
-     *
-     * @var unknown
-     */
-    private $properties = array(
-        'row',
-        'grid'
-    );
+    const VIEW_TEMPLATE = 'newsactual';
 
     public function __invoke(array $entries, $medias, $template)
     {
+        
+        var_dump(static::VIEW_TEMPLATE);exit;
+        $viewTemplate = $this->view->groupstyles[$this->getLayoutKey()];
+        if (isset($viewTemplate[static::VIEW_TEMPLATE])){
+            $this->setTemplate($viewTemplate[static::VIEW_TEMPLATE]);
+        }        
+        
+        
         $grid = $this->getTemplateProperty('grid', 'element');
         $url = $entries['modulContent']['url'];
         $html = '';
