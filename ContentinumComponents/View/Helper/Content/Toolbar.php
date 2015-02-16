@@ -27,17 +27,17 @@
  */
 namespace ContentinumComponents\View\Helper\Content;
 
-
-
 use ContentinumComponents\Html\HtmlAttribute;
+
 class Toolbar extends AbstractContentHelper
 {
+
     /**
      *
      * @var array
      */
     protected $row;
-    
+
     /**
      *
      * @var array
@@ -45,11 +45,11 @@ class Toolbar extends AbstractContentHelper
     protected $grid;
 
     /**
-     * 
+     *
      * @var array
      */
     protected $elements;
-    
+
     /**
      *
      * @var array
@@ -58,11 +58,11 @@ class Toolbar extends AbstractContentHelper
         'row',
         'grid',
         'elements'
-        
-    );    
-    
+    )
+    ;
+
     /**
-     * 
+     *
      * @param array $entry
      * @param unknown $medias
      * @param unknown $template
@@ -73,35 +73,37 @@ class Toolbar extends AbstractContentHelper
         $this->setTemplate($template);
         $grid = $this->getTemplateProperty('grid', 'element');
         $attr = array();
-        if (false !== ($attr = $this->getTemplateProperty('grid', 'attr')) ){
+        if (false !== ($attr = $this->getTemplateProperty('grid', 'attr'))) {
             $attr = $this->getTemplateProperty('grid', 'attr');
         }
         $html = '';
-        foreach ($this->elements as $element => $row){
-            if (isset($entry[$element])){
-                if (isset($entry[$element]['attr'])){
-                    if (isset($row['attr'])){
-                        $row['attr'] = array_merge($entry[$element]['attr'],$row['attr']);
+        foreach ($this->elements as $element => $row) {
+            if (isset($entry[$element])) {
+                if (isset($entry[$element]['href'])) {
+                    $row['href'] = $row['href'] . $entry[$element]['href'];
+                }
+                if (isset($entry[$element]['attr'])) {
+                    if (isset($row['attr'])) {
+                        $row['attr'] = array_merge($entry[$element]['attr'], $row['attr']);
                     }
                 }
             }
             
-            
             $configure = $row;
-            $html .= $this->view->contentelement($grid,  $this->buildLink($configure)  , $attr );
+            $html .= $this->view->contentelement($grid, $this->buildLink($configure), $attr);
         }
         $row = $this->getTemplateProperty('row', 'element');
         $attr = array();
-        if (false !== ($attr = $this->getTemplateProperty('row', 'attr')) ){
+        if (false !== ($attr = $this->getTemplateProperty('row', 'attr'))) {
             $attr = $this->getTemplateProperty('row', 'attr');
-        } 
-
-        $html = $this->view->contentelement($row,  $html  , $attr );
+        }
+        
+        $html = $this->view->contentelement($row, $html, $attr);
         return $html;
     }
-    
+
     /**
-     * 
+     *
      * @param unknown $link
      * @return string
      */
@@ -109,23 +111,22 @@ class Toolbar extends AbstractContentHelper
     {
         $ln = '<a href="' . $link['href'] . '"';
         
-        if (isset($link['attr'])){
+        if (isset($link['attr'])) {
             $ln .= HtmlAttribute::attributeArray($link['attr']);
         }
         
         $ln .= '>';
         $label = '';
-        if (isset($link['icon'])){
+        if (isset($link['icon'])) {
             $label .= $link['icon'];
-        } 
-        if (isset($link['content'])){
-            if (strlen($label) > 1){
+        }
+        if (isset($link['content'])) {
+            if (strlen($label) > 1) {
                 $label .= ' ';
             }
             $label .= $link['content'];
-        } 
+        }
         $ln .= $label . '</a>';
         return $ln;
-        
     }
 }
