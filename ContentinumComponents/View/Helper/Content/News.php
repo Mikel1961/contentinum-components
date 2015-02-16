@@ -27,123 +27,10 @@
  */
 namespace ContentinumComponents\View\Helper\Content;
 
-use Zend\View\Helper\AbstractHelper;
 use ContentinumComponents\Tools\HandleSerializeDatabase;
 
-class News extends AbstractHelper
+class News extends AbstractNewsHelper
 {
-
-    /**
-     *
-     * @var array
-     */
-    private $row;
-
-    /**
-     *
-     * @var array
-     */
-    private $grid;
-
-    /**
-     *
-     * @var array
-     */
-    private $header;
-
-    /**
-     *
-     * @var array
-     */
-    private $footer;
-    
-    /**
-     * 
-     * @var array
-     */
-    private $media;
-    
-    /**
-     * 
-     * @var array
-     */
-    private $mediateaser;
-    
-    /**
-     * 
-     * @var array
-     */
-    private $mediateaserleft;
-    
-    /**
-     * 
-     * @var array
-     */
-    private $mediateaserright;
-
-    /**
-     *
-     * @var array
-     */
-    private $publishAuthor;
-    
-    /**
-     * 
-     * @var array
-     */
-    private $groupParams;
-    
-    /**
-     * 
-     * @var string
-     */
-    private $groupName;
-
-    /**
-     *
-     * @var array
-     */
-    private $labelReadMore;
-    
-    /**
-     * 
-     * @var integer
-     */
-    private $teaserLandscapeSize;
-    
-    /**
-     * 
-     * @var integer
-     */
-    private $teaserPortraitSize;
-    
-    /**
-     * 
-     * @var integer
-     */
-    private $iTotal = 10;
-    
-    
-    private $toolbar;
-
-    /**
-     * 
-     * @var array
-     */
-    private $properties = array(
-        'row',
-        'grid',
-        'header',
-        'footer',
-        'media',
-        'mediateaserleft',
-        'mediateaserright',
-        'publishAuthor',
-        'labelReadMore',
-        'teaserLandscapeSize',
-        'teaserPortraitSize',
-        'toolbar'
-    );
 
     /**
      * 
@@ -155,15 +42,13 @@ class News extends AbstractHelper
      */
     public function __invoke(array $content, $medias, $template = null, $teasers = true)
     {
-        $this->setTemplate($template);
+        $viewTemplate = $this->view->groupstyles[$this->getLayoutKey()];
+        if (isset($viewTemplate[static::VIEW_TEMPLATE])){
+            $this->setTemplate($viewTemplate[static::VIEW_TEMPLATE]);
+        }   
         
-        $header = $this->getTemplateProperty('header', 'row');
-        $footer = $this->getTemplateProperty('footer', 'row');
-        
-        $newselement = $this->getTemplateProperty('row', 'element');
-        $grid = $this->getTemplateProperty('grid', 'element');
         $cut = true;
-        
+        $labelReadMore = $this->labelReadMore->toArray();
 
         if (false !== $this->view->article && isset($content['entries'][$this->view->article]) ){
             foreach ($content['entries'] as $row){
@@ -173,6 +58,7 @@ class News extends AbstractHelper
                 }                
             }
             $content['entries'] = array($content['entries'][$this->view->article]);
+            $backLink = $this->backlink->toArray();
             $cut = false; 
         }
         $html = '';
@@ -192,21 +78,32 @@ class News extends AbstractHelper
                 if (null == $this->groupName){
                     $this->groupName = $row['groupName'];
                 }
-                $head = '<time>' . $this->view->dateFormat(new \DateTime($row['publishDate']), \IntlDateFormatter::FULL) . '</time>';
-                $head .= $this->formatPublishAuthor($row);
-                $head .= $this->buildToolbar($row, $row['id'], $medias);
-                $head .= '<h2>' . $row['headline'] . '</h2>';
-                $attr = array();
-                if ($header) {
-                    if (isset($header['attr'])) {
-                        $attr = $header['attr'];
-                    }
-                    $newsrow .= $this->view->contentelement($header['element'], $head, $attr);
-                    $attr = array();
-                } else {
-                    $newsrow .= $head;
+
+                
+                $head = '';
+                $head .= $this->deployRow($this->publishDate, $row['publishDate']);
+                if (strlen($row['publishAuthor']) > 1) {
+                    $head .= $this->deployRow($this->publishAuthor, $row['publishAuthor']);
                 }
+                
+                if (null !== $this->toolbar){
+                    $head .= $this->view->contenttoolbar(array('pdf' => array('href' => '/' . $row['id'])),$medias, $this->toolbar->toArray());
+                
+                }
+                
+                $head .= $this->deployRow($this->headline, $row['headline']);
+                $newsrow .= $this->deployRow($this->header, $head);                
+                
+                
+                
                 if (true === $cut){
+                    
+                    $labelReadMore["grid"]["attr"]['href'] = '/' . $this->view->pageurl . '/' . $row['source'];
+                    if ($this->view->category){
+                        $labelReadMore["grid"]["attr"]['href'] .= '/' . $this->view->category;
+                    }                    
+                    
+                    $labelReadMore["grid"]["attr"]['title'] = $row['labelReadMore'] . ' zu ' .  $row['headline'];                    
                     
                     if (isset($row['medias']) && $row['medias'] > 1) {
                         if ('mediateaserright' == $row['htmlwidgets']){
@@ -220,7 +117,7 @@ class News extends AbstractHelper
                     
                     if (strlen($row['contentTeaser']) > 1) {
                         $newsrow .= $row['contentTeaser'];
-                        $newsrow .= $this->readMoreLink($row);
+                        $newsrow .= $this->deployRow($labelReadMore, $row['labelReadMore']);
                     } else {
                         $content = $row['content'];
                         if ($row['numberCharacterTeaser'] > 0 && strlen($content) > $row['numberCharacterTeaser']) {
@@ -229,7 +126,7 @@ class News extends AbstractHelper
                             $content = $content . ' ...</p>';
                         }
                         $newsrow .= $content;
-                        $newsrow .= $this->readMoreLink($row);
+                        $newsrow .= $this->deployRow($labelReadMore, $row['labelReadMore']);
                     }
                 } else {
                     $newsrow .= $row['contentTeaser'];
@@ -254,31 +151,20 @@ class News extends AbstractHelper
                         default:
                             break;
                     }
+
+                    $backLink["grid"]["attr"]['href'] = '/' . $this->view->pageurl . '/' . $row['source'];
+                    if ($this->view->category){
+                        $backLink["grid"]["attr"]['href'] .= '/archive/' . $this->view->category;
+                    }
+                    
+                    $backLink["grid"]["attr"]['title'] = $this->view->translate('Back');                
+                    $foot .= $this->deployRow($backLink, $this->view->translate('Back'));
+                    
+                    if (null !== $this->footer){
+                        $newsrow .= $this->deployRow($this->footer, $foot);
+                    }
                 }
-                
-                
-                if ($footer) {
-                    if (isset($footer['attr'])) {
-                        $attr = $footer['attr'];
-                    }
-                    if (false === $cut){
-                        $newsrow .= $this->backLink($row);
-                    }
-                    $attr = array();
-                } else {
-                    if (false === $cut){
-                        $newsrow .= $this->backLink($row);
-                    }                    
-                }                
-                $attr = array();
-                if ($grid){
-                    if (false !== $this->getTemplateProperty('grid', 'attr')){
-                        $attr = $this->getTemplateProperty('grid', 'attr');
-                    }
-                    $html .= $this->view->contentelement($grid, $newsrow, $attr );
-                } else {
-                    $html .= $newsrow;
-                }
+                $html .= $this->deployRow($this->news,$newsrow);
                 $i++;
                 if ($this->iTotal == $i){
                     break;
@@ -286,8 +172,8 @@ class News extends AbstractHelper
             }
         }
         
-        if (false !== $newselement){
-            $html = $this->view->contentelement($newselement, $html, $this->getTemplateProperty('row', 'attr'));
+        if (null !== $this->wrapper){
+            $html = $this->deployRow($this->wrapper, $html);
         }
         
         if (isset($this->groupParams['headlineImages']) && strlen($this->groupParams['headlineImages']) > 1){
@@ -322,151 +208,5 @@ class News extends AbstractHelper
         } else {
             $this->groupParams = array();
         }
-    }
-
-    /**
-     *
-     * @param unknown $prop
-     * @param unknown $key
-     * @return boolean
-     */
-    protected function getTemplateProperty($prop, $key)
-    {
-        if (isset($this->{$prop}[$key])) {
-            return $this->{$prop}[$key];
-        } else {
-            return false;
-        }
-    }
-
-    protected function setTemplate($template)
-    {
-            foreach ($template as $key => $values) {
-                if (in_array($key, $this->properties)) {
-                    $this->{$key} = $values;
-                }
-            }
-    }
-
-    /**
-     *
-     * @param unknown $row
-     * @return unknown
-     */
-    protected function formatPublishAuthor($row)
-    {
-        if (strlen($row['publishAuthor']) > 1) {
-            if ($this->publishAuthor) {
-                $elm = $this->getTemplateProperty('publishAuthor', 'row');
-                $grid = $this->getTemplateProperty('publishAuthor', 'grid');
-                $publishAuthor = $row['publishAuthor'];
-                if (isset($grid['element'])) {
-                    if (isset($grid['attr'])) {
-                        $attr = $grid['attr'];
-                    }
-                    $publishAuthor = $this->view->contentelement($grid['element'], $publishAuthor, $attr);
-                    $attr = array();
-                }
-                if (isset($elm['attr'])) {
-                    $attr = $elm['attr'];
-                }
-                $publishAuthor = $this->view->contentelement($elm['element'], $publishAuthor, $attr);
-            } else {
-                $publishAuthor = $row['publishAuthor'];
-            }
-            return ' - ' . $publishAuthor;
-        } else {
-            return '';
-        }
-    }
-    
-    /**
-     *
-     * @param unknown $row
-     * @return string
-     */
-    protected function backLink($row)
-    {
-            if ($this->labelReadMore) {
-                $elm = $this->getTemplateProperty('labelReadMore', 'row');
-                $grid = $this->getTemplateProperty('labelReadMore', 'grid');
-                $attr['href'] = '/'. $this->view->pageurl;
-                if ($this->view->category){
-                    $attr['href'] .= '/archive/' . $this->view->category;
-                }
-                $attr['title'] = $this->view->translate('Back');
-                $readMore = $this->view->translate('Back');
-                if (isset($grid['element'])) {
-                    if (isset($grid['attr'])) {
-                        $attr = array_merge($grid['attr'], $attr);
-                    }
-                    $readMore = $this->view->contentelement($grid['element'], $readMore, $attr);
-                    $attr = array();
-                }
-                if (isset($elm['attr'])) {
-                    $attr = $elm['attr'];
-                }
-                $readMore = $this->view->contentelement($elm['element'], $readMore, $attr);
-            } else {
-                $href = '/'. $this->view->pageurl;
-                if ($this->view->category){
-                    $href .= '/archive/' . $this->view->category;
-                }                
-                $readMore = '<a href="' . $href . '" title="'. $this->view->translate('Back')  .'">'. $this->view->translate('Back')  .'</a>';
-            }
-            return $readMore;
-    }    
-
-    /**
-     *
-     * @param unknown $row
-     * @return string
-     */
-    protected function readMoreLink($row)
-    {
-        if (strlen($row['labelReadMore']) > 1) {
-            if ($this->labelReadMore) {
-                $elm = $this->getTemplateProperty('labelReadMore', 'row');
-                $grid = $this->getTemplateProperty('labelReadMore', 'grid');
-                $attr['href'] = '/'. $this->view->pageurl . '/' . $row['source'];
-                if ($this->view->category){
-                    $attr['href'] .= '/' . $this->view->category;
-                }
-                $attr['title'] = $row['labelReadMore'] . ' ' . $row['headline'];
-                $readMore = $row['labelReadMore'];
-                if (isset($grid['element'])) {
-                    if (isset($grid['attr'])) {
-                        $attr = array_merge($grid['attr'], $attr);
-                    }
-                    $readMore = $this->view->contentelement($grid['element'], $readMore, $attr);
-                    $attr = array();
-                }
-                if (isset($elm['attr'])) {
-                    $attr = $elm['attr'];
-                }
-                $readMore = $this->view->contentelement($elm['element'], $readMore, $attr);
-            } else {
-                $readMore = '<a href="/' . $row['source'] . '" title="' . $row['labelReadMore'] . ' ' . $row['headline'] . '">';
-                $readMore .= $row['labelReadMore'] . '</a>';
-            }
-            return $readMore;
-        } else {
-            return '';
-        }
-    }
-    
-    
-    
-    private function buildToolbar($row, $id, $medias)
-    {
-        $html = '';
-        if (null !== $this->toolbar){
-            $toolbar = $this->toolbar;
-            if ( isset($toolbar['pdf']) ){
-                $toolbar['pdf']['href'] = '/pdf/news/' . $id;
-            }
-            $html = $this->view->contenttoolbar(array(),$medias, $toolbar); 
-        }
-        return $html;
     }
 }

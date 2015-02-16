@@ -36,112 +36,134 @@ abstract class AbstractNewsHelper extends AbstractContentHelper
      *
      * @var array
      */
-    private $row;
+    protected $wrapper;
     
     /**
      *
      * @var array
      */
-    private $grid;
+    protected $news;
     
     /**
      *
      * @var array
      */
-    private $header;
+    protected $header;
+    
+    
+    /**
+     * 
+     * @var array
+     */
+    protected $headline;
     
     /**
      *
      * @var array
      */
-    private $footer;
+    protected $footer;
     
     /**
      *
      * @var array
      */
-    private $media;
+    protected $media;
     
     /**
      *
      * @var array
      */
-    private $mediateaser;
+    protected $mediateaser;
     
     /**
      *
      * @var array
      */
-    private $mediateaserleft;
+    protected $mediateaserleft;
     
     /**
      *
      * @var array
      */
-    private $mediateaserright;
+    protected $mediateaserright;
     
     /**
      *
      * @var array
      */
-    private $publishAuthor;
+    protected $publishAuthor;
+    
+    /**
+     * 
+     * @var array
+     */
+    protected $publishDate;
     
     /**
      *
      * @var array
      */
-    private $groupParams;
+    protected $groupParams;
     
     /**
      *
      * @var string
      */
-    private $groupName;
+    protected $groupName;
     
     /**
      *
      * @var array
      */
-    private $labelReadMore;
+    protected $labelReadMore;
+    
+    /**
+     * 
+     * @var array
+     */
+    protected $backlink;
     
     /**
      *
      * @var integer
      */
-    private $teaserLandscapeSize;
+    protected $teaserLandscapeSize;
     
     /**
      *
      * @var integer
      */
-    private $teaserPortraitSize;
+    protected $teaserPortraitSize;
     
     /**
      *
      * @var integer
      */
-    private $iTotal = 10;
+    protected $iTotal = 10;
     
     /**
      * 
      * @var unknown
      */
-    private $toolbar;
+    protected $toolbar;
     
     /**
      *
      * @var array
      */
-    private $properties = array(
-        'row',
-        'grid',
+    protected $properties = array(
+        'wrapper',
+        'news',
         'header',
+        'headline',
         'footer',
         'media',
         'mediateaserleft',
         'mediateaserright',
         'publishAuthor',
+        'publishDate',
         'labelReadMore',
+        'backlink',
         'teaserLandscapeSize',
         'teaserPortraitSize',
         'toolbar'

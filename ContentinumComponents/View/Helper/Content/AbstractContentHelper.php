@@ -136,7 +136,10 @@ abstract class AbstractContentHelper extends AbstractHelper
         }
     } 
 
-    
+    /**
+     * Get template as array
+     * @return multitype:NULL
+     */
     protected function getTemplate()
     {
         $template = array();
@@ -152,18 +155,37 @@ abstract class AbstractContentHelper extends AbstractHelper
      * @param unknown $content
      * @param string $beforeGrid
      */
+    /**
+     * Format a content row
+     * @param unknown $pattern
+     * @param unknown $content
+     * @param string $beforeGrid
+     */
     protected function deployRow($pattern, $content, $beforeGrid = '')
     {
         $html = '';
         if (null !== $pattern){
-            $pattern = $pattern->toArray();
+            if (! is_array($pattern)){
+                $pattern = $pattern->toArray();
+            }
             $html .= $beforeGrid;
             if (isset($pattern['grid'])){
+                if (isset($pattern['grid']['format'])){
+                    $content = $this->formatContent($pattern['grid']['format'], $content);
+                }
+                
                 $attr = array();
                 
                 if (isset($pattern['grid']['attr']) && !empty($pattern['grid']['attr'])){
                     $attr = $pattern['grid']['attr'];
-                    $attr = $this->deployAttrHref($attr, $content);
+                    if ( isset($pattern['grid']['label']) ){
+                        if ('content' == $pattern['grid']['label']){
+                            $href = '';
+                        }
+                    } else {
+                        $href = $content; 
+                    }
+                    $attr = $this->deployAttrHref($attr, $href);
                 }
                 $before = '';
                 $after = '';
@@ -176,10 +198,8 @@ abstract class AbstractContentHelper extends AbstractHelper
                 $html .= $this->view->contentelement($pattern['grid']['element'],$before . $content . $after ,$attr);
             }
             
-            
             if (isset($pattern['row'])){
                 $attr = array();
-                
                 if (isset($pattern['row']['attr']) && !empty($pattern['row']['attr'])){
                     $attr = $pattern['row']['attr'];
                 }
@@ -190,8 +210,7 @@ abstract class AbstractContentHelper extends AbstractHelper
                 }  
                 if (isset($pattern['row']['content:before'])){
                     $before = $pattern['row']['content:before'];
-                }                   
-                
+                }
                 $html = $this->view->contentelement($pattern['row']['element'],$before . $html. $after,$attr);                
             }
         }
@@ -221,6 +240,26 @@ abstract class AbstractContentHelper extends AbstractHelper
             $attr['href'] = $attr['href'] . $content;
         }
         return $attr;
+    }
+
+    /**
+     * format or filter content
+     * @param unknown $format
+     * @param unknown $content
+     * @return unknown
+     */
+    protected function formatContent($format, $content)
+    {
+        if (isset($format['dateFormat'])) {
+            switch ($format['dateFormat']['attr']) {
+                case 'FULL':
+                default:                    
+                    $content = $this->view->dateFormat(new \DateTime($content), \IntlDateFormatter::FULL);
+                    break;
+            }
+        }
+        
+        return $content;
     }
     
 }

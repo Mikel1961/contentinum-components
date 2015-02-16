@@ -27,122 +27,68 @@
  */
 namespace ContentinumComponents\View\Helper\Content;
 
-
-
 class NewsActual extends AbstractNewsHelper
 {
+
     const VIEW_TEMPLATE = 'newsactual';
 
     public function __invoke(array $entries, $medias, $template)
     {
-        
-        var_dump(static::VIEW_TEMPLATE);exit;
         $viewTemplate = $this->view->groupstyles[$this->getLayoutKey()];
-        if (isset($viewTemplate[static::VIEW_TEMPLATE])){
+        if (isset($viewTemplate[static::VIEW_TEMPLATE])) {
             $this->setTemplate($viewTemplate[static::VIEW_TEMPLATE]);
-        }        
+        }
         
+        $labelReadMore = $this->labelReadMore->toArray();
         
-        $grid = $this->getTemplateProperty('grid', 'element');
         $url = $entries['modulContent']['url'];
         $html = '';
         foreach ($entries['modulContent']['news'] as $entry) {
             if (0 === $entry->webContent->overwrite) {
-                $html .= '<article class="news-article-actual">';
-                $head = '<time>' . $this->view->dateFormat(new \DateTime($entry->webContent->publishDate), \IntlDateFormatter::FULL) . '</time>';
+                
+                $article = '';
+                $head = '';
+                $head .= $this->deployRow($this->publishDate, $entry->webContent->publishDate);
                 if (strlen($entry->webContent->publishAuthor) > 1) {
-                    $head .= '- <span class="news-article-author">' . $entry->webContent->publishAuthor . '</span>';
+                    $head .= $this->deployRow($this->publishAuthor, $entry->webContent->publishAuthor);
                 }
-                $head .= $this->buildToolbar($entry, $entry->id, $medias);
-                $head .= '<h2>' . $entry->webContent->headline . '</h2>';
-                $html .= $this->newsheader($head);
+                
+                if (null !== $this->toolbar) {
+                    $head .= $this->view->contenttoolbar(array(
+                        'pdf' => array(
+                            'href' => '/' . $entry->webContent->id
+                        )
+                    ), $medias, $this->toolbar->toArray());
+                }
+                
+                $head .= $this->deployRow($this->headline, $entry->webContent->headline);
+                $article .= $this->deployRow($this->header, $head);
+                
+                $labelReadMore["grid"]["attr"]['href'] = '/' . $url . '/' . $entry->webContent->source;
+                $labelReadMore["grid"]["attr"]['title'] = $entry->webContent->labelReadMore . ' zu ' . $entry->webContent->headline;
                 
                 if (strlen($entry->webContent->contentTeaser) > 1) {
-                    $html .= $entry->webContent->contentTeaser;
-                    $html .= $this->readMoreLink($entry,$url);
+                    $article .= $entry->webContent->contentTeaser;
+                    $article .= $this->deployRow($labelReadMore, $entry->webContent->labelReadMore);
                 } else {
                     $content = $entry->webContent->content;
-                    if (strlen($entry->webContent->numberCharacterTeaser) > 0 && strlen($content) > $entry->webContent->numberCharacterTeaser) {
+                    if ($entry->webContent->numberCharacterTeaser > 0 && strlen($content) > $entry->webContent->numberCharacterTeaser) {
                         $content = substr($content, 0, $entry->webContent->numberCharacterTeaser);
                         $content = substr($content, 0, strrpos($content, " "));
                         $content = $content . ' ...</p>';
+                        $article .= $content;
+                        $article .= $this->deployRow($labelReadMore, $entry->webContent->labelReadMore);
                     }
-                    $html .= $content;
-                    $html .= $this->readMoreLink($entry,$url);
                 }
-                $html .= '</article>';
+                
+                $html .= $this->deployRow($this->news, $article);
             }
         }
-        return '<section class="news">' .  $html . '</section>';
-    }
-
-    /**
-     *
-     * @param unknown $row
-     * @return string
-     */
-    protected function readMoreLink($entry,$url)
-    {
-        if (strlen($entry->webContent->labelReadMore) > 1) {
-            
-            $readMore = '<p class="news-article-readmore"><a class="button" href="/'.$url.'/'.$entry->webContent->source.'" title="' . $entry->webContent->labelReadMore . ' ' . $entry->webContent->headline . '">';
-            $readMore .= $entry->webContent->labelReadMore . '</a></p>';
-            
-            return $readMore;
-        } else {
-            return '';
+        
+        if (null !== $this->wrapper) {
+            $html = $this->deployRow($this->wrapper, $html);
         }
-    }
-
-    protected function newsheader($str)
-    {
-        return '<header class="news-article-header">' . $str . '</header>';
-    }
-
-    /**
-     *
-     * @param unknown $prop
-     * @param unknown $key
-     * @return boolean
-     */
-    protected function getTemplateProperty($prop, $key)
-    {
-        if (isset($this->{$prop}[$key])) {
-            return $this->{$prop}[$key];
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     *
-     * @param unknown $template
-     */
-    protected function setTemplate($template)
-    {
-        if (null !== $template) {
-            
-            foreach ($template as $key => $values) {
-                if (in_array($key, $this->properties)) {
-                    $this->{$key} = $values;
-                }
-            }
-        }
-    }
-
-    protected function unsetProperties()
-    {
-        foreach ($this->properties as $prop) {
-            $this->{$prop} = null;
-        }
-    }
-    
-    private function buildToolbar($row, $id, $medias)
-    {
-        $html = '<ul class="inline-list right">';
-        $html .= '<li class="toolbar-list-element"><a title="Diesen Artikel als Link versenden" href="#"><i class="fa fa-envelope"> </i></a></li>';
-        $html .= '<li class="toolbar-list-element"><a title="Diesen Artikel als PDF herunterladen" href="#"><i class="fa fa-download"> </i></a></li>';
-        $html .= '<li class="toolbar-list-element"><a title="Diesen Artikel auf Facebook liken" href="#"><i class="fa fa-facebook"> </i></a></li></ul>';
+        
         return $html;
-    }    
+    }
 }
