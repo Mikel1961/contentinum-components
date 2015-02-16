@@ -50,14 +50,13 @@ class News extends AbstractNewsHelper
         $cut = true;
         $labelReadMore = $this->labelReadMore->toArray();
 
-        if (false !== $this->view->article && isset($content['entries'][$this->view->article]) ){
-            foreach ($content['entries'] as $row){
-                if ('1' === $row['id']) {
-                    $this->convertParams($row['groupParams']);
-                    break;
-                }                
+        if (false !== $this->view->article && ! empty($this->view->articlecontent) ){
+            foreach($this->view->articlecontent as $entry){
+                $this->groupName = $entry->name;
+                $this->convertParams($entry->groupParams);
+                $content['entries'] = array($entry->webContent->toArray()); 
+                break;
             }
-            $content['entries'] = array($content['entries'][$this->view->article]);
             $backLink = $this->backlink->toArray();
             $cut = false; 
         }
@@ -107,9 +106,9 @@ class News extends AbstractNewsHelper
                     
                     if (isset($row['medias']) && $row['medias'] > 1) {
                         if ('mediateaserright' == $row['htmlwidgets']){
-                            $mediaTemplate = $this->mediateaserright;
+                            $mediaTemplate = $this->mediateaserright->toArray();
                         } else {
-                            $mediaTemplate = $this->mediateaserleft;
+                            $mediaTemplate = $this->mediateaserleft->toArray();
                         }
                         $setSizes = array('landscape' => $this->teaserLandscapeSize, 'portrait' => $this->teaserPortraitSize);
                         $newsrow .= $this->view->images($row, $medias, $mediaTemplate, $setSizes);
@@ -131,7 +130,7 @@ class News extends AbstractNewsHelper
                 } else {
                     $newsrow .= $row['contentTeaser'];
                     if (isset($row['medias']) && $row['medias'] > 1) {
-                        $newsrow .= $this->view->images($row, $medias, $this->media);
+                        $newsrow .= $this->view->images($row, $medias, $this->media->toArray());
                     }                    
                     $newsrow .= $row['content'];
                     
