@@ -152,13 +152,13 @@ class News extends AbstractNewsHelper
                             break;
                     }
 
-                    $backLink["grid"]["attr"]['href'] = '/' . $this->view->pageurl . '/' . $row['source'];
+                    $backLink["grid"]["attr"]['href'] = '/' . $this->view->pageurl;
                     if ($this->view->category){
                         $backLink["grid"]["attr"]['href'] .= '/archive/' . $this->view->category;
                     }
                     
                     $backLink["grid"]["attr"]['title'] = $this->view->translate('Back');                
-                    $foot .= $this->deployRow($backLink, $this->view->translate('Back'));
+                    $foot = $this->deployRow($backLink, $this->view->translate('Back'));
                     
                     if (null !== $this->footer){
                         $newsrow .= $this->deployRow($this->footer, $foot);
