@@ -54,7 +54,9 @@ class News extends AbstractNewsHelper
             foreach($this->view->articlecontent as $entry){
                 $this->groupName = $entry->name;
                 $this->convertParams($entry->groupParams);
-                $content['entries'] = array($entry->webContent->toArray()); 
+                $entries = $entry->webContent->toArray();
+                $entries['medias'] = $entries['webMediasId']->id;
+                $content['entries'] = array($entries);  
                 break;
             }
             $backLink = $this->backlink->toArray();
