@@ -64,6 +64,16 @@ class NewsActual extends AbstractNewsHelper
                 $head .= $this->deployRow($this->headline, $entry->webContent->headline);
                 $article .= $this->deployRow($this->header, $head);
                 
+                if ( 1 !== $entry->webContent->webMediasId->id){
+                    if ('mediateaserright' == $entry->webContent->htmlwidgets){
+                        $mediaTemplate = $this->mediateaserright->toArray();
+                    } else {
+                        $mediaTemplate = $this->mediateaserleft->toArray();
+                    }
+                    $setSizes = array('landscape' => $this->teaserLandscapeSize, 'portrait' => $this->teaserPortraitSize);
+                    $newsrow .= $this->view->images(array('medias' => $entry->webContent->webMediasId->id, 'mediaStyle' => ''), $medias, $mediaTemplate, $setSizes);                    
+                }
+                
                 $labelReadMore["grid"]["attr"]['href'] = '/' . $url . '/' . $entry->webContent->source;
                 $labelReadMore["grid"]["attr"]['title'] = $entry->webContent->labelReadMore . ' zu ' . $entry->webContent->headline;
                 
