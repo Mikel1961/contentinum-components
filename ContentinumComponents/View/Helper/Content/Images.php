@@ -79,6 +79,14 @@ class Images extends AbstractHelper
         'content'
     );
 
+    /**
+     * 
+     * @param unknown $article
+     * @param unknown $medias
+     * @param string $template
+     * @param string $setSize
+     * @return string
+     */
     public function __invoke($article, $medias, $template = null, $setSize = null)
     {
         $this->setTemplate($template);
@@ -168,6 +176,11 @@ class Images extends AbstractHelper
         return $content;
     }
 
+    /**
+     * 
+     * @param unknown $mediaMetas
+     * @return unknown|boolean
+     */
     protected function caption($mediaMetas)
     {
         if (isset($mediaMetas['caption']) && strlen($mediaMetas['caption']) > 1) {
@@ -177,12 +190,24 @@ class Images extends AbstractHelper
         }
     }
     
+    /**
+     * 
+     * @param unknown $row
+     * @param unknown $grid
+     * @param unknown $img
+     * @param unknown $caption
+     * @param unknown $mediaStyle
+     * @return string
+     */
     protected function format($row, $grid, $img,$caption, $mediaStyle)
     {
         $html = '<' . $row;
         $attr = $this->getTemplateProperty('row', 'attr');
 
         if (strlen($mediaStyle) > 1){
+            if (is_object($attr)){
+                $attr = $attr->toArray();
+            }
             $class = '';
             if (isset($attr['class'])){
                 $class = $attr['class'] . ' ';

@@ -54,24 +54,32 @@ class NewsActual extends AbstractNewsHelper
                 }
                 
                 if (null !== $this->toolbar) {
-                    $head .= $this->view->contenttoolbar(array(
-                        'pdf' => array(
-                            'href' => '/' . $entry->webContent->id
-                        )
-                    ), $medias, $this->toolbar->toArray());
+                    $links['pdf'] = array(
+                        'href' => '/' . $entry->webContent->id
+                    );
+                    $links['facebook'] = array(
+                        'href' => '?u=' . urlencode('http://' . $this->view->host . '/' . $url . '/' . $entry->webContent->source)
+                    );
+                    $head .= $this->view->contenttoolbar($links, $medias, $this->toolbar->toArray());
                 }
                 
                 $head .= $this->deployRow($this->headline, $entry->webContent->headline);
                 $article .= $this->deployRow($this->header, $head);
                 
-                if ( 1 !== $entry->webContent->webMediasId->id){
-                    if ('mediateaserright' == $entry->webContent->htmlwidgets){
+                if (1 !== $entry->webContent->webMediasId->id) {
+                    if ('mediateaserright' == $entry->webContent->htmlwidgets) {
                         $mediaTemplate = $this->mediateaserright->toArray();
                     } else {
                         $mediaTemplate = $this->mediateaserleft->toArray();
                     }
-                    $setSizes = array('landscape' => $this->teaserLandscapeSize, 'portrait' => $this->teaserPortraitSize);
-                    $newsrow .= $this->view->images(array('medias' => $entry->webContent->webMediasId->id, 'mediaStyle' => ''), $medias, $mediaTemplate, $setSizes);                    
+                    $setSizes = array(
+                        'landscape' => $this->teaserLandscapeSize,
+                        'portrait' => $this->teaserPortraitSize
+                    );
+                    $article .= $this->view->images(array(
+                        'medias' => $entry->webContent->webMediasId->id,
+                        'mediaStyle' => ''
+                    ), $medias, $mediaTemplate, $setSizes);
                 }
                 
                 $labelReadMore["grid"]["attr"]['href'] = '/' . $url . '/' . $entry->webContent->source;
