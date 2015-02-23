@@ -60,6 +60,9 @@ class NewsActual extends AbstractNewsHelper
                     $links['facebook'] = array(
                         'href' => '?u=' . urlencode('http://' . $this->view->host . '/' . $url . '/' . $entry->webContent->source)
                     );
+                    $links['sendmail'] = array(
+                        'href' => '/' . $entry->webContent->id
+                    );                    
                     $head .= $this->view->contenttoolbar($links, $medias, $this->toolbar->toArray());
                 }
                 

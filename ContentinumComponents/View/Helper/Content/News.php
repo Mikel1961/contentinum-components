@@ -88,6 +88,7 @@ class News extends AbstractNewsHelper
                 }
                 
                 if (null !== $this->toolbar){
+                    $links['sendmail'] = array('href' => '/' . $row['id']);
                     $links['pdf'] = array('href' => '/' . $row['id']);
                     $links['facebook'] = array('href' => '?u=' .  urlencode('http://' . $this->view->host . '/' . $this->view->pageurl . '/' . $row['source'])  );                    
                     $head .= $this->view->contenttoolbar($links,$medias, $this->toolbar->toArray());
