@@ -29,6 +29,9 @@ namespace ContentinumComponents\Forms\Elements;
 
 use Zend\Form\Element;
 use Zend\InputFilter\InputProviderInterface;
+use Zend\Validator\Explode as ExplodeValidator;
+use Zend\Validator\Regex as RegexValidator;
+use Zend\Validator\ValidatorInterface;
 
 class Tel  extends Element implements InputProviderInterface
 {
@@ -39,7 +42,104 @@ class Tel  extends Element implements InputProviderInterface
      */
     protected $attributes = array(
         'type' => 'tel',
-    );    
+    ); 
+
+    /**
+     * @var ValidatorInterface
+     */
+    protected $validator;
+    
+    /**
+     * @var ValidatorInterface
+     */
+    protected $telValidator;
+    
+    /**
+     * Get primary validator
+     *
+     * @return ValidatorInterface
+     */
+    public function getValidator()
+    {
+        if (null === $this->validator) {
+            $telValidator = $this->getTelValidator();
+    
+            $multiple = (isset($this->attributes['multiple']))
+            ? $this->attributes['multiple'] : null;
+    
+            if (true === $multiple || 'multiple' === $multiple) {
+                $this->validator = new ExplodeValidator(array(
+                    'validator' => $telValidator,
+                ));
+            } else {
+                $this->validator = $telValidator;
+            }
+        }
+    
+        return $this->validator;
+    }
+    
+    /**
+     * Sets the primary validator to use for this element
+     *
+     * @param  ValidatorInterface $validator
+     * @return Email
+     */
+    public function setValidator(ValidatorInterface $validator)
+    {
+        $this->validator = $validator;
+        return $this;
+    }
+    
+    /**
+     * Get the tel validator to use for multiple or single
+     * tel addresses.
+     *
+     * Note from the HTML5 Specs regarding the regex:
+     *
+     * "This requirement is a *willful* violation of RFC 5322, which
+     * defines a syntax for e-mail addresses that is simultaneously
+     * too strict (before the "@" character), too vague
+     * (after the "@" character), and too lax (allowing comments,
+     * whitespace characters, and quoted strings in manners
+     * unfamiliar to most users) to be of practical use here."
+     *
+     * The default Regex validator is in use to match that of the
+     * browser validation, but you are free to set a different
+     * (more strict) tel validator such as Zend\Validator\Email
+     * if you wish.
+     *
+     * @return ValidatorInterface
+     */
+    public function getTelValidator()
+    {
+        if (null === $this->telValidator) {
+            
+            $Land = '((\+[0-9]{2,4}([ -][0-9]+?[ -]| ?\([0-9]+?\) ?))';
+            $Ort = '|(\(0[0-9 ]+?\) ?)|(0[0-9]+? ?( |-|\/) ?))';
+            $Nr = '([0-9]+?[ \/-]?)+?[0-9]';
+            $regEx = '/^'.$Land.$Ort.$Nr.'$/';         
+            
+            
+            $this->telValidator = new RegexValidator(
+                $regEx
+            );
+        }
+        return $this->telValidator;
+    }
+    
+    /**
+     * Sets the tel validator to use for multiple or single
+     * tel addresses.
+     *
+     * @param  ValidatorInterface $validator
+     * @return Email
+     */
+    public function setEmailValidator(ValidatorInterface $validator)
+    {
+        $this->telValidator = $validator;
+        return $this;
+    }    
     
 	/**
 	 *  (non-PHPdoc)
