@@ -123,15 +123,33 @@ class FormBuild extends AbstractHelper
     private function renderElement($element)
     {
         $html = '';
+        $htmlLabel = '';
+        $htmlLabelText = '';
+        $htmlLabelEnd = '';
         $error = '';
         $type = $element->getAttribute('type');
         $formLabel = $this->view->plugin('formLabel');
         if ($element->getOption('label')) {
-            $html .= $formLabel->openTag();
-            $html .= $this->view->translate($element->getOption('label'));
-            $html .= $formLabel->closeTag();
+            $htmlLabel = '<label';
+            if (true == ($labelAttributes = $element->getOption('label_attributes'))) {
+                $htmlLabel .= ' ' . HtmlAttribute::attributeArray($labelAttributes);
+            }
+            $htmlLabel .= '>';
+            $htmlLabelText = $this->view->translate($element->getOption('label'));
+            $htmlLabelEnd = '</label>';
         }
-        $html .= $this->view->formElement($element);
+        $htmlElement = $this->view->formElement($element);
+        switch ($type){
+            case 'checkbox':
+                $html = $htmlLabel . $htmlElement . $htmlLabelText . $htmlLabelEnd;
+                break;
+            default:
+                $html = $htmlLabel . $htmlLabelText . $htmlLabelEnd . $htmlElement;
+                break;
+        }
+        
+        
+        
         if ($type == 'submit') {
             $abortDeco = $element->getOption('deco-abort-btn');
             $label = 'Button';
