@@ -38,24 +38,30 @@ namespace ContentinumComponents\Crypt;
  */
 class GeneratePassword
 {
-	public static $letters = array("a" , "b" , "c" , "d" , "e" , "f" , "g" , "h" , "k" , "m" , "n" , "p" , "q" , "r" , "s" , "t" , "u" , "v" , "w" , "x" , "y" , "z", "A" , "B" , "C" , "D" , "E" , "F" , "G" , "H" , "K" , "M" , "N" , "P" , "Q" , "R" , "S" , "T" , "U" , "V" , "W" , "X" , "Y" , "Z");
-	public static $numbers = array("2" , "3" , "4" , "5" , "6" , "7" , "8" , "9");
-	public static $character = array("#" , "!" , "%" , "&" , "=" , "?");
-	/**
-	 * Get passwort
-	 * @param unknown_type $laenge
-	*/
-	public static function get ($laenge = 10)
-	{
-		for ($i = 0, $Passwort = ""; strlen($Passwort) < $laenge; $i ++) {
-			if (rand(0, 2) == 0 && isset( self::$letters )) {
-				$Passwort .= self::$letters[rand(0, count(self::$letters))];
-			} elseif (rand(0, 2) == 1 && isset(self::$numbers)) {
-				$Passwort .= self::$numbers[rand(0, count(self::$numbers))];
-			} elseif (rand(0, 2) == 2 && isset(self::$character)) {
-				$Passwort .= self::$character[rand(0, count(self::$character))];
-			}
-		}
-		return $Passwort;
-	}
+
+    public static $pool = array(
+        '1' => 'qwertzupasdfghkyxcvbnm',
+        '2' => '23456789',
+        '3' => 'WERTZUPLKJHGFDSAYXCVBNM',
+        '4' => '#*+?!'
+    );
+
+    /**
+     * Get passwort
+     * 
+     * @param unknown_type $laenge
+     */
+    public static function get($iPassword = 8)
+    {
+        $pool = self::$pool;
+        shuffle($pool);       
+        $pool = implode('', $pool);        
+        $password = '';
+        srand((double) microtime() * 1000000);       
+        for ($index = 0; $index < $iPassword; $index ++) 
+        {        
+            $password .= substr($pool, (rand() % (strlen($pool))), 1);
+        }
+        return $password;
+    }
 }
