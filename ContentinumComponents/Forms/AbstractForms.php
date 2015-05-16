@@ -41,6 +41,7 @@ use ContentinumComponents\Entity\Exeption\InvalidValueEntityException;
 abstract class AbstractForms 
 {
 	const DECO_FORM = 'deco-form';
+	const DECO_ATTR_ELEMENTS = 'deco-attr-elements';
 	const DECO_ROW_BUTTON = 'deco-row-button';
 	const DECO_ROW_RADIO = 'deco-row-radio';
 	const DECO_ROW_CHECK = 'deco-row-check';
@@ -57,7 +58,7 @@ abstract class AbstractForms
 	 * Decorator keys storage
 	 * @var array
 	 */
-	protected $decoStorageKeys = array('deco-form' => self::DECO_FORM, 'deco-row-button' => self::DECO_ROW_BUTTON, 'deco-row-radio' => self::DECO_ROW_RADIO, 'deco-row-check' => self::DECO_ROW_CHECK, 'deco-row-select' => self::DECO_ROW_SELECT, 'deco-row' => self::DECO_ROW, 'deco-tab-row' => self::DECO_TAB_ROW, 'deco-element-row' => self::DECO_ELM_ROW , 'deco-desc' => self::DECO_DESC, 'deco-error' => self::DECO_ERROR, 'deco-abort-btn' => self::DECO_ABORT_BTN);
+	protected $decoStorageKeys = array('deco-form' => self::DECO_FORM, 'deco-attr-elements' => self::DECO_ATTR_ELEMENTS, 'deco-row-button' => self::DECO_ROW_BUTTON, 'deco-row-radio' => self::DECO_ROW_RADIO, 'deco-row-check' => self::DECO_ROW_CHECK, 'deco-row-select' => self::DECO_ROW_SELECT, 'deco-row' => self::DECO_ROW, 'deco-tab-row' => self::DECO_TAB_ROW, 'deco-element-row' => self::DECO_ELM_ROW , 'deco-desc' => self::DECO_DESC, 'deco-error' => self::DECO_ERROR, 'deco-abort-btn' => self::DECO_ABORT_BTN);
 	
 	/**
 	 * \Zend\Form\Factory
@@ -102,6 +103,7 @@ abstract class AbstractForms
 	 * @var array
 	 */
 	protected $decorators = array( 'deco-row' => array('tag' => 'div', 'attributes' => array('class' => 'form-element')), 
+	                               'deco-attr-elements' => array('class' => 'elm'),
 	                               'deco-tab-row' => array('tag' => 'p'),
 			                       'deco-desc' => array('tag' => 'span', 'attributes' => array('class' => 'desc')),
 	                               'deco-error' => array('tag' => 'span', 'separator' => '<br />', 'attributes' => array('class' => 'error', 'role' => 'alert')),
