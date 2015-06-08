@@ -42,15 +42,13 @@ class Process extends Worker
      * @var boolen
      */
     private $handleSequence = true;
-
+    
 	/**
 	 * @see \Contentinum\Mapper\Worker::save()
 	 */
 	public function save($datas, $entity = null, $stage = '', $id = null)
 	{
-		
 		$entity = $this->handleEntity($entity);
-		 
 		if (null === ($id = $entity->getPrimaryValue()   )) {
 		    if (true === $this->handleSequence ){ 
 			     $datas[$entity->getPrimaryKey()] = $this->sequence() + 1;
@@ -66,6 +64,31 @@ class Process extends Worker
 			parent::save($datas, $entity, self::SAVE_UPDATE);
 		}
 	}
+	
+	/**
+	 * @see \Contentinum\Mapper\Worker::save()
+	 */
+	public function batchSave($datas, $entity = null, $stage = '', $id = null)
+	{
+	
+	    $entity = $this->handleEntity($entity);
+	    	
+	    if (null === ($id = $entity->getPrimaryValue()   )) {
+	        if (true === $this->handleSequence ){
+	            $result = $this->fetchSequence();
+	            $datas[$entity->getPrimaryKey()] = $result['sequence'] + 1;
+	        }
+	        // log if available
+	        if (true === $this->hasLogger()) {
+	            $this->logger->info(' next insert id for ' . $this->getEntityName () . ' ' . $datas[$entity->getPrimaryKey()] );
+	        }
+	        $datas = $this->foreignMapper($datas);
+	        parent::save($datas, $entity, self::SAVE_INSERT,$datas[$entity->getPrimaryKey()]);
+	    } else {
+	        $datas = $this->foreignMapper($datas);
+	        parent::save($datas, $entity, self::SAVE_UPDATE);
+	    }
+	}	
 	
 	/**
 	 * Delete entry if not publish

@@ -413,9 +413,16 @@ class Worker extends AbstractMapper
 	 * @param string $column        	
 	 * @return string number last insert id
 	 */
-	public function sequence( $key = null, $value = null, $column = 'id') 
+	public function sequence( $key = null, $value = null, $column = 'id',$clear = false) 
 	{
-		$em = $this->getStorage();
+	    
+	    $em = $this->getStorage();
+	    
+	    if (true === $clear) {
+	        $em->clear($this->getEntityName());
+	    }		
+	    
+	    
 		$builder = $em->createQueryBuilder ();
 		$builder->add ( 'select', 'MAX(main.' . $column . ') AS number' );
 		$builder->add ( 'from', $this->getEntityName() . ' AS main' );
@@ -426,6 +433,24 @@ class Worker extends AbstractMapper
 		$query = $builder->getQuery ();
 		// query
 		return $query->getSingleScalarResult ();
+	}
+	
+	/**
+	 * Native sql: Get the last primary id value
+	 *        	
+	 * @param string $key        	
+	 * @param string $value        	
+	 * @param string $column        	
+	 * @return string number last insert id
+	 */
+	public function fetchSequence($key = null, $value = null, $column = 'id')
+	{
+	    $em = $this->getStorage();
+	    $em->clear($this->getEntityName());
+	    $tableName = $em->getClassMetadata($this->getEntityName())->getTableName();
+	    $sql = "SELECT MAX({$column}) AS sequence FROM {$tableName}";
+	    $conn = $em->getConnection();
+	    return $conn->query($sql)->fetch();
 	}
 	
 	/**
