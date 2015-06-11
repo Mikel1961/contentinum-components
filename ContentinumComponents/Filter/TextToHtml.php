@@ -62,7 +62,7 @@ class TextToHtml implements FilterInterface
      * (non-PHPdoc)
      * @see \Zend\Filter\FilterInterface::filter()
      */
-	public function filter($value) 
+	public function filter($value, $tag = 'p') 
 	{
 		$grafs = explode("\n\n", $value );
 		for ($i = 0, $j = count($grafs); $i < $j; $i ++) {
@@ -70,7 +70,7 @@ class TextToHtml implements FilterInterface
 			$grafs[$i] = preg_replace('/[^@\s]+@([-a-z0-9]+\.)+[a-z]{2,}/i', '<a href="mailto:$1">$1</a>', $grafs[$i]);
 			$grafs[$i] = preg_replace('/€/', '&euro;', $grafs[$i]);
 			$grafs[$i] = preg_replace('/\r/', '<br />', $grafs[$i]);
-			$grafs[$i] = '<p>' . $grafs[$i] . '</p>';
+			$grafs[$i] = '<'.$tag.'>' . $grafs[$i] . '</'.$tag.'>';
 		}
 		return join("\n\n", $grafs);		
 	}
