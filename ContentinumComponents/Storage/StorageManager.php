@@ -703,6 +703,34 @@ class StorageManager
         
         return;
     }
+    
+    /**
+     * Build directory tree array
+     * @param unknown $dir
+     */
+    public function fillArrayWithFileNodes( \DirectoryIterator $dir )
+    {
+        $data = array();
+        foreach ( $dir as $node )
+        {
+            if ( $node->isDir() && !$node->isDot() )
+            {
+                $data[$node->getFilename()] = self::fillArrayWithFileNodes( new \DirectoryIterator( $node->getPathname() ) );
+            }
+        }
+        return $data;
+    }    
+    
+    /**
+     * Get directory tree as array
+     * @param unknown $path
+     * @param unknown $skip_files
+     * @param unknown $link_prefix
+     */
+    public function getDirectoryTreeArray($path, $skip_files = false, $link_prefix = '')
+    {
+        return $this->fillArrayWithFileNodes( new \DirectoryIterator( $path ) );
+    }
 
     /**
      *
