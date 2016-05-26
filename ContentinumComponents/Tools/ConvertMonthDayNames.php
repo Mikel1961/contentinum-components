@@ -76,7 +76,7 @@ class ConvertMonthDayNames
      * @param unknown $value
      * @param string $prop
      */
-    protected function get($value, $prop = 'monthsname')
+    public function get($value, $prop = 'monthsname')
     {
         if (isset($this->{$prop}[$value])) {
             return $this->{$prop}[$value];
