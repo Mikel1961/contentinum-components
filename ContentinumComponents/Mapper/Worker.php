@@ -755,12 +755,12 @@ class Worker extends AbstractMapper
 	    $status = $this->find($id, $clear);
 	    switch ($status->publish){
 	        case 'no': //$datas, $entity = null, $stage = '', $id = null)
-	            self::save(array('publish' => 'yes'),$status, self::SAVE_UPDATE,$id );
+	            self::save(array('publish' => 'yes', 'updateflag' => '1'),$status, self::SAVE_UPDATE,$id );
 	            $logmsg = 'Data record published successfully';
 	            $msg = 'Changed publication status of a data record successfully';
 	            break;
 	        case 'yes':
-	            self::save(array('publish' => 'no'),$status, self::SAVE_UPDATE,$id );
+	            self::save(array('publish' => 'no', 'updateflag' => '1'),$status, self::SAVE_UPDATE,$id );
 	            $logmsg = 'Data record unpublished successfully';
 	            $msg = 'Changed publication status of a data record successfully';
 	            break;
