@@ -116,7 +116,7 @@ class Tel  extends Element implements InputProviderInterface
         if (null === $this->telValidator) {
             
             $Land = '((\+[0-9]{2,4}([ -][0-9]+?[ -]| ?\([0-9]+?\) ?))';
-            $Ort = '|(\(0[0-9 ]+?\) ?)|(0[0-9]+? ?( |-|\/) ?))';
+            $Ort = '|(\(0[0-9 ]+?\) ?)|(0[0-9]+? ?( |-|\/)?))';
             $Nr = '([0-9]+?[ \/-]?)+?[0-9]';
             $regEx = '/^'.$Land.$Ort.$Nr.'$/';         
             
