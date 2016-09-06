@@ -86,6 +86,7 @@ class FormBuild extends AbstractHelper
     private function renderElements($elements)
     {
         $html = '';
+        $tmp = array();
         foreach ($elements as $element) {
             $tmp[] = $this->renderElement($element);
             if (true == ($fieldset = $element->getOption('fieldset'))) {
