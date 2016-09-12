@@ -129,15 +129,24 @@ class FormBuild extends AbstractHelper
         $htmlLabelEnd = '';
         $error = '';
         $type = $element->getAttribute('type');
-        $formLabel = $this->view->plugin('formLabel');
+        $required = $element->getAttribute('required');
+        //$formLabel = $this->view->plugin('formLabel');
         if ($element->getOption('label')) {
             $htmlLabel = '<label';
             if (true == ($labelAttributes = $element->getOption('label_attributes'))) {
                 $htmlLabel .= ' ' . HtmlAttribute::attributeArray($labelAttributes);
             }
             $htmlLabel .= '>';
+            if ('required' == $required){
+                $htmlLabel .= '<strong>';
+            }
             $htmlLabelText = $this->view->translate($element->getOption('label'));
-            $htmlLabelEnd = '</label>';
+            if ('required' == $required){
+                $htmlLabel .= '<strong></label>';
+            } else {
+                $htmlLabelEnd = '</label>';
+            }
+            
         }
         $htmlElement = $this->view->formElement($element);
         switch ($type){
