@@ -142,7 +142,7 @@ class FormBuild extends AbstractHelper
             }
             $htmlLabelText = $this->view->translate($element->getOption('label'));
             if ('required' == $required){
-                $htmlLabel .= '<strong></label>';
+                $htmlLabel .= '</strong></label>';
             } else {
                 $htmlLabelEnd = '</label>';
             }
