@@ -130,7 +130,6 @@ class FormBuild extends AbstractHelper
         $error = '';
         $type = $element->getAttribute('type');
         $required = $element->getAttribute('required');
-        //$formLabel = $this->view->plugin('formLabel');
         if ($element->getOption('label')) {
             $htmlLabel = '<label';
             if (true == ($labelAttributes = $element->getOption('label_attributes'))) {
@@ -142,7 +141,7 @@ class FormBuild extends AbstractHelper
             }
             $htmlLabelText = $this->view->translate($element->getOption('label'));
             if ('required' == $required){
-                $htmlLabel .= '</strong></label>';
+                $htmlLabelEnd = '</strong></label>';
             } else {
                 $htmlLabelEnd = '</label>';
             }
