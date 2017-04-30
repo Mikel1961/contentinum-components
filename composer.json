@@ -1,21 +1,26 @@
 {
-	"name": "contentinum/contentinum-components",
+	"name" : "contentinum/contentinum-components",
 	"description" : "Contentinum library for Symfony and contentinum manage content application",
-	"keywords": ["contentinum", "library", "cms"],
-	"homepage": "https://github.com/Mikel1961/contentinum-components",
-    "license": "BSD",
-    "type": "library",
-    "authors": [
-        {
-            "name": "Michael Jochum",
-            "email": "michael.jochum@jochum-mediaservices.de",
-            "homepage": "http://jochum-mediaservices.de/"
-        }
-    ],	
-    "require": {
-        "php": ">=5.3.3"
-    },
-    "autoload": {
-        "classmap": ["ContentinumComponents"]
-    } 
+	"keywords" : [
+		"contentinum",
+		"library",
+		"cms"
+	],
+	"homepage" : "https://github.com/Mikel1961/contentinum-components",
+	"license" : "BSD",
+	"type" : "library",
+	"authors" : [{
+			"name" : "Michael Jochum",
+			"email" : "michael.jochum@jochum-mediaservices.de",
+			"homepage" : "http://jochum-mediaservices.de/"
+		}
+	],
+	"require" : {
+		"php" : "^5.6 || ^7.0"
+	},
+	"autoload" : {
+		"classmap" : [
+			"ContentinumComponents"
+		]
+	}
 }
