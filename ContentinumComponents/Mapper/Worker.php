@@ -125,6 +125,12 @@ class Worker extends AbstractMapper
 	protected $identity;
 	
 	/**
+	 * Language
+	 * @var string
+	 */
+	protected $language;
+	
+	/**
 	 * Construct
 	 * @param EntityManager $storage
 	 * @param string $charset
@@ -386,6 +392,22 @@ class Worker extends AbstractMapper
 	}
 
 	/**
+     * @return the $language
+     */
+    public function getLanguage()
+    {
+        return $this->language;
+    }
+
+    /**
+     * @param string $language
+     */
+    public function setLanguage($language)
+    {
+        $this->language = $language;
+    }
+
+    /**
 	 * Get current user ident
 	 * @return number
 	 */
